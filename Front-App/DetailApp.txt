@@ -1,0 +1,138 @@
+1. Tree App
+/Front-End
+  /assets              
+    /fonts              # Font chữ (NotoSansKR, Roboto, v.v.)
+    /images             # Hình ảnh minh họa, logo, splash
+      logo.png
+      splash.png
+    /icons              # Icon PNG hoặc SVG
+      home.png
+      video.png
+      rank.png
+  /components           
+    Button.js           # Nút bấm chung
+    Card.js             # Thành phần thẻ hiển thị
+    Header.js           # Thanh tiêu đề
+    ProgressBar.js      # Thanh tiến trình
+    VideoPlayer.js      # Thành phần phát video
+  /data                 
+    lessons.json        # Danh sách bài học
+    vocabulary.json     # Dữ liệu từ vựng
+    videoQuestions.json # Dữ liệu câu hỏi từ video
+  /navigation           
+    AppNavigator.js     # Điều hướng chính (Stack)
+    TabNavigator.js     # Điều hướng dạng tab
+    DrawerNavigator.js  # Điều hướng dạng Drawer
+  /screens  
+    /Auth               # Thư mục Đăng nhập/Đăng ký
+      LoginScreen.js    # Màn hình Đăng nhập
+      RegisterScreen.js # Màn hình Đăng ký
+      AuthStyles.js     # Style cho các màn hình Auth         
+    /Home               # Màn hình trang chủ
+      HomeScreen.js
+      HomeStyles.js
+    /Lessons            # Màn hình bài học
+      LessonsScreen.js
+      LessonDetailScreen.js
+      LessonsStyles.js
+    /Practice           # Màn hình luyện tập
+      PracticeScreen.js
+      FlashcardScreen.js
+      QuizScreen.js
+      PracticeStyles.js
+    /Video              # Màn hình xem phim
+      VideoScreen.js
+      VideoQuestionScreen.js
+      VideoStyles.js
+    /Rankings           # Màn hình xếp hạng
+      RankingsScreen.js
+      RankingsStyles.js
+    /Profile            # Màn hình hồ sơ
+      ProfileScreen.js
+      EditProfileScreen.js
+      ProfileStyles.js
+    /Settings           # Màn hình cài đặt
+      SettingsScreen.js
+      SettingsStyles.js
+  /styles               
+    colors.js           # Màu sắc toàn cục
+    globalStyles.js     # Style toàn cục
+    typography.js       # Font chữ và kích cỡ
+  /utils                
+    constants.js        # Giá trị cố định
+    helpers.js          # Hàm tiện ích chung
+    asyncStorage.js     # Tích hợp AsyncStorage
+    validators.js       # Bộ kiểm tra dữ liệu
+  App.js                # Entry point của ứng dụng
+/backend
+   /models
+       - User.js
+       - Lesson.js
+       - VideoQuestion.js
+   /routes
+       - auth.js
+       - lessons.js
+       - rankings.js
+   /controllers
+       - authController.js
+       - lessonController.js
+       - rankingController.js
+   /utils
+       - db.js
+   server.js
+  Chi tiết từng mục
+1. /assets
+fonts/: Font chữ đặc biệt (ví dụ: NotoSansKR cho tiếng Hàn).
+images/: Logo, hình ảnh nền splash, hoặc hình minh họa bài học.
+icons/: Biểu tượng PNG/SVG dùng cho navigation hoặc nút bấm.
+2. /components
+Button.js: Nút bấm chung với style đồng nhất, hỗ trợ tùy chỉnh.
+Card.js: Thành phần thẻ hiển thị (dùng trong bài học hoặc từ điển).
+TabNavigator.js: Giao diện thanh tab điều hướng giữa các màn hình.
+Header.js: Thanh tiêu đề hiển thị trên mỗi màn hình.
+ProgressBar.js: Thanh tiến trình hiển thị mức độ hoàn thành bài học.
+3. /data
+Dữ liệu mẫu JSON:
+lessons.json: Danh sách các bài học với chủ đề và cấp độ.
+vocabulary.json: Từ vựng mẫu dùng cho từ điển.
+4. /navigation
+AppNavigator.js: Cấu hình điều hướng chính (stack/drawer navigation).
+TabNavigator.js: Điều hướng giữa các tab chính (Home, Lessons, Practice, Profile).
+5. /screens
+Tổ chức màn hình theo module để dễ quản lý:
+
+/Home/: Trang tổng quan, hiển thị tiến trình và gợi ý bài học.
+/Lessons/: Danh sách bài học và chi tiết từng bài học.
+/Practice/: Các tính năng luyện tập như flashcards, bài kiểm tra.
+/Dictionary/: Từ điển và chi tiết từ vựng (nghĩa, phát âm).
+/Profile/: Thông tin và tùy chỉnh cá nhân.
+/Progress/: Tiến trình học tập.
+/Settings/: Tùy chỉnh ứng dụng (theme, ngôn ngữ).
+6. /styles
+colors.js: Định nghĩa các màu chung (primary, secondary, background).
+globalStyles.js: Các style dùng chung cho toàn ứng dụng.
+typography.js: Kích thước, font chữ cho tiêu đề, đoạn văn.
+7. /utils
+constants.js: Giá trị cố định như URL API, mức độ bài học.
+helpers.js: Hàm tiện ích như định dạng ngày, shuffle array.
+validators.js: Bộ kiểm tra dữ liệu đầu vào (text, email).
+1. Tab "Video"
+VideoScreen.js: Hiển thị danh sách video ngắn (tập trung vào các đoạn phim tiếng Hàn).
+VideoQuestionScreen.js: Sau khi xem xong, người dùng sẽ trả lời câu hỏi liên quan đến nội dung phim (lấy từ videoQuestions.json).
+VideoPlayer.js: Thành phần phát video, sử dụng react-native-video hoặc expo-av.
+2. Tab "Rankings"
+Hiển thị bảng xếp hạng điểm số của người dùng.
+Dữ liệu được lưu trữ và truy xuất từ AsyncStorage để duy trì trạng thái.
+1. LoginScreen.js
+Giao diện đăng nhập với các trường:
+Email.
+Mật khẩu.
+Nút Đăng nhập và liên kết đến màn hình Đăng ký.
+Xử lý lưu thông tin phiên người dùng bằng AsyncStorage.
+2. RegisterScreen.js
+Giao diện đăng ký với các trường:
+Tên người dùng.
+Email.
+Mật khẩu.
+Xác nhận mật khẩu.
+Nút Đăng ký để tạo tài khoản.
