@@ -35,6 +35,9 @@
       LessonsScreen.js
       LessonDetailScreen.js
       LessonsStyles.js
+    /OnBroadingPage
+      OnBroadingPage1.js
+      OnBroadingPage2.js
     /Practice           # Màn hình luyện tập
       PracticeScreen.js
       FlashcardScreen.js
@@ -100,7 +103,6 @@ AppNavigator.js: Cấu hình điều hướng chính (stack/drawer navigation).
 TabNavigator.js: Điều hướng giữa các tab chính (Home, Lessons, Practice, Profile).
 5. /screens
 Tổ chức màn hình theo module để dễ quản lý:
-
 /Home/: Trang tổng quan, hiển thị tiến trình và gợi ý bài học.
 /Lessons/: Danh sách bài học và chi tiết từng bài học.
 /Practice/: Các tính năng luyện tập như flashcards, bài kiểm tra.
@@ -136,3 +138,14 @@ Email.
 Mật khẩu.
 Xác nhận mật khẩu.
 Nút Đăng ký để tạo tài khoản.
+ <Stack.Navigator initialRouteName="OnboardingPage1" screenOptions={{ headerShown: false }}>
+        {/* Onboarding Pages */}
+        <Stack.Screen name="OnboardingPage1" component={OnboardingPage1} />
+        <Stack.Screen name="OnboardingPage2" component={OnboardingPage2} />
+
+        {/* Login Stack */}
+        <Stack.Screen name="LoginStack" component={AuthStack} />
+        {/* Home Screen */}
+        <Stack.Screen name="MainApp" component={TabNavigator} />
+       
+      </Stack.Navigator>
