@@ -1,47 +1,47 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 
-const OnboardingPage1 = ({ navigation }) => {
-  const [selectedOption, setSelectedOption] = useState(null);
+const OnboardingPage3 = ({ navigation }) => {
+  const [selectedMethod, setSelectedMethod] = useState(null);
 
-  const handleSelectOption = (option) => {
-    setSelectedOption(option);
+  const handleSelectMethod = (method) => {
+    setSelectedMethod(method);
   };
 
   return (
     <View style={styles.container}>
-      <Image source={require("../../assets/illustration1.png")} style={styles.image} />
-      <Text style={styles.title}>Mục tiêu học tiếng Hàn của bạn?</Text>
+      <Image source={require("../../assets/illustration2.png")} style={styles.image} />
+      <Text style={styles.title}>Bạn muốn học tiếng Hàn theo cách nào?</Text>
 
       {[
-        "Giao tiếp cơ bản hằng ngày",
-        "Xem phim, nghe nhạc không cần phụ đề",
-        "Kết bạn và trò chuyện với người Hàn Quốc",
-        "Chuẩn bị cho kỳ thi TOPIK",
-        "Cơ hội việc làm và du học",
-      ].map((option) => (
+        "Học qua bài giảng và bài tập truyền thống",
+        "Học qua hội thoại thực tế",
+        "Học bằng cách xem phim và nghe nhạc",
+        "Luyện viết và phát âm chuẩn",
+        "Kết hợp tất cả các phương pháp",
+      ].map((method) => (
         <TouchableOpacity
-          key={option}
+          key={method}
           style={[
             styles.optionButton,
-            selectedOption === option && styles.selectedOption,
+            selectedMethod === method && styles.selectedOption,
           ]}
-          onPress={() => handleSelectOption(option)}
+          onPress={() => handleSelectMethod(method)}
           activeOpacity={0.7}
         >
-          <Text style={[styles.optionText, selectedOption === option && styles.selectedText]}>
-            {option}
+          <Text style={[styles.optionText, selectedMethod === method && styles.selectedText]}>
+            {method}
           </Text>
         </TouchableOpacity>
       ))}
 
       <TouchableOpacity
-        style={[styles.nextButton, !selectedOption && styles.disabledButton]}
-        onPress={() => navigation.navigate("OnboardingPage2", { goal: selectedOption })}
-        disabled={!selectedOption}
+        style={[styles.nextButton, !selectedMethod && styles.disabledButton]}
+        onPress={() => navigation.navigate("OnboardingPage4", { method: selectedMethod })}
+        disabled={!selectedMethod}
         activeOpacity={0.8}
       >
-        <Text style={styles.nextText}>Tiếp theo</Text>
+        <Text style={styles.nextText}>Hoàn tất</Text>
       </TouchableOpacity>
     </View>
   );
@@ -115,4 +115,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default OnboardingPage1;
+export default OnboardingPage3;

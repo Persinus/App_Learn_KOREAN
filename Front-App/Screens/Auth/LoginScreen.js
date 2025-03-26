@@ -1,55 +1,114 @@
-import React from "react";
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from "react-native";
-import { FontAwesome } from "@expo/vector-icons"; // Dùng cho icon Google và Facebook
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  Animated,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+} from "react-native";
+import { FontAwesome } from "@expo/vector-icons"; // Icon for Google and Facebook
 
 const LoginScreen = ({ navigation }) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const fadeAnim = new Animated.Value(0); // Initial animation value for fade-in
+
+  React.useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 1000,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
+  const handleLogin = () => {
+    if (email && password) {
+      Alert.alert("Login Successful", `Welcome, ${email}!`);
+      navigation.navigate("TabNavigator", { screen: "HomeScreen" });
+    } else {
+      Alert.alert("Error", "Please enter your email and password.");
+    }
+  };
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Log In</Text>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+       
+          <Text style={styles.title}>Log In</Text>
 
-      {/* Email Input */}
-      <Text style={styles.label}>Your Email</Text>
-      <TextInput style={styles.input} placeholder="Enter your email" keyboardType="email-address" />
+          {/* Email Input */}
+          <Text style={styles.label}>Your Email</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your email"
+            keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
+          />
 
-      {/* Password Input */}
-      <Text style={styles.label}>Password</Text>
-      <View style={styles.passwordContainer}>
-        <TextInput
-          style={[styles.input, styles.passwordInput]}
-          placeholder="Enter your password"
-          secureTextEntry
-        />
-        <FontAwesome name="eye" size={20} color="gray" style={styles.eyeIcon} />
-      </View>
+          {/* Password Input */}
+          <Text style={styles.label}>Password</Text>
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={[styles.input, styles.passwordInput]}
+              placeholder="Enter your password"
+              secureTextEntry={!isPasswordVisible}
+              value={password}
+              onChangeText={setPassword}
+            />
+            <TouchableOpacity
+              onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+              style={styles.eyeIcon}
+            >
+              <FontAwesome
+                name={isPasswordVisible ? "eye-slash" : "eye"}
+                size={20}
+                color="gray"
+              />
+            </TouchableOpacity>
+          </View>
 
-      <TouchableOpacity style={styles.forgotPassword}>
-        <Text style={styles.link}>Forgot password?</Text>
-      </TouchableOpacity>
+          <TouchableOpacity style={styles.forgotPassword}>
+            <Text style={styles.link}>Forgot password?</Text>
+          </TouchableOpacity>
 
-      {/* Log In Button */}
-      <TouchableOpacity style={styles.loginButton}>
-        <Text style={styles.loginText}>Log In</Text>
-      </TouchableOpacity>
+          {/* Log In Button */}
+          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+            <Text style={styles.loginText}>Log In</Text>
+          </TouchableOpacity>
 
-      {/* Sign Up Section */}
-      <View style={styles.signUpContainer}>
-        <Text style={styles.text}>Don't have an account? </Text>
-        <TouchableOpacity>
-          <Text style={styles.link}>Sign up</Text>
-        </TouchableOpacity>
-      </View>
+          {/* Sign Up Section */}
+          <View style={styles.signUpContainer}>
+            <Text style={styles.text}>Don't have an account? </Text>
+            <TouchableOpacity>
+              <Text style={styles.link}>Sign up</Text>
+            </TouchableOpacity>
+          </View>
 
-      {/* Social Login Section */}
-      <Text style={styles.orText}>Or log in with</Text>
-      <View style={styles.socialContainer}>
-        <TouchableOpacity style={styles.socialButton}>
-          <FontAwesome name="google" size={20} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.socialButton}>
-          <FontAwesome name="facebook" size={20} color="white" />
-        </TouchableOpacity>
-      </View>
-    </View>
+          {/* Social Login Section */}
+          <Text style={styles.orText}>Or log in with</Text>
+          <View style={styles.socialContainer}>
+            <TouchableOpacity style={[styles.socialButton, styles.googleButton]}>
+              <FontAwesome name="google" size={20} color="white" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.socialButton, styles.facebookButton]}
+            >
+              <FontAwesome name="facebook" size={20} color="white" />
+            </TouchableOpacity>
+          </View>
+       
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -65,11 +124,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 30,
-    color: "#333",
+    color: "#6a0dad",
   },
   label: {
     fontSize: 14,
-    color: "#666",
+    color: "#6a0dad",
     marginBottom: 5,
   },
   input: {
@@ -136,6 +195,12 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     width: 50,
     alignItems: "center",
+  },
+  googleButton: {
+    backgroundColor: "#db4437",
+  },
+  facebookButton: {
+    backgroundColor: "#3b5998",
   },
 });
 

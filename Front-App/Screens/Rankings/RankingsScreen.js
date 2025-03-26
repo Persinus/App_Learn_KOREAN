@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -7,28 +7,28 @@ import {
   TouchableOpacity,
   Image,
   Modal,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+} from "react-native";
+import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
 
 const rankings = [
-  { id: '1', name: 'Nguyễn Văn A', score: 1500, image: require('../../assets/avatar1.png') },
-  { id: '2', name: 'Trần Thị B', score: 1400, image: require('../../assets/avatar2.png') },
-  { id: '3', name: 'Lê Văn C', score: 800, image: require('../../assets/avatar3.png') },
-  { id: '4', name: 'Phạm D', score: 300, image: require('../../assets/avatar4.png') },
+  { id: "1", name: "Nguyễn Văn A", score: 1500, image: require("../../assets/avatar1.png") },
+  { id: "2", name: "Trần Thị B", score: 1400, image: require("../../assets/avatar2.png") },
+  { id: "3", name: "Lê Văn C", score: 800, image: require("../../assets/avatar3.png") },
+  { id: "4", name: "Phạm D", score: 300, image: require("../../assets/avatar4.png") },
 ];
 
 const rankIcons = {
-  S: require('../../assets/rank-s.png'),
-  A: require('../../assets/rank-a.png'),
-  B: require('../../assets/rank-b.png'),
-  C: require('../../assets/rank-c.png'),
+  S: require("../../assets/rank-s.png"),
+  A: require("../../assets/rank-a.png"),
+  B: require("../../assets/rank-b.png"),
+  C: require("../../assets/rank-c.png"),
 };
 
 const getRank = (score) => {
-  if (score >= 1500) return 'S';
-  if (score >= 1000) return 'A';
-  if (score >= 500) return 'B';
-  return 'C';
+  if (score >= 1500) return "S";
+  if (score >= 1000) return "A";
+  if (score >= 500) return "B";
+  return "C";
 };
 
 const RankingsScreen = () => {
@@ -37,15 +37,16 @@ const RankingsScreen = () => {
   const renderRankCard = ({ item, index }) => {
     const rank = getRank(item.score);
     return (
-      <View style={styles.rankCard}>
-        <Text style={styles.rank}>{index + 1}</Text>
+      <TouchableOpacity style={styles.rankCard} activeOpacity={0.9}>
+        <Text style={[styles.rank, index === 0 && styles.firstRank]}>{index + 1}</Text>
         <Image source={item.image} style={styles.avatar} />
         <View style={styles.rankInfo}>
           <Text style={styles.name}>{item.name}</Text>
           <Text style={styles.score}>{item.score} điểm</Text>
         </View>
         <Image source={rankIcons[rank]} style={styles.rankIcon} />
-      </View>
+        {index === 0 && <FontAwesome5 name="crown" size={24} color="#FFD700" style={styles.crownIcon} />}
+      </TouchableOpacity>
     );
   };
 
@@ -58,16 +59,16 @@ const RankingsScreen = () => {
     >
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Chi tiết Xếp hạng</Text>
+          <Text style={styles.modalTitle}>🏆 Chi tiết Xếp hạng</Text>
           {Object.keys(rankIcons).map((rank) => (
             <View key={rank} style={styles.rankDetailRow}>
               <Image source={rankIcons[rank]} style={styles.rankDetailIcon} />
               <Text style={styles.rankDetailText}>Hạng {rank}</Text>
               <Text style={styles.rankDetailPoints}>
-                {rank === 'S' && '1500+'}
-                {rank === 'A' && '1000 - 1499'}
-                {rank === 'B' && '500 - 999'}
-                {rank === 'C' && '0 - 499'}
+                {rank === "S" && "1500+"}
+                {rank === "A" && "1000 - 1499"}
+                {rank === "B" && "500 - 999"}
+                {rank === "C" && "0 - 499"}
               </Text>
             </View>
           ))}
@@ -86,9 +87,9 @@ const RankingsScreen = () => {
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.infoButton}>
-          <Ionicons name="information-circle-outline" size={24} color="#4b46f1" />
+          <Ionicons name="information-circle-outline" size={28} color="#ffffff" />
         </TouchableOpacity>
-        <Text style={styles.header}>Bảng xếp hạng</Text>
+        <Text style={styles.header}>🏅 Bảng xếp hạng</Text>
       </View>
 
       <FlatList
@@ -105,39 +106,45 @@ const RankingsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: "#4b46f1", // Purple background
     padding: 16,
   },
   headerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 16,
   },
   infoButton: {
-    marginRight: 8,
+    marginRight: 10,
   },
   header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#4b46f1',
+    fontSize: 26,
+    fontWeight: "bold",
+    color: "#ffffff",
   },
   rankCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: 16,
-    backgroundColor: '#ffffff',
-    borderRadius: 8,
+    backgroundColor: "#ffffff",
+    borderRadius: 12,
     marginBottom: 12,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
+    shadowColor: "#000",
+    shadowOpacity: 0.15,
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 2 },
+    elevation: 4,
+    position: "relative",
   },
   rank: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#4b46f1',
+    fontWeight: "bold",
+    color: "#4b46f1",
     marginRight: 16,
+  },
+  firstRank: {
+    color: "#FFD700",
+    fontSize: 22,
   },
   avatar: {
     width: 50,
@@ -150,42 +157,48 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: "600",
+    color: "#333333",
   },
   score: {
     fontSize: 16,
-    color: '#333',
+    color: "#4b46f1",
   },
   rankIcon: {
     width: 40,
     height: 40,
   },
+  crownIcon: {
+    position: "absolute",
+    top: 5,
+    left: 10,
+  },
   modalOverlay: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: "#ffffff",
     padding: 20,
     borderRadius: 10,
-    width: '80%',
+    width: "80%",
   },
   modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 20,
+    fontWeight: "bold",
     marginBottom: 16,
-    textAlign: 'center',
-    color: '#4b46f1',
+    textAlign: "center",
+    color: "#4b46f1",
   },
   rankDetailRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
+    borderBottomColor: "#ddd",
   },
   rankDetailIcon: {
     width: 30,
@@ -194,23 +207,24 @@ const styles = StyleSheet.create({
   },
   rankDetailText: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     flex: 1,
+    color: "#4b46f1",
   },
   rankDetailPoints: {
     fontSize: 16,
-    color: '#333',
+    color: "#333333",
   },
   closeButton: {
-    backgroundColor: '#4b46f1',
+    backgroundColor: "#4b46f1",
     padding: 10,
     borderRadius: 8,
     marginTop: 16,
   },
   closeButtonText: {
-    color: '#fff',
-    textAlign: 'center',
-    fontWeight: 'bold',
+    color: "#ffffff",
+    textAlign: "center",
+    fontWeight: "bold",
   },
 });
 

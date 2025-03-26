@@ -1,15 +1,14 @@
 import React from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import YoutubeIframe from 'react-native-youtube-iframe';
 
-const VideoDetailScreen = ({ route, navigation }) => {
-  const { youtubeId, title, question } = route.params;
+const VideoDetailScreen = ({ route }) => {
+  const { youtubeId, title, question, koreanSub } = route.params;
 
   if (!youtubeId) {
     return (
       <View style={styles.container}>
         <Text style={styles.errorText}>Không tìm thấy video YouTube!</Text>
-        <Button title="Quay lại" onPress={() => navigation.goBack()} />
       </View>
     );
   }
@@ -22,7 +21,7 @@ const VideoDetailScreen = ({ route, navigation }) => {
         videoId={youtubeId}
         height={200} // Chiều cao video
       />
-      <Button title="Quay lại" onPress={() => navigation.goBack()} />
+      <Text style={styles.subtitle}>{koreanSub}</Text>
     </View>
   );
 };
@@ -51,6 +50,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'red',
     textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginVertical: 10,
+    color: '#333',
   },
 });
 
