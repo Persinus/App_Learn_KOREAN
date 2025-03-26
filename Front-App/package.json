@@ -10,6 +10,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo/metro-runtime": "~4.0.1",
     "@react-native-async-storage/async-storage": "^2.1.2",
     "@react-native-community/datetimepicker": "^8.3.0",
     "@react-native-community/masked-view": "^0.1.11",
@@ -19,21 +20,27 @@
     "@react-navigation/material-top-tabs": "^7.2.1",
     "@react-navigation/native": "^7.0.17",
     "@react-navigation/stack": "^7.2.1",
+    "@react-three/drei": "^8.13.1",
+    "@react-three/fiber": "^8.18.0",
+    "drei": "^2.2.21",
     "expo": "~52.0.37",
     "expo-auth-session": "~6.0.3",
     "expo-av": "~15.0.2",
+    "expo-gl": "^15.0.4",
     "expo-speech": "~13.0.1",
     "expo-status-bar": "~2.0.1",
     "firebase": "^11.5.0",
     "google-translate-api": "^2.3.0",
     "lottie-react-native": "^7.2.2",
     "react": "^18.3.1",
+    "react-dom": "18.3.1",
     "react-hook-form": "^7.54.2",
     "react-native": "^0.76.7",
     "react-native-autocomplete-input": "^5.5.6",
     "react-native-elements": "^3.4.3",
     "react-native-gesture-handler": "^2.24.0",
     "react-native-modal-datetime-picker": "^18.0.0",
+    "react-native-pager-view": "^6.7.0",
     "react-native-paper": "^5.13.1",
     "react-native-progress": "^5.0.1",
     "react-native-reanimated": "^3.17.1",
@@ -47,8 +54,10 @@
     "react-native-vector-icons": "^10.2.0",
     "react-native-video": "^6.11.0",
     "react-native-voice": "^0.3.0",
+    "react-native-web": "~0.19.13",
     "react-native-webview": "^13.13.4",
-    "react-native-youtube-iframe": "^2.3.0"
+    "react-native-youtube-iframe": "^2.3.0",
+    "three": "^0.174.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

@@ -13,7 +13,7 @@ const SplashScreen = ({ navigation }) => {
       useNativeDriver: false,
     }).start(() => {
       // Chuyển sang màn hình chính sau khi hoàn thành
-      navigation.replace('OnboardingPage1');
+      navigation.replace('BridgeScreen');
     });
   }, []);
 

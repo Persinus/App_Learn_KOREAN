@@ -149,3 +149,13 @@ Nút Đăng ký để tạo tài khoản.
         <Stack.Screen name="MainApp" component={TabNavigator} />
        
       </Stack.Navigator>
+
+
+
+
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="SplashStack" component={SplashStack} />
+        <Stack.Screen name="AuthStack" component={AuthStack} />
+        <Stack.Screen name="TabNavigator" component={TabNavigator} />
+       
+      </Stack.Navigator>

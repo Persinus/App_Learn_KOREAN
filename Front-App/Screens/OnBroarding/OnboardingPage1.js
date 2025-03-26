@@ -1,118 +1,44 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { View, Text, Image, TouchableOpacity } from "react-native";
+import onboardingStyles from "../../Styles/onboardingStyles"; // ✅ Import styles chung
 
 const OnboardingPage1 = ({ navigation }) => {
   const [selectedOption, setSelectedOption] = useState(null);
 
-  const handleSelectOption = (option) => {
-    setSelectedOption(option);
-  };
-
   return (
-    <View style={styles.container}>
-      <Image source={require("../../assets/illustration1.png")} style={styles.image} />
-      <Text style={styles.title}>Mục tiêu học tiếng Hàn của bạn?</Text>
+    <View style={onboardingStyles.container}>
+      <Image source={require("../../assets/illustration1.png")} style={onboardingStyles.image} />
+      <Text style={onboardingStyles.title}>Mục tiêu học tiếng Hàn của bạn?</Text>
 
-      {[
-        "Giao tiếp cơ bản hằng ngày",
-        "Xem phim, nghe nhạc không cần phụ đề",
-        "Kết bạn và trò chuyện với người Hàn Quốc",
-        "Chuẩn bị cho kỳ thi TOPIK",
-        "Cơ hội việc làm và du học",
-      ].map((option) => (
+      {["Giao tiếp cơ bản", "Xem phim không phụ đề", "Thi TOPIK", "Cơ hội du học"].map((option) => (
         <TouchableOpacity
           key={option}
           style={[
-            styles.optionButton,
-            selectedOption === option && styles.selectedOption,
+            onboardingStyles.optionButton,
+            selectedOption === option && onboardingStyles.selectedOption,
           ]}
-          onPress={() => handleSelectOption(option)}
-          activeOpacity={0.7}
+          onPress={() => setSelectedOption(option)}
         >
-          <Text style={[styles.optionText, selectedOption === option && styles.selectedText]}>
+          <Text
+            style={[
+              onboardingStyles.optionText,
+              selectedOption === option && onboardingStyles.selectedText,
+            ]}
+          >
             {option}
           </Text>
         </TouchableOpacity>
       ))}
 
       <TouchableOpacity
-        style={[styles.nextButton, !selectedOption && styles.disabledButton]}
+        style={[onboardingStyles.nextButton, !selectedOption && onboardingStyles.disabledButton]}
         onPress={() => navigation.navigate("OnboardingPage2", { goal: selectedOption })}
         disabled={!selectedOption}
-        activeOpacity={0.8}
       >
-        <Text style={styles.nextText}>Tiếp theo</Text>
+        <Text style={onboardingStyles.nextText}>Tiếp theo</Text>
       </TouchableOpacity>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#fafafa",
-    paddingHorizontal: 20,
-  },
-  image: {
-    width: 220,
-    height: 220,
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: "bold",
-    textAlign: "center",
-    color: "#4A148C",
-    marginBottom: 20,
-  },
-  optionButton: {
-    width: "100%",
-    backgroundColor: "#EDE7F6",
-    paddingVertical: 14,
-    paddingHorizontal: 15,
-    borderRadius: 12,
-    marginBottom: 10,
-    shadowColor: "#4A148C",
-    shadowOffset: { width: 2, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3, // Android shadow
-  },
-  selectedOption: {
-    backgroundColor: "#B39DDB",
-  },
-  optionText: {
-    fontSize: 16,
-    textAlign: "center",
-    color: "#4A148C",
-    fontWeight: "500",
-  },
-  selectedText: {
-    fontWeight: "bold",
-    color: "#FFF",
-  },
-  nextButton: {
-    backgroundColor: "#4A148C",
-    paddingVertical: 12,
-    paddingHorizontal: 25,
-    borderRadius: 8,
-    marginTop: 20,
-    shadowColor: "#4A148C",
-    shadowOffset: { width: 1, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  disabledButton: {
-    backgroundColor: "#D1C4E9",
-  },
-  nextText: {
-    color: "#FFF",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-});
 
 export default OnboardingPage1;

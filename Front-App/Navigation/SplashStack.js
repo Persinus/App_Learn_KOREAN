@@ -7,13 +7,14 @@ import OnboardingPage3 from '../Screens/OnBroarding/OnbroadingPage3';
 import OnboardingPage4 from '../Screens/OnBroarding/OnbroadingPage4';
 import OnboardingPage5 from '../Screens/OnBroarding/OnbroadingPage5';
 import LoginPage from '../Screens/Auth/LoginPage';
-
+import BridgeScreen from "../Screens/bridge";
 const Stack = createStackNavigator();
 
 const SplashStack = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="SplashScreen" component={SplashScreen} />
+      <Stack.Screen name="BridgeScreen" component={BridgeScreen} />
       <Stack.Screen name="OnboardingPage1" component={OnboardingPage1} />
       <Stack.Screen name="OnboardingPage2" component={OnboardingPage2} />
       <Stack.Screen name="OnboardingPage3" component={OnboardingPage3} />

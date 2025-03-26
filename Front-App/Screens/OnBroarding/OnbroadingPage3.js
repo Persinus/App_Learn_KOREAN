@@ -1,118 +1,50 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { View, Text, Image, TouchableOpacity } from "react-native";
+import onboardingStyles from "../../Styles/onboardingStyles"; // ✅ Import styles chung
 
 const OnboardingPage3 = ({ navigation }) => {
   const [selectedMethod, setSelectedMethod] = useState(null);
 
-  const handleSelectMethod = (method) => {
-    setSelectedMethod(method);
-  };
-
   return (
-    <View style={styles.container}>
-      <Image source={require("../../assets/illustration2.png")} style={styles.image} />
-      <Text style={styles.title}>Bạn muốn học tiếng Hàn theo cách nào?</Text>
+    <View style={onboardingStyles.container}>
+      <Image source={require("../../assets/illustration2.png")} style={onboardingStyles.image} />
+      <Text style={onboardingStyles.title}>Bạn muốn học tiếng Hàn theo cách nào?</Text>
 
       {[
-        "Học qua bài giảng và bài tập truyền thống",
-        "Học qua hội thoại thực tế",
-        "Học bằng cách xem phim và nghe nhạc",
-        "Luyện viết và phát âm chuẩn",
-        "Kết hợp tất cả các phương pháp",
+        "Học qua bài giảng",
+        "Học qua hội thoại",
+        "Học bằng cách xem phim",
+        "Luyện viết và phát âm",
+        "Kết hợp tất cả phương pháp",
       ].map((method) => (
         <TouchableOpacity
           key={method}
           style={[
-            styles.optionButton,
-            selectedMethod === method && styles.selectedOption,
+            onboardingStyles.optionButton,
+            selectedMethod === method && onboardingStyles.selectedOption,
           ]}
-          onPress={() => handleSelectMethod(method)}
-          activeOpacity={0.7}
+          onPress={() => setSelectedMethod(method)}
         >
-          <Text style={[styles.optionText, selectedMethod === method && styles.selectedText]}>
+          <Text
+            style={[
+              onboardingStyles.optionText,
+              selectedMethod === method && onboardingStyles.selectedText,
+            ]}
+          >
             {method}
           </Text>
         </TouchableOpacity>
       ))}
 
       <TouchableOpacity
-        style={[styles.nextButton, !selectedMethod && styles.disabledButton]}
+        style={[onboardingStyles.nextButton, !selectedMethod && onboardingStyles.disabledButton]}
         onPress={() => navigation.navigate("OnboardingPage4", { method: selectedMethod })}
         disabled={!selectedMethod}
-        activeOpacity={0.8}
       >
-        <Text style={styles.nextText}>Hoàn tất</Text>
+        <Text style={onboardingStyles.nextText}>Tiếp theo</Text>
       </TouchableOpacity>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#fafafa",
-    paddingHorizontal: 20,
-  },
-  image: {
-    width: 220,
-    height: 220,
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: "bold",
-    textAlign: "center",
-    color: "#4A148C",
-    marginBottom: 20,
-  },
-  optionButton: {
-    width: "100%",
-    backgroundColor: "#EDE7F6",
-    paddingVertical: 14,
-    paddingHorizontal: 15,
-    borderRadius: 12,
-    marginBottom: 10,
-    shadowColor: "#4A148C",
-    shadowOffset: { width: 2, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3, // Android shadow
-  },
-  selectedOption: {
-    backgroundColor: "#B39DDB",
-  },
-  optionText: {
-    fontSize: 16,
-    textAlign: "center",
-    color: "#4A148C",
-    fontWeight: "500",
-  },
-  selectedText: {
-    fontWeight: "bold",
-    color: "#FFF",
-  },
-  nextButton: {
-    backgroundColor: "#4A148C",
-    paddingVertical: 12,
-    paddingHorizontal: 25,
-    borderRadius: 8,
-    marginTop: 20,
-    shadowColor: "#4A148C",
-    shadowOffset: { width: 1, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  disabledButton: {
-    backgroundColor: "#D1C4E9",
-  },
-  nextText: {
-    color: "#FFF",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-});
 
 export default OnboardingPage3;
