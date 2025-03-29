@@ -1,61 +1,59 @@
 [
-    { "suit": "♠️", "value": "A", "image": "https://example.com/spade_A.png" },
-    { "suit": "♠️", "value": "2", "image": "https://example.com/spade_2.png" },
-    { "suit": "♠️", "value": "3", "image": "https://example.com/spade_3.png" },
-    { "suit": "♠️", "value": "4", "image": "https://example.com/spade_4.png" },
-    { "suit": "♠️", "value": "5", "image": "https://example.com/spade_5.png" },
-    { "suit": "♠️", "value": "6", "image": "https://example.com/spade_6.png" },
-    { "suit": "♠️", "value": "7", "image": "https://example.com/spade_7.png" },
-    { "suit": "♠️", "value": "8", "image": "https://example.com/spade_8.png" },
-    { "suit": "♠️", "value": "9", "image": "https://example.com/spade_9.png" },
-    { "suit": "♠️", "value": "10", "image": "https://example.com/spade_10.png" },
-    { "suit": "♠️", "value": "J", "image": "https://example.com/spade_J.png" },
-    { "suit": "♠️", "value": "Q", "image": "https://example.com/spade_Q.png" },
-    { "suit": "♠️", "value": "K", "image": "https://i.pinimg.com/474x/49/ab/7a/49ab7aa7171d74dab0eff8e6f7093517.jpg" },
-  
-    { "suit": "♥️", "value": "A", "image": "https://example.com/heart_A.png" },
-    { "suit": "♥️", "value": "2", "image": "https://example.com/heart_2.png" },
-    { "suit": "♥️", "value": "3", "image": "https://example.com/heart_3.png" },
-    { "suit": "♥️", "value": "4", "image": "https://example.com/heart_4.png" },
-    { "suit": "♥️", "value": "5", "image": "https://example.com/heart_5.png" },
-    { "suit": "♥️", "value": "6", "image": "https://example.com/heart_6.png" },
-    { "suit": "♥️", "value": "7", "image": "https://example.com/heart_7.png" },
-    { "suit": "♥️", "value": "8", "image": "https://example.com/heart_8.png" },
-    { "suit": "♥️", "value": "9", "image": "https://example.com/heart_9.png" },
-    { "suit": "♥️", "value": "10", "image": "https://example.com/heart_10.png" },
-    { "suit": "♥️", "value": "J", "image": "https://i.pinimg.com/474x/88/aa/7a/88aa7acdab56cd4c6337ccfb322b2185.jpg" },
-    { "suit": "♥️", "value": "Q", "image": "https://i.pinimg.com/736x/1b/d7/a2/1bd7a2fd90579450a554c78ad0922f86.jpg" },
-    { "suit": "♥️", "value": "K", "image": "https://i.pinimg.com/474x/b0/45/70/b045700e37ddadf9eee9769cc1140882.jpg" },
-  
-    { "suit": "♣️", "value": "A", "image": "https://example.com/club_A.png" },
-    { "suit": "♣️", "value": "2", "image": "https://example.com/club_2.png" },
-    { "suit": "♣️", "value": "3", "image": "https://example.com/club_3.png" },
-    { "suit": "♣️", "value": "4", "image": "https://example.com/club_4.png" },
-    { "suit": "♣️", "value": "5", "image": "https://example.com/club_5.png" },
-    { "suit": "♣️", "value": "6", "image": "https://example.com/club_6.png" },
-    { "suit": "♣️", "value": "7", "image": "https://example.com/club_7.png" },
-    { "suit": "♣️", "value": "8", "image": "https://example.com/club_8.png" },
-    { "suit": "♣️", "value": "9", "image": "https://example.com/club_9.png" },
-    { "suit": "♣️", "value": "10", "image": "https://example.com/club_10.png" },
-    { "suit": "♣️", "value": "J", "image": "https://i.pinimg.com/474x/a7/13/24/a7132483f3d4b217a66dd53659bd1269.jpg" },
-    { "suit": "♣️", "value": "Q", "image": "https://example.com/club_Q.png" },
-    { "suit": "♣️", "value": "K", "image": "https://i.pinimg.com/474x/c5/63/1b/c5631b5adf2a81351009e1ce2bd316ec.jpg" },
-  
-    { "suit": "♦️", "value": "A", "image": "https://example.com/diamond_A.png" },
-    { "suit": "♦️", "value": "2", "image": "https://example.com/diamond_2.png" },
-    { "suit": "♦️", "value": "3", "image": "https://example.com/diamond_3.png" },
-    { "suit": "♦️", "value": "4", "image": "https://example.com/diamond_4.png" },
-    { "suit": "♦️", "value": "5", "image": "https://example.com/diamond_5.png" },
-    { "suit": "♦️", "value": "6", "image": "https://example.com/diamond_6.png" },
-    { "suit": "♦️", "value": "7", "image": "https://example.com/diamond_7.png" },
-    { "suit": "♦️", "value": "8", "image": "https://example.com/diamond_8.png" },
-    { "suit": "♦️", "value": "9", "image": "https://example.com/diamond_9.png" },
-    { "suit": "♦️", "value": "10", "image": "https://example.com/diamond_10.png" },
-    { "suit": "♦️", "value": "J", "image": "https://example.com/diamond_J.png" },
-    { "suit": "♦️", "value": "Q", "image": "https://i.pinimg.com/474x/6e/b2/95/6eb2958bb68743da42f1d28fb548f202.jpg" },
-    { "suit": "♦️", "value": "K", "image": "https://i.pinimg.com/474x/6b/5b/30/6b5b30c00309e3cfae486f543bc1809a.jpg" },
-  
-    { "suit": "Joker", "value": "Joker Đen", "image": "" },
-    { "suit": "Joker", "value": "Joker Đỏ", "image": "" }
-  ]
-  
+  {
+      "suit": "♠️",
+      "value": "A",
+      "image": "https://example.com/spade_A.png",
+      "question": "Từ nào là danh từ chỉ một loại trái cây?",
+      "answers": [
+          { "id": 1, "text": "사과" },
+          { "id": 2, "text": "먹다" },
+          { "id": 3, "text": "빨간" },
+          { "id": 4, "text": "빨리" }
+      ],
+      "valueTrue": 1,
+      "score": 1
+  },
+  {
+      "suit": "♠️",
+      "value": "2",
+      "image": "https://example.com/spade_2.png",
+      "question": "Danh từ nào có nghĩa là 'cặp sách'?",
+      "answers": [
+          { "id": 1, "text": "빨리" },
+          { "id": 2, "text": "가방" },
+          { "id": 3, "text": "크다" },
+          { "id": 4, "text": "먹다" }
+      ],
+      "valueTrue": 2,
+      "score": 2
+  },
+  {
+      "suit": "♠️",
+      "value": "J",
+      "image": "https://i.pinimg.com/474x/f1/d3/57/f1d357b7500975ec0d1d9a5d139d396e.jpg",
+      "question": "다음 빈칸에 들어갈 단어를 고르세요: 저는 손목에 ___를 차고 시간을 확인해요. (Tôi đeo ___ trên tay để xem giờ.)",
+      "answers": [
+          { "id": 1, "text": "책상" },
+          { "id": 2, "text": "시계" },
+          { "id": 3, "text": "크다" },
+          { "id": 4, "text": "가방" }
+      ],
+      "valueTrue": 2,
+      "score": 11
+  },
+  {
+      "suit": "♠️",
+      "value": "Q",
+      "image": "https://i.pinimg.com/474x/00/de/79/00de794204ce05c795c26e8a73b779a1.jpg",
+      "question": "다음 빈칸에 들어갈 단어를 고르세요: 우리는 ___를 타고 여행을 떠나요. (Chúng tôi đi du lịch bằng ___.)",
+      "answers": [
+          { "id": 1, "text": "자동차" },
+          { "id": 2, "text": "책상" },
+          { "id": 3, "text": "가방" },
+          { "id": 4, "text": "빨리" }
+      ],
+      "valueTrue": 1,
+      "score": 12
+  }
+]
+

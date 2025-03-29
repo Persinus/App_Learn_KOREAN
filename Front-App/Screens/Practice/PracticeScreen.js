@@ -3,22 +3,22 @@ import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList } from 'react
 
 const subscriptionOptions = [
   {
-    title: "By Monthly",
-    description: "Enjoy a month of library learning and word learning treasures in this grade.",
+    title: "Monthly Lessons",
+    description: "Access all lesson plans and resources for one month to boost your learning.",
     color: "#E6D6FF",
     icon: require('../../assets/avatar1.png'),
-    onPress: (navigation) => navigation.navigate('LessionScreen')
+    onPress: (navigation) => navigation.navigate('LessionScreen'),
   },
   {
-    title: "By Year",
-    description: "Enjoy a year of library learning and word learning treasures in this grade.",
+    title: "Yearly Mini Games",
+    description: "Enjoy mini games designed to make learning fun throughout the year.",
     color: "#D6E6FF",
     icon: require('../../assets/avatar1.png'),
-    onPress: (navigation) => navigation.navigate('MiniGame1')
+    onPress: (navigation) => navigation.navigate('MiniGame1'),
   },
   {
-    title: "Lifetime card",
-    description: "Enjoy lifelong library learning and word learning treasures in this grade.",
+    title: "Lifetime Video Library",
+    description: "Get lifetime access to a rich library of educational videos and resources.",
     color: "#FFE6C7",
     icon: require('../../assets/avatar1.png'),
     onPress: (navigation) => navigation.navigate('VideoListScreen'), // Điều hướng đến màn hình khác

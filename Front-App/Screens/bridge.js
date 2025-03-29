@@ -31,7 +31,8 @@ const BridgeScreen = () => {
       <TouchableOpacity
         style={styles.button}
         onPress={() =>
-            navigation.navigate("AuthStack", { screen: "LoginScreen" })}
+          navigation.navigate("AuthStack", { screen: "LoginScreen" })
+        }
       >
         <Text style={styles.buttonText}>🔑 Đã có tài khoản</Text>
       </TouchableOpacity>
@@ -54,6 +55,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 30,
+    color: "#333",
+    paddingHorizontal: 10,
+    lineHeight: 30,
   },
   button: {
     width: "80%",
@@ -62,10 +66,17 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     marginBottom: 15,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 5,
   },
   buttonText: {
     fontSize: 16,
     fontWeight: "bold",
     color: "#FFF",
+    textAlign: "center",
+    letterSpacing: 0.5,
   },
 });

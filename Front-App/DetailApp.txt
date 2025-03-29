@@ -159,3 +159,20 @@ Nút Đăng ký để tạo tài khoản.
         <Stack.Screen name="TabNavigator" component={TabNavigator} />
        
       </Stack.Navigator>
+      
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+
+// Import các màn hình
+import TabNavigator from './Navigation/AppNavigator';
+import SplashStack from './Navigation/SplashStack';
+import AuthStack from './Navigation/AuthStack';
+import Admob from './Screens/admob';
+
+const Stack = createStackNavigator();
+export default function App() {
+  return (
+    <Admob /> // Hiển thị trực tiếp màn hình Admob
+  );
+}

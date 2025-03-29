@@ -13,7 +13,7 @@ const musicVideos = [
   { 
     id: '4', 
     title: "Can't Stop Shining MV", 
-    question: 'TEMPEST (템페스트) - Can’t Stop Shining MV', 
+    question: 'Xem Bài Hát và trả lời câu hỏi bên dưới ', 
     youtubeId: 'JOiri4g1MnE', 
     thumbnail: 'https://img.youtube.com/vi/JOiri4g1MnE/0.jpg',
     jsonSub: require('../../assets/BaiHat2VietSub.json'), // 🟢 Đường dẫn JSON phụ đề tiếng Việt
