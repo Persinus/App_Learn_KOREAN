@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { 
   View, Text, FlatList, StyleSheet, TouchableOpacity, Image, Animated 
 } from "react-native";
+import { FontAwesome5 } from '@expo/vector-icons';
 
 const paidCourses = [
   { 
@@ -46,7 +47,7 @@ const paidCourses = [
   },
 ];
 
-const PaidCoursesScreen = () => {
+const PaidCoursesScreen = ({ navigation }) => {
   const [scaleAnim] = useState(new Animated.Value(1));
 
   const handlePressIn = () => {
@@ -65,10 +66,21 @@ const PaidCoursesScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>🔥 Khóa học mất phí 🔥</Text>
+      <View style={headerStyles.container}>
+        <TouchableOpacity 
+          style={headerStyles.backButton}
+          onPress={() => navigation.goBack()}
+        >
+          <FontAwesome5 name="arrow-left" size={16} color="#4b46f1" />
+        </TouchableOpacity>
+        <Text style={headerStyles.title}>Khóa học</Text>
+      </View>
+
       <FlatList
         data={paidCourses}
         keyExtractor={(item) => item.id}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.listContainer}
         renderItem={({ item }) => (
           <Animated.View style={[styles.courseItem, { transform: [{ scale: scaleAnim }] }]}>
             <TouchableOpacity 
@@ -76,6 +88,7 @@ const PaidCoursesScreen = () => {
               onPressOut={handlePressOut} 
               activeOpacity={0.8}
               style={styles.touchable}
+              onPress={() => navigation.navigate('PaidCoursesDetail', { course: item })}
             >
               <Image source={{ uri: item.cover }} style={styles.courseCover} />
               <View style={styles.content}>
@@ -83,9 +96,10 @@ const PaidCoursesScreen = () => {
                 <View style={styles.textContainer}>
                   <Text style={styles.courseName}>{item.name}</Text>
                   <Text style={styles.courseTeacher}>👨‍🏫 {item.teacher}</Text>
-                  <Text style={styles.courseRating}>⭐ {item.rating} / 5</Text>
-                  <Text style={styles.coursePrice}>💰 {item.price}</Text>
-                  <Text style={styles.courseDescription}>{item.description}</Text>
+                  <View style={styles.ratingContainer}>
+                    <Text style={styles.courseRating}>⭐ {item.rating}/5</Text>
+                    <Text style={styles.coursePrice}>💰 {item.price}</Text>
+                  </View>
                 </View>
               </View>
             </TouchableOpacity>
@@ -99,77 +113,96 @@ const PaidCoursesScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f3e5f5",
-    padding: 20,
+    backgroundColor: '#f8f9fa',
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#6a0dad",
-    textAlign: "center",
-    marginBottom: 20,
+  listContainer: {
+    padding: 16,
+    paddingBottom: 20
   },
   courseItem: {
-    backgroundColor: "#ffffff",
-    borderRadius: 15,
-    marginBottom: 15,
-    shadowColor: "#000",
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    marginBottom: 16,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 5,
+    shadowRadius: 4,
   },
   touchable: {
-    borderRadius: 15,
-    overflow: "hidden",
+    borderRadius: 16,
+    overflow: 'hidden',
   },
   courseCover: {
-    width: "100%",
+    width: '100%',
     height: 150,
   },
   content: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 12,
-    backgroundColor: "#fff",
-    borderBottomLeftRadius: 15,
-    borderBottomRightRadius: 15,
+    padding: 16,
+    flexDirection: 'row',
   },
   courseImage: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    marginRight: 15,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     borderWidth: 2,
-    borderColor: "#6a0dad",
+    borderColor: '#4b46f1',
   },
   textContainer: {
     flex: 1,
+    marginLeft: 12,
   },
   courseName: {
     fontSize: 16,
-    fontWeight: "bold",
-    color: "#6a0dad",
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 4,
   },
   courseTeacher: {
     fontSize: 14,
-    color: "#333",
-    marginTop: 2,
+    color: '#666',
+    marginBottom: 8,
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   courseRating: {
     fontSize: 14,
-    color: "#ff9800",
-    marginTop: 2,
+    color: '#ffa000',
   },
   coursePrice: {
     fontSize: 16,
-    fontWeight: "bold",
-    color: "#d500f9",
-    marginTop: 5,
+    fontWeight: '600',
+    color: '#4b46f1',
   },
-  courseDescription: {
-    fontSize: 13,
-    color: "#666",
-    marginTop: 5,
+});
+
+const headerStyles = StyleSheet.create({
+  container: {
+    paddingTop: 45,
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+    backgroundColor: '#6a0dad',
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  rightButton: {
+    padding: 8,
+  },
+  backButton: {
+    padding: 8,
   },
 });
 

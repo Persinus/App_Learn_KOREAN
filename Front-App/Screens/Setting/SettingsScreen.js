@@ -1,10 +1,23 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Switch, Alert } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Switch, Alert, ScrollView, Animated } from 'react-native';
 import { FontAwesome5, Ionicons } from '@expo/vector-icons';
 
-const ProfileSettingsScreen = ({ navigation }) => {
+const SettingsScreen = ({ navigation }) => {
   const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(true);
   const [isLocationEnabled, setIsLocationEnabled] = useState(true);
+  const scrollY = useRef(new Animated.Value(0)).current;
+
+  const headerHeight = scrollY.interpolate({
+    inputRange: [0, 100],
+    outputRange: [120, 60],
+    extrapolate: 'clamp'
+  });
+
+  const headerOpacity = scrollY.interpolate({
+    inputRange: [0, 100],
+    outputRange: [1, 0.9],
+    extrapolate: 'clamp'
+  });
 
   const user = {
     name: 'Kim Seokjin',
@@ -19,156 +32,200 @@ const ProfileSettingsScreen = ({ navigation }) => {
       "Bạn có chắc chắn muốn đăng xuất?",
       [
         { text: "Hủy", style: "cancel" },
-        { text: "Đăng xuất", onPress: () => navigation.replace('LoginScreen') },
+        { text: "Đăng xuất", onPress: () => navigation.replace('LoginScreen') }
       ]
     );
   };
 
-  const handleSyncData = () => {
-    Alert.alert("Đồng bộ dữ liệu", "Dữ liệu của bạn đã được đồng bộ hóa thành công!");
-  };
-
-  const handlePrivacySettings = () => {
-    navigation.navigate('PrivacyScreen'); // Chuyển đến màn hình quyền riêng tư
-  };
-
   return (
     <View style={styles.container}>
-      {/* Hồ sơ người dùng */}
-      <View style={styles.profileContainer}>
-        <Image source={{ uri: user.profilePicture }} style={styles.profilePicture} />
-        <View style={styles.userInfo}>
-          <Text style={styles.name}>{user.name}</Text>
-          <Text style={styles.email}>{user.email}</Text>
-          <Text style={styles.level}>🌟 Cấp độ: {user.level}</Text>
+      <View style={styles.headerContainer}>
+        <View style={styles.headerMain}>
+          <Text style={styles.headerTitle}>Cài đặt</Text>
+          <TouchableOpacity
+            style={styles.helpButton}
+            onPress={() => navigation.navigate('InfoApp')}
+          >
+            <FontAwesome5 name="question-circle" size={16} color="#4b46f1" />
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          style={styles.editButton}
-          onPress={() => navigation.navigate('EditProfileScreen', { user })}
+      </View>
+
+      <ScrollView 
+        style={styles.content}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <View style={styles.profileCard}>
+          <Image source={{ uri: user.profilePicture }} style={styles.avatar} />
+          <View style={styles.userInfo}>
+            <Text style={styles.userName}>{user.name}</Text>
+            <Text style={styles.userEmail}>{user.email}</Text>
+            <Text style={styles.userLevel}>🌟 Cấp độ: {user.level}</Text>
+          </View>
+          <TouchableOpacity 
+            style={styles.editButton}
+            onPress={() => navigation.navigate('EditInfoUser', { user })}
+          >
+            <FontAwesome5 name="pen" size={16} color="#fff" />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.settingsGroup}>
+          <Text style={styles.groupTitle}>Cài đặt ứng dụng</Text>
+          <View style={styles.settingItem}>
+            <View style={styles.settingLabel}>
+              <Ionicons name="notifications-outline" size={20} color="#4b46f1" />
+              <Text style={styles.settingText}>Thông báo</Text>
+            </View>
+            <Switch value={isNotificationsEnabled} onValueChange={setIsNotificationsEnabled} />
+          </View>
+
+          <View style={styles.settingItem}>
+            <View style={styles.settingLabel}>
+              <Ionicons name="location-outline" size={20} color="#4b46f1" />
+              <Text style={styles.settingText}>Vị trí</Text>
+            </View>
+            <Switch value={isLocationEnabled} onValueChange={setIsLocationEnabled} />
+          </View>
+
+          <TouchableOpacity 
+            style={styles.settingItem}
+            onPress={() => navigation.navigate('UserFeedback')}
+          >
+            <View style={styles.settingLabel}>
+              <Ionicons name="chatbubble-outline" size={20} color="#4b46f1" />
+              <Text style={styles.settingText}>Phản hồi</Text>
+            </View>
+            <FontAwesome5 name="chevron-right" size={16} color="#666" />
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.settingItem}
+            onPress={() => navigation.navigate('InfoApp')}
+          >
+            <View style={styles.settingLabel}>
+              <Ionicons name="information-circle-outline" size={20} color="#4b46f1" />
+              <Text style={styles.settingText}>Thông tin ứng dụng</Text>
+            </View>
+            <FontAwesome5 name="chevron-right" size={16} color="#666" />
+          </TouchableOpacity>
+        </View>
+
+        <TouchableOpacity 
+          style={styles.logoutButton} 
+          onPress={handleLogout}
         >
-          <FontAwesome5 name="edit" size={18} color="white" />
+          <FontAwesome5 name="sign-out-alt" size={18} color="#ff4444" />
+          <Text style={styles.logoutText}>Đăng xuất</Text>  
         </TouchableOpacity>
-      </View>
-
-      {/* Cài đặt */}
-      <View style={styles.settingsContainer}>
-        <Text style={styles.sectionTitle}>⚙️ Cài đặt</Text>
-
-        <View style={styles.settingItem}>
-          <View style={styles.settingLabel}>
-            <Ionicons name="notifications-outline" size={20} color="#4b46f1" />
-            <Text style={styles.settingText}>Thông báo</Text>
-          </View>
-          <Switch
-            value={isNotificationsEnabled}
-            onValueChange={(value) => setIsNotificationsEnabled(value)}
-          />
-        </View>
-
-        <View style={styles.settingItem}>
-          <View style={styles.settingLabel}>
-            <Ionicons name="location-outline" size={20} color="#4b46f1" />
-            <Text style={styles.settingText}>Vị trí</Text>
-          </View>
-          <Switch
-            value={isLocationEnabled}
-            onValueChange={(value) => setIsLocationEnabled(value)}
-          />
-        </View>
-
-        <TouchableOpacity style={styles.settingItem} onPress={handleSyncData}>
-          <View style={styles.settingLabel}>
-            <Ionicons name="sync-outline" size={20} color="#4b46f1" />
-            <Text style={styles.settingText}>Đồng bộ dữ liệu</Text>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.settingItem} onPress={handlePrivacySettings}>
-          <View style={styles.settingLabel}>
-            <Ionicons name="shield-checkmark-outline" size={20} color="#4b46f1" />
-            <Text style={styles.settingText}>Quyền riêng tư</Text>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.settingItem} onPress={handleLogout}>
-          <View style={styles.settingLabel}>
-            <Ionicons name="log-out-outline" size={20} color="#f00" />
-            <Text style={[styles.settingText, { color: '#f00' }]}>Đăng xuất</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
+      </ScrollView>
     </View>
   );
 };
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
-    padding: 16,
+    backgroundColor: '#fff',
   },
-  profileContainer: {
+  headerContainer: {
+    paddingTop: 45,
+    paddingHorizontal: 16, 
+    paddingBottom: 16,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  headerMain: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  helpButton: {
+    padding: 8,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 10,
+  },
+  content: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 20
+  },
+  profileCard: {
+    margin: 16,
+    padding: 16,
+    backgroundColor: '#fff',
+    borderRadius: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#ffffff',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 16,
     shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
     shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
     elevation: 3,
-    position: 'relative',
+    borderWidth: 1,
+    borderColor: '#eee',
   },
-  profilePicture: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+  avatar: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    borderWidth: 2,
+    borderColor: '#4b46f1',
   },
   userInfo: {
     marginLeft: 16,
     flex: 1,
   },
-  name: {
-    fontSize: 20,
+  userName: {
+    fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
   },
-  email: {
+  userEmail: {
     fontSize: 14,
-    color: '#777',
+    color: '#666',
+    marginTop: 4,
   },
-  level: {
-    fontSize: 16,
+  userLevel: {
+    fontSize: 14,
     color: '#4b46f1',
+    marginTop: 4,
   },
   editButton: {
-    backgroundColor: '#4b46f1',
-    padding: 10,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
     position: 'absolute',
-    right: 16,
     top: 16,
+    right: 16,
+    backgroundColor: '#4b46f1',
+    padding: 8,
+    borderRadius: 8,
   },
-  settingsContainer: {
-    backgroundColor: '#ffffff',
-    borderRadius: 12,
+  settingsGroup: {
+    margin: 16,
     padding: 16,
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#eee",
+    elevation: 2,
     shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
     shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
     elevation: 3,
   },
-  sectionTitle: {
+  groupTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 12,
-    color: '#4b46f1',
+    color: '#333',
+    marginBottom: 16,
   },
   settingItem: {
     flexDirection: 'row',
@@ -176,7 +233,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
+    borderBottomColor: '#eee',
   },
   settingLabel: {
     flexDirection: 'row',
@@ -185,8 +242,30 @@ const styles = StyleSheet.create({
   settingText: {
     fontSize: 16,
     color: '#333',
-    marginLeft: 8,
+    marginLeft: 12,
+  },
+  logoutButton: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+    margin: 16,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#eee',
+    elevation: 2,
+    shadowColor: '#000', 
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  logoutText: {
+    fontSize: 16,
+    color: '#ff4444',
+    marginLeft: 12,
   },
 });
 
-export default ProfileSettingsScreen;
+export default SettingsScreen;

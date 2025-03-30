@@ -7,8 +7,10 @@ import {
   TouchableOpacity,
   Image,
   Modal,
+  ScrollView,
 } from "react-native";
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
+import headerStyles from '../../Styles/HeaderStyles';
 
 const rankings = [
   { id: "1", name: "Nguyễn Văn A", score: 1500, image: require("../../assets/avatar1.png") },
@@ -32,76 +34,173 @@ const getRank = (score) => {
   return "C";
 };
 
+const rankStyles = {
+  S: {
+    color: '#FFD700',
+    backgroundColor: 'rgba(255, 215, 0, 0.1)',
+    borderColor: '#FFD700'
+  },
+  A: {
+    color: '#C0C0C0',
+    backgroundColor: 'rgba(192, 192, 192, 0.1)',
+    borderColor: '#C0C0C0'
+  },
+  B: {
+    color: '#CD7F32',
+    backgroundColor: 'rgba(205, 127, 50, 0.1)',
+    borderColor: '#CD7F32'
+  },
+  C: {
+    color: '#666',
+    backgroundColor: 'rgba(102, 102, 102, 0.1)',
+    borderColor: '#666'
+  }
+};
+
 // 🎖️ Component Podium hiển thị top 3
-const Podium = ({ topThree }) => {
+const Podium = ({ topThree, navigation }) => {
   return (
-    <View style={styles.podiumContainer}>
-      {/* Hạng 2 */}
-      <View style={[styles.podiumItem, styles.secondPlace]}>
-        <Image source={topThree[1].image} style={styles.podiumAvatar} />
-        <Text style={styles.podiumName}>{topThree[1].name}</Text>
-        <Text style={styles.podiumScore}>{topThree[1].score} điểm</Text>
-      </View>
+    <View style={styles.podiumWrapper}>
+      <Text style={styles.sectionTitle}>🏆 Top 3 Người Chơi</Text>
+      <View style={styles.podiumContainer}>
+        {/* Hạng 2 */}
+        <TouchableOpacity 
+          style={[styles.podiumItem, styles.secondPlace]}
+          onPress={() => navigation.navigate('DetailRanking', { user: {...topThree[1], rank: getRank(topThree[1].score)} })}
+        >
+          <View style={styles.podiumContent}>
+            <Image source={topThree[1].image} style={styles.podiumAvatar} />
+            <Text style={styles.podiumName} numberOfLines={1}>{topThree[1].name}</Text>
+            <View style={[styles.rankBadge, { backgroundColor: rankStyles.A.backgroundColor }]}>
+              <Text style={[styles.rankText, { color: rankStyles.A.color }]}>{topThree[1].score} điểm</Text>
+            </View>
+          </View>
+          <View style={styles.medalContainer}>
+            <FontAwesome5 name="medal" size={24} color="#C0C0C0" />
+          </View>
+        </TouchableOpacity>
 
-      {/* Hạng 1 */}
-      <View style={[styles.podiumItem, styles.firstPlace]}>
-        <Image source={topThree[0].image} style={styles.podiumAvatar} />
-        <Text style={styles.podiumName}>{topThree[0].name}</Text>
-        <Text style={styles.podiumScore}>{topThree[0].score} điểm</Text>
-        <FontAwesome5 name="crown" size={24} color="#FFD700" style={styles.crownIcon} />
-      </View>
+        {/* Hạng 1 */}
+        <TouchableOpacity 
+          style={[styles.podiumItem, styles.firstPlace]}
+          onPress={() => navigation.navigate('DetailRanking', { user: {...topThree[0], rank: getRank(topThree[0].score)} })}
+        >
+          <View style={styles.podiumContent}>
+            <Image source={topThree[0].image} style={styles.podiumAvatar} />
+            <Text style={styles.podiumName} numberOfLines={1}>{topThree[0].name}</Text>
+            <View style={[styles.rankBadge, { backgroundColor: rankStyles.S.backgroundColor }]}>
+              <Text style={[styles.rankText, { color: rankStyles.S.color }]}>{topThree[0].score} điểm</Text>
+            </View>
+          </View>
+          <View style={styles.medalContainer}>
+            <FontAwesome5 name="crown" size={24} color="#FFD700" />
+          </View>
+        </TouchableOpacity>
 
-      {/* Hạng 3 */}
-      <View style={[styles.podiumItem, styles.thirdPlace]}>
-        <Image source={topThree[2].image} style={styles.podiumAvatar} />
-        <Text style={styles.podiumName}>{topThree[2].name}</Text>
-        <Text style={styles.podiumScore}>{topThree[2].score} điểm</Text>
+        {/* Hạng 3 */}
+        <TouchableOpacity 
+          style={[styles.podiumItem, styles.thirdPlace]}
+          onPress={() => navigation.navigate('DetailRanking', { user: {...topThree[2], rank: getRank(topThree[2].score)} })}
+        >
+          <View style={styles.podiumContent}>
+            <Image source={topThree[2].image} style={styles.podiumAvatar} />
+            <Text style={styles.podiumName} numberOfLines={1}>{topThree[2].name}</Text>
+            <View style={[styles.rankBadge, { backgroundColor: rankStyles.B.backgroundColor }]}>
+              <Text style={[styles.rankText, { color: rankStyles.B.color }]}>{topThree[2].score} điểm</Text>
+            </View>
+          </View>
+          <View style={styles.medalContainer}>
+            <FontAwesome5 name="medal" size={24} color="#CD7F32" />
+          </View>
+        </TouchableOpacity>
       </View>
     </View>
   );
 };
 
 // 🎖️ Component hiển thị danh sách các người chơi còn lại
-const RankingList = ({ data }) => {
+const RankingList = ({ data, navigation }) => {
   return (
-    <FlatList
-      data={data}
-      keyExtractor={(item) => item.id}
-      renderItem={({ item, index }) => {
-        const rank = getRank(item.score);
-        return (
-          <View style={styles.rankCard}>
-            <Text style={styles.rank}>{index + 4}</Text>
-            <Image source={item.image} style={styles.avatar} />
-            <Text style={styles.name}>{item.name}</Text>
-            <Text style={styles.score}>{item.score} điểm</Text>
-            <Image source={rankIcons[rank]} style={styles.rankIcon} />
-          </View>
-        );
-      }}
-    />
+    <View style={styles.rankingListContainer}>
+      <Text style={styles.sectionTitle}>📊 Bảng Xếp Hạng</Text>
+      <FlatList
+        data={data}
+        keyExtractor={(item) => item.id}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item, index }) => {
+          const rank = getRank(item.score);
+          return (
+            <TouchableOpacity 
+              style={[styles.rankCard, { borderColor: rankStyles[rank].borderColor }]}
+              onPress={() => navigation.navigate('DetailRanking', { user: {...item, rank} })}
+            >
+              <View style={styles.rankNumberContainer}>
+                <Text style={styles.rankNumber}>#{index + 4}</Text>
+              </View>
+              <Image source={item.image} style={styles.rankAvatar} />
+              <View style={styles.rankInfo}>
+                <Text style={styles.rankName} numberOfLines={1}>{item.name}</Text>
+                <View style={[styles.rankBadge, { backgroundColor: rankStyles[rank].backgroundColor }]}>
+                  <Text style={[styles.rankText, { color: rankStyles[rank].color }]}>{item.score} điểm</Text>
+                </View>
+              </View>
+              <FontAwesome5 name="chevron-right" size={16} color="#ccc" />
+            </TouchableOpacity>
+          );
+        }}
+      />
+    </View>
   );
 };
 
 // 🎖️ Màn hình chính
-const RankingsScreen = () => {
+const RankingsScreen = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
+
+  const renderHeader = () => (
+    <Podium topThree={rankings.slice(0, 3)} navigation={navigation} />
+  );
 
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.headerContainer}>
-        <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.infoButton}>
-          <Ionicons name="information-circle-outline" size={28} color="#ffffff" />
+      <View style={headerStyles.container}>
+        <TouchableOpacity 
+          style={headerStyles.backButton}
+          onPress={() => navigation.goBack()}
+        >
+          <FontAwesome5 name="arrow-left" size={16} color="#4b46f1" />
         </TouchableOpacity>
-        <Text style={styles.header}>🏅 Bảng xếp hạng</Text>
+        <Text style={headerStyles.title}>Bảng xếp hạng</Text>
       </View>
 
-      {/* Podium Top 3 */}
-      <Podium topThree={rankings.slice(0, 3)} />
-
-      {/* Danh sách còn lại */}
-      <RankingList data={rankings.slice(3)} />
+      <FlatList
+        data={rankings.slice(3)}
+        ListHeaderComponent={renderHeader}
+        renderItem={({ item, index }) => {
+          const rank = getRank(item.score);
+          return (
+            <TouchableOpacity 
+              style={[styles.rankCard, { borderColor: rankStyles[rank].borderColor }]}
+              onPress={() => navigation.navigate('DetailRanking', { user: {...item, rank} })}
+            >
+              <View style={styles.rankNumberContainer}>
+                <Text style={styles.rankNumber}>#{index + 4}</Text>
+              </View>
+              <Image source={item.image} style={styles.rankAvatar} />
+              <View style={styles.rankInfo}>
+                <Text style={styles.rankName} numberOfLines={1}>{item.name}</Text>
+                <View style={[styles.rankBadge, { backgroundColor: rankStyles[rank].backgroundColor }]}>
+                  <Text style={[styles.rankText, { color: rankStyles[rank].color }]}>{item.score} điểm</Text>
+                </View>
+              </View>
+              <FontAwesome5 name="chevron-right" size={16} color="#ccc" />
+            </TouchableOpacity>
+          );
+        }}
+        keyExtractor={item => item.id}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      />
 
       {/* Modal chi tiết hạng */}
       {modalVisible && (
@@ -148,48 +247,61 @@ const RankingsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#4b46f1",
-    padding: 16,
+    backgroundColor: '#fff',
   },
-  headerContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333',
     marginBottom: 16,
+    paddingHorizontal: 16,
   },
-  infoButton: {
-    marginRight: 10,
-  },
-  header: {
-    fontSize: 26,
-    fontWeight: "bold",
-    color: "#ffffff",
+  podiumWrapper: {
+    marginTop: 16,
   },
   podiumContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "flex-end",
-    height: 160,
-    marginBottom: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    paddingHorizontal: 16,
+    marginBottom: 24,
   },
   podiumItem: {
-    alignItems: "center",
-    width: 80,
-    padding: 10,
-    borderRadius: 10,
-    marginHorizontal: 5,
+    flex: 1,
+    margin: 4,
+    padding: 12,
+    borderRadius: 16,
+    backgroundColor: '#fff',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
-  firstPlace: { backgroundColor: "#FFD700", height: 140 },
-  secondPlace: { backgroundColor: "#C0C0C0", height: 120 },
-  thirdPlace: { backgroundColor: "#CD7F32", height: 110 },
+  podiumContent: {
+    alignItems: 'center',
+  },
   podiumAvatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginBottom: 5,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    marginBottom: 8,
+    borderWidth: 2,
+    borderColor: '#fff',
   },
-  podiumName: { fontSize: 14, fontWeight: "bold" },
-  podiumScore: { fontSize: 12, color: "#333" },
-  crownIcon: { position: "absolute", top: -10 },
+  medalContainer: {
+    position: 'absolute',
+    top: -12,
+    right: -12,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 4,
+    elevation: 4,
+  },
+  rankingListContainer: {
+    flex: 1,
+    paddingHorizontal: 16,
+  },
   rankCard: {
     flexDirection: "row",
     alignItems: "center",
@@ -197,19 +309,45 @@ const styles = StyleSheet.create({
     padding: 10,
     marginVertical: 5,
     borderRadius: 10,
+    borderWidth: 1,
   },
-  rank: { fontSize: 18, fontWeight: "bold", width: 30 },
-  avatar: { width: 40, height: 40, borderRadius: 20, marginRight: 10 },
-  name: { flex: 1, fontSize: 16 },
-  score: { fontSize: 16, fontWeight: "bold", color: "#4b46f1" },
-  rankIcon: { width: 40, height: 40 },
+  rankNumberContainer: {
+    width: 30,
+    alignItems: 'center',
+  },
+  rankNumber: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  rankAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 10,
+  },
+  rankInfo: {
+    flex: 1,
+  },
+  rankName: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  rankBadge: {
+    paddingVertical: 2,
+    paddingHorizontal: 6,
+    borderRadius: 4,
+  },
+  rankText: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.5)",
     justifyContent: "center",
     alignItems: "center",
   },
-  
   modalContent: {
     width: "90%",
     backgroundColor: "#fff",
@@ -222,14 +360,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 5,
   },
-  
   modalTitle: {
     fontSize: 22,
     fontWeight: "bold",
     color: "#4b46f1",
     marginBottom: 15,
   },
-  
   rankDetailRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -239,26 +375,22 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#ddd",
   },
-  
   rankDetailIcon: {
     width: 40,
     height: 40,
     marginRight: 10,
   },
-  
   rankDetailText: {
     fontSize: 18,
     fontWeight: "bold",
     flex: 1,
     color: "#4b46f1",
   },
-  
   rankDetailPoints: {
     fontSize: 16,
     fontWeight: "600",
     color: "#ff5733",
   },
-  
   closeButton: {
     marginTop: 15,
     backgroundColor: "#4b46f1",
@@ -266,14 +398,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 10,
   },
-  
   closeButtonText: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
   },
-  
-  
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 20
+  },
 });
 
 export default RankingsScreen;

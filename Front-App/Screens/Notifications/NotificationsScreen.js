@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Animated } from "react-native";
+import { FontAwesome5 } from "@expo/vector-icons";
 
 const notificationsData = [
   { id: "1", title: "🎉 Nhận thưởng", message: "Bạn đã nhận được 50 điểm thưởng!", time: "5 phút trước", seen: false },
@@ -8,7 +9,7 @@ const notificationsData = [
   { id: "4", title: "🔥 Ưu đãi đặc biệt", message: "Giảm 30% cho khóa học tiếng Hàn giao tiếp!", time: "Hôm qua", seen: true },
 ];
 
-const NotificationsScreen = () => {
+const NotificationsScreen = ({ navigation }) => {
   const [notifications, setNotifications] = useState(notificationsData);
   const [fadeAnim] = useState(new Animated.Value(1));
 
@@ -24,16 +25,28 @@ const NotificationsScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>🔔 Thông báo</Text>
+      <View style={styles.header}>
+        <TouchableOpacity 
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
+          <FontAwesome5 name="arrow-left" size={16} color="#4b46f1" />
+        </TouchableOpacity>
+        <Text style={styles.title}>Thông báo</Text>
+      </View>
+
       <FlatList
         data={notifications}
         keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.listContainer}
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => handlePress(item.id)} activeOpacity={0.8}>
-            <Animated.View style={[styles.notificationItem, item.seen ? styles.seenNotification : styles.unseenNotification, { opacity: fadeAnim }]}>
-              <Text style={styles.notificationTitle}>{item.title}</Text>
+          <TouchableOpacity onPress={() => handlePress(item.id)} activeOpacity={0.7}>
+            <Animated.View style={[styles.notificationItem, item.seen ? styles.seenNotification : styles.unseenNotification]}>
+              <View style={styles.notificationContent}>
+                <Text style={styles.notificationTitle}>{item.title}</Text>
+                <Text style={styles.time}>{item.time}</Text>
+              </View>
               <Text style={styles.message}>{item.message}</Text>
-              <Text style={styles.time}>{item.time}</Text>
             </Animated.View>
           </TouchableOpacity>
         )}
@@ -46,45 +59,67 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    padding: 20,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 45,
+    paddingBottom: 12,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  backButton: {
+    padding: 8,
+    marginRight: 12,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 8,
   },
   title: {
-    fontSize: 22,
-    fontWeight: "bold",
-    color: "#6a0dad",
-    textAlign: "center",
-    marginBottom: 20,
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#333",
+  },
+  listContainer: {
+    padding: 16,
   },
   notificationItem: {
-    padding: 15,
-    borderRadius: 12,
-    marginBottom: 10,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 8,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#eee',
+  },
+  notificationContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
   },
   unseenNotification: {
-    backgroundColor: "#d1c4e9",
+    borderLeftWidth: 3,
+    borderLeftColor: "#4b46f1",
   },
   seenNotification: {
-    backgroundColor: "#f3e5f5",
+    opacity: 0.8,
   },
   notificationTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#6a0dad",
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#333",
+    flex: 1,
   },
   message: {
-    fontSize: 14,
-    color: "#333",
-    marginTop: 5,
+    fontSize: 13,
+    color: "#666",
+    lineHeight: 18,
   },
   time: {
     fontSize: 12,
-    color: "#777",
-    marginTop: 8,
-    textAlign: "right",
+    color: "#999",
+    marginLeft: 8,
   },
 });
 
