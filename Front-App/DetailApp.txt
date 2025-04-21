@@ -176,3 +176,107 @@ export default function App() {
     <Admob /> // Hiển thị trực tiếp màn hình Admob
   );
 }
+
+
+
+import React from 'react';
+import { View, Button } from 'react-native';
+import * as Speech from 'expo-speech';
+
+export default function App() {
+  const speakKorean = () => {
+    Speech.speak('날아올라 좀 더 멀리.', {
+      language: 'ko', // Tiếng Hàn
+      pitch: 1.5, // Cao độ giọng nói
+      rate: 0.99, // Tốc độ đọc
+    });
+  };
+
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Button title="🔊 Nghe tiếng Hàn" onPress={speakKorean} />
+    </View>
+  );
+}
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, Button, FlatList } from 'react-native';
+import io from 'socket.io-client';
+
+const socket = io('http://localhost:3000');
+
+const App = () => {
+    const [roomCode, setRoomCode] = useState('');
+    const [playerId, setPlayerId] = useState(null);
+    const [room, setRoom] = useState(null);
+    const [questionIndex, setQuestionIndex] = useState(0);
+    const [questions, setQuestions] = useState([]);
+    const [answer, setAnswer] = useState('');
+    const [hp, setHp] = useState(100);
+    const [enemyHp, setEnemyHp] = useState(100);
+
+    useEffect(() => {
+        socket.on('connect', () => {
+            setPlayerId(socket.id);
+        });
+
+        socket.on('roomCreated', (code) => {
+            setRoomCode(code);
+            setRoom({ players: [socket.id], questions: [] });
+        });
+
+        socket.on('roomUpdated', (updatedRoom) => {
+            setRoom(updatedRoom);
+            setQuestions(updatedRoom.questions);
+            setHp(updatedRoom.hp[socket.id] || 100);
+            const enemy = updatedRoom.players.find(p => p !== socket.id);
+            setEnemyHp(updatedRoom.hp[enemy] || 100);
+            setQuestionIndex(updatedRoom.currentIndex || 0);
+        });
+
+        return () => {
+            socket.off('connect');
+            socket.off('roomCreated');
+            socket.off('roomUpdated');
+        };
+    }, []);
+
+    const createRoom = () => {
+        socket.emit('createRoom');
+    };
+
+    const joinRoom = () => {
+        socket.emit('joinRoom', roomCode);
+    };
+
+    const submitAnswer = () => {
+        if (!questions[questionIndex]) return;
+        const correct = answer === questions[questionIndex].answer;
+        socket.emit('submitAnswer', { roomCode, isCorrect: correct });
+        setAnswer('');
+    };
+
+    return (
+        <View style={{ padding: 20 }}>
+            <Text>Enter or Create a Room</Text>
+            <TextInput placeholder="Room Code" value={roomCode} onChangeText={setRoomCode} style={{ borderWidth: 1, marginBottom: 10 }} />
+            <Button title="Create Room" onPress={createRoom} />
+            <Button title="Join Room" onPress={joinRoom} />
+            {room && (
+                <View>
+                    <Text>Your HP: {hp} | Enemy HP: {enemyHp}</Text>
+                    <Text>Question: {questions[questionIndex]?.question}</Text>
+                    <FlatList
+                        data={questions[questionIndex]?.options || []}
+                        renderItem={({ item }) => (
+                            <Button title={item} onPress={() => setAnswer(item)} />
+                        )}
+                        keyExtractor={(item, index) => index.toString()}
+                    />
+                    <Button title="Submit Answer" onPress={submitAnswer} />
+                </View>
+            )}
+        </View>
+    );
+};
+
+export default  App;

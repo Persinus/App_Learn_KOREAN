@@ -12,6 +12,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Audio } from 'expo-av';
 
+ 
 const getDaysInMonth = (month, year) => {
   const days = new Date(year, month + 1, 0).getDate();
   return Array.from({ length: days }, (_, i) => i + 1);
@@ -38,9 +39,11 @@ const DailyReward = ({ navigation }) => {
   const storageKey = `goldRewards-${currentMonth}-${currentYear}`;
 
   useEffect(() => {
+
+
     const fetchRewards = async () => {
       try {
-        // Lấy dữ liệu phần thưởng lưu trữ
+        // Load stored rewards
         const storedRewards = await AsyncStorage.getItem(storageKey);
         if (storedRewards) {
           setGoldRewards(JSON.parse(storedRewards));
@@ -49,67 +52,69 @@ const DailyReward = ({ navigation }) => {
           setGoldRewards(newRewards);
           await AsyncStorage.setItem(storageKey, JSON.stringify(newRewards));
         }
-  
-        // Lấy danh sách các ngày đã nhận
+
+        // Load claimed days
         const storedClaimedDays = await AsyncStorage.getItem('rewardClaimedDays');
         if (storedClaimedDays) {
           let claimedDays = JSON.parse(storedClaimedDays);
-          // Reset lại ngày hôm nay (chỉ cho mục đích test)
+          // Reset claimed days only for testing purposes
           claimedDays = claimedDays.filter((day) => day !== currentDay);
           setRewardClaimedDays(claimedDays);
-  
-          // Cập nhật lại vào AsyncStorage
+
+          // Update AsyncStorage
           await AsyncStorage.setItem('rewardClaimedDays', JSON.stringify(claimedDays));
+          
         }
       } catch (error) {
         console.error('Error loading rewards:', error);
       }
     };
-  
+
     fetchRewards();
   }, [currentMonth, currentYear, currentDay]);
-
 
   const playSound = async () => {
     const sound = new Audio.Sound();
     try {
-      await sound.loadAsync(require('../../assets/reward-sound.mp3'));
+      await sound.loadAsync(require('../../assets/reward-sound.mp3')); // Ensure this path is correct
       await sound.playAsync();
     } catch (error) {
       console.error('Error playing sound:', error);
     }
   };
 
+  const handleClaimReward = async (day) => {
+    if (rewardClaimedDays.includes(day)) {
+      Alert.alert('Thông báo', 'Bạn đã nhận thưởng hôm nay rồi!');
+      return;
+    }
   
-const handleClaimReward = async (day) => {
-  if (rewardClaimedDays.includes(day)) {
-    Alert.alert('Thông báo', 'Bạn đã nhận thưởng hôm nay rồi!');
-    return;
-  }
-
-  if (day !== currentDay) {
-    Alert.alert('Thông báo', 'Bạn chỉ có thể nhận thưởng vào hôm nay!');
-    return;
-  }
-
-  const gold = goldRewards[day];
-  setGoldAmount(gold);
-  setRewardClaimedDays([...rewardClaimedDays, day]);
-  setShowReward(true);
-  await playSound();
-
-  try {
-    await AsyncStorage.setItem('rewardClaimedDays', JSON.stringify([...rewardClaimedDays, day]));
-  } catch (error) {
-    console.error('Error saving claimed days:', error);
-  }
-};
+    if (day !== currentDay) {
+      Alert.alert('Thông báo', 'Bạn chỉ có thể nhận thưởng vào hôm nay!');
+      return;
+    }
+  
+    const gold = goldRewards[day];
+    setGoldAmount(gold);
+    setRewardClaimedDays([...rewardClaimedDays, day]);
+    setShowReward(true);
+    await playSound();
+  
+    try {
+      await AsyncStorage.setItem('rewardClaimedDays', JSON.stringify([...rewardClaimedDays, day]));
+      
+      // Gửi Push Notification
+      await sendPushNotification('Điểm danh thành công!', `Bạn đã nhận được ${gold} xu hôm nay! 🎉`);
+    } catch (error) {
+      console.error('Error saving claimed days:', error);
+    }
+  };
 
   const renderDay = ({ item: day }) => {
     const isToday = day === currentDay;
     const isClaimed = rewardClaimedDays.includes(day);
     const isMissed = day < currentDay && !rewardClaimedDays.includes(day);
-  
+
     const dayStyle = isClaimed
       ? styles.claimed
       : isToday
@@ -117,7 +122,7 @@ const handleClaimReward = async (day) => {
       : isMissed
       ? styles.missed
       : styles.unclaimed;
-  
+
     const handleDayPress = () => {
       if (isClaimed) {
         Alert.alert('Thông báo', 'Bạn đã nhận thưởng ngày này!');
@@ -125,19 +130,18 @@ const handleClaimReward = async (day) => {
         handleClaimReward(day);
       }
     };
-  
+
     return (
       <TouchableOpacity
-      style={[styles.day, dayStyle]}
-      onPress={handleDayPress}
-      disabled={!isToday && !isClaimed} // Chỉ cho phép bấm ngày hôm nay hoặc ngày đã nhận
-    >
-      <Text style={styles.dayText}>{day}</Text>
-      <Text style={styles.goldText}>💎 +{goldRewards[day]}</Text>
-    </TouchableOpacity>
+        style={[styles.day, dayStyle]}
+        onPress={handleDayPress}
+        disabled={!isToday && !isClaimed} // Only allow press for today or claimed days
+      >
+        <Text style={styles.dayText}>{day}</Text>
+        <Text style={styles.goldText}>💎 +{goldRewards[day]}</Text>
+      </TouchableOpacity>
     );
   };
-  
 
   return (
     <View style={styles.container}>
@@ -185,8 +189,13 @@ const handleClaimReward = async (day) => {
     </View>
   );
 };
+
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#1e1e2d', paddingTop: 40 },
+  container: { 
+    flex: 1, 
+    backgroundColor: '#1e1e2d', 
+    paddingTop: 40 
+  },
   backButton: {
     position: 'absolute',
     top: 40,
@@ -195,7 +204,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#4b46f1',
     borderRadius: 8,
   },
-  backButtonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
+  backButtonText: { 
+    color: '#fff', 
+    fontSize: 16, 
+    fontWeight: 'bold' 
+  },
   headerIcon: {
     width: 80,
     height: 80,
@@ -216,7 +229,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 16,
   },
-  calendar: { alignItems: 'center', justifyContent: 'center' },
+  calendar: { 
+    alignItems: 'center', 
+    justifyContent: 'center' 
+  },
   day: {
     width: 45,
     height: 45,
@@ -225,21 +241,26 @@ const styles = StyleSheet.create({
     margin: 6,
     borderRadius: 8,
   },
-  dayText: { fontSize: 16, fontWeight: 'bold', color: '#fff' },
-  goldContainer: { flexDirection: 'row', alignItems: 'center', marginTop: 4 },
-  goldIcon: { width: 16, height: 16, marginRight: 4 },
-  goldText: { fontSize: 12, color: '#ffd700' },
+  dayText: { 
+    fontSize: 16, 
+    fontWeight: 'bold', 
+    color: '#fff' 
+  },
+  goldText: { 
+    fontSize: 12, 
+    color: '#ffd700' 
+  },
   today: {
-    backgroundColor: '#4caf50', // Xanh lá cho hôm nay
+    backgroundColor: '#4caf50', // Green color for today
   },
   claimed: {
-    backgroundColor: '#ffa726', // Cam cho ngày đã nhận
+    backgroundColor: '#ffa726', // Orange for claimed days
   },
   missed: {
-    backgroundColor: '#e0e0e0', // Xám cho ngày đã lỡ
+    backgroundColor: '#e0e0e0', // Gray for missed days
   },
   unclaimed: {
-    backgroundColor: '#90caf9', // Xanh dương cho ngày chưa nhận
+    backgroundColor: '#90caf9', // Light blue for unclaimed days
   },
   modalView: {
     flex: 1,
@@ -258,7 +279,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#4caf50',
     borderRadius: 8,
   },
-  closeButtonText: { color: '#fff', fontSize: 16 },
+  closeButtonText: { 
+    color: '#fff', 
+    fontSize: 16 
+  },
+  // closeButton
+  //... other styles for the modal
+  //add style sheet 
+  
 });
 
 export default DailyReward;
