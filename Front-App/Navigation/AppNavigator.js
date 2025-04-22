@@ -4,7 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { MaterialIcons, FontAwesome5 } from 'react-native-vector-icons';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-// Import các màn hình
+// Import các màn hình chính
 import HomeStack from './HomeStack';
 import PracticeStackNavigator from './PracticeStackNavigator';
 import RankingsScreen from '../Screens/Rankings/RankingsScreen';
@@ -15,7 +15,7 @@ import EditInfoUser from '../Screens/Setting/EditInfoUser';
 import UserFeedback from '../Screens/Setting/UserFeedback';
 import PaidCoursesDetail from '../Screens/PaidCourses/PaidCoursesDetail';
 import LinkingPaid from '../Screens/PaidCourses/LinkingPaid';
-import JoinCourse from '../Screens/PaidCourses/JoinCourse'; // Thêm dòng này
+import JoinCourse from '../Screens/PaidCourses/JoinCourse';
 import DetailRanking from '../Screens/Rankings/DetailRanking';
 
 const Tab = createBottomTabNavigator();
@@ -28,7 +28,6 @@ const SettingsStack = () => {
       <Stack.Screen name="InfoApp" component={InfoApp} />
       <Stack.Screen name="EditInfoUser" component={EditInfoUser} />
       <Stack.Screen name="UserFeedback" component={UserFeedback} />
-      {/* ...other setting screens... */}
     </Stack.Navigator>
   );
 };
@@ -53,7 +52,7 @@ const RankingsStack = () => {
   );
 };
 
-const TabNavigator = () => {
+const MainNavigator = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Tab.Navigator
@@ -82,7 +81,7 @@ const TabNavigator = () => {
                 return null;
             }
           },
-          tabBarShowLabel: false, // Ẩn nhãn tab
+          tabBarShowLabel: false,
           tabBarStyle: {
             backgroundColor: '#fff',
             borderTopWidth: 1,
@@ -104,4 +103,4 @@ const TabNavigator = () => {
   );
 };
 
-export default TabNavigator;
+export default MainNavigator;

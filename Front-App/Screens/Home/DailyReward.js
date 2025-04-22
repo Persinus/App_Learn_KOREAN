@@ -11,8 +11,8 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Audio } from 'expo-av';
+import { sendPushNotification } from '../../utils/NotificationHelper';
 
- 
 const getDaysInMonth = (month, year) => {
   const days = new Date(year, month + 1, 0).getDate();
   return Array.from({ length: days }, (_, i) => i + 1);
@@ -39,8 +39,6 @@ const DailyReward = ({ navigation }) => {
   const storageKey = `goldRewards-${currentMonth}-${currentYear}`;
 
   useEffect(() => {
-
-
     const fetchRewards = async () => {
       try {
         // Load stored rewards
@@ -63,7 +61,6 @@ const DailyReward = ({ navigation }) => {
 
           // Update AsyncStorage
           await AsyncStorage.setItem('rewardClaimedDays', JSON.stringify(claimedDays));
-          
         }
       } catch (error) {
         console.error('Error loading rewards:', error);
@@ -88,22 +85,20 @@ const DailyReward = ({ navigation }) => {
       Alert.alert('Thông báo', 'Bạn đã nhận thưởng hôm nay rồi!');
       return;
     }
-  
+
     if (day !== currentDay) {
       Alert.alert('Thông báo', 'Bạn chỉ có thể nhận thưởng vào hôm nay!');
       return;
     }
-  
+
     const gold = goldRewards[day];
     setGoldAmount(gold);
     setRewardClaimedDays([...rewardClaimedDays, day]);
     setShowReward(true);
     await playSound();
-  
+
     try {
       await AsyncStorage.setItem('rewardClaimedDays', JSON.stringify([...rewardClaimedDays, day]));
-      
-      // Gửi Push Notification
       await sendPushNotification('Điểm danh thành công!', `Bạn đã nhận được ${gold} xu hôm nay! 🎉`);
     } catch (error) {
       console.error('Error saving claimed days:', error);
@@ -283,10 +278,6 @@ const styles = StyleSheet.create({
     color: '#fff', 
     fontSize: 16 
   },
-  // closeButton
-  //... other styles for the modal
-  //add style sheet 
-  
 });
 
 export default DailyReward;

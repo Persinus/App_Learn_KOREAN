@@ -8,6 +8,8 @@ import {
   Image,
   Modal,
   ScrollView,
+  TextInput,
+  Alert,
 } from "react-native";
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
 import headerStyles from '../../Styles/HeaderStyles';
@@ -57,7 +59,89 @@ const rankStyles = {
   }
 };
 
-// 🎖️ Component Podium hiển thị top 3
+const socialFeatures = [
+  {
+    id: 'friends',
+    title: 'Bạn bè',
+    icon: 'user-friends',
+    count: 25
+  },
+  {
+    id: 'groups',
+    title: 'Nhóm học',
+    icon: 'users',
+    count: 3
+  },
+  {
+    id: 'challenges',
+    title: 'Thử thách',
+    icon: 'trophy',
+    count: 5
+  },
+  {
+    id: 'messages',
+    title: 'Tin nhắn',
+    icon: 'comment-dots',
+    count: 12
+  }
+];
+
+const activities = [
+  {
+    id: '1',
+    user: "Nguyễn Văn A", 
+    avatar: require("../../assets/avatar1.png"),
+    action: "đã hoàn thành",
+    target: "Bài học số 5",
+    time: "2 giờ trước"
+  },
+  {
+    id: '2', 
+    user: "Trần Thị B",
+    avatar: require("../../assets/avatar2.png"),
+    action: "đạt thành tích",
+    target: "Học 7 ngày liên tiếp", 
+    time: "5 giờ trước"
+  },
+  {
+    id: '3',
+    user: "Kim Min Ho",
+    avatar: require("../../assets/avatar3.png"),
+    action: "đã chia sẻ tiến độ",
+    target: "Hoàn thành 80% khóa học Giao tiếp cơ bản",
+    time: "6 giờ trước",
+    progress: 80
+  }
+];
+
+const friendSystem = {
+  requests: [
+    { id: '1', name: 'Nguyen Van X', avatar: require("../../assets/avatar1.png"), status: 'pending' },
+    { id: '2', name: 'Tran Thi Y', avatar: require("../../assets/avatar2.png"), status: 'pending' }
+  ],
+  friends: [
+    { id: '1', name: 'Le Van A', avatar: require("../../assets/avatar3.png"), status: 'online', lastActive: 'Vừa xong' },
+    { id: '2', name: 'Pham Thi B', avatar: require("../../assets/avatar4.png"), status: 'offline', lastActive: '2 giờ trước' }
+  ]
+};
+
+const studyGroups = [
+  {
+    id: '1',
+    name: 'Nhóm TOPIK 2023',
+    members: 15,
+    avatar: require("../../assets/avatar1.png"), // Using existing avatar as placeholder
+    lastActivity: 'Vừa xong'
+  },
+  {
+    id: '2', 
+    name: 'Giao tiếp cơ bản',
+    members: 8,
+    avatar: require("../../assets/avatar2.png"), // Using existing avatar as placeholder 
+    lastActivity: '1 giờ trước'
+  }
+];
+
 const Podium = ({ topThree, navigation }) => {
   return (
     <View style={styles.podiumWrapper}>
@@ -118,47 +202,171 @@ const Podium = ({ topThree, navigation }) => {
   );
 };
 
-// 🎖️ Component hiển thị danh sách các người chơi còn lại
-const RankingList = ({ data, navigation }) => {
-  return (
-    <View style={styles.rankingListContainer}>
-      <Text style={styles.sectionTitle}>📊 Bảng Xếp Hạng</Text>
-      <FlatList
-        data={data}
-        keyExtractor={(item) => item.id}
-        showsVerticalScrollIndicator={false}
-        renderItem={({ item, index }) => {
-          const rank = getRank(item.score);
-          return (
-            <TouchableOpacity 
-              style={[styles.rankCard, { borderColor: rankStyles[rank].borderColor }]}
-              onPress={() => navigation.navigate('DetailRanking', { user: {...item, rank} })}
-            >
-              <View style={styles.rankNumberContainer}>
-                <Text style={styles.rankNumber}>#{index + 4}</Text>
-              </View>
-              <Image source={item.image} style={styles.rankAvatar} />
-              <View style={styles.rankInfo}>
-                <Text style={styles.rankName} numberOfLines={1}>{item.name}</Text>
-                <View style={[styles.rankBadge, { backgroundColor: rankStyles[rank].backgroundColor }]}>
-                  <Text style={[styles.rankText, { color: rankStyles[rank].color }]}>{item.score} điểm</Text>
-                </View>
-              </View>
-              <FontAwesome5 name="chevron-right" size={16} color="#ccc" />
-            </TouchableOpacity>
-          );
-        }}
-      />
+const RankingsScreen = ({ navigation }) => {
+  const [activeTab, setActiveTab] = useState('rankings');
+  const [showSocialModal, setShowSocialModal] = useState(false); 
+  const [selectedFeature, setSelectedFeature] = useState(null);
+  const [showFriendRequests, setShowFriendRequests] = useState(false);
+  const [showFriendModal, setShowFriendModal] = useState(false);
+  const [showGroupModal, setShowGroupModal] = useState(false);
+  const [showChatModal, setShowChatModal] = useState(false);
+
+  const renderProgress = (progress) => (
+    <View style={styles.progressContainer}>
+      <View style={styles.progressBar}>
+        <View style={[styles.progressFill, { width: `${progress}%` }]} />
+      </View>
+      <Text style={styles.progressText}>{progress}%</Text>
     </View>
   );
-};
-
-// 🎖️ Màn hình chính
-const RankingsScreen = ({ navigation }) => {
-  const [modalVisible, setModalVisible] = useState(false);
 
   const renderHeader = () => (
     <Podium topThree={rankings.slice(0, 3)} navigation={navigation} />
+  );
+
+  const handleFriendRequest = (id, action) => {
+    Alert.alert(
+      'Xác nhận',
+      `${action === 'accept' ? 'Chấp nhận' : 'Từ chối'} lời mời kết bạn?`,
+      [
+        { text: 'Hủy', style: 'cancel' },
+        { 
+          text: 'Đồng ý',
+          onPress: () => {
+            console.log(`Friend request ${action}ed:`, id);
+          }
+        }
+      ]
+    );
+  };
+
+  const renderFriendModal = () => (
+    <Modal
+      visible={showFriendModal}
+      transparent
+      animationType="slide"
+      onRequestClose={() => setShowFriendModal(false)}
+    >
+      <View style={styles.modalOverlay}>
+        <View style={styles.modalContent}>
+          <Text style={styles.modalTitle}>Bạn bè</Text>
+          
+          {friendSystem.requests.length > 0 && (
+            <View style={styles.requestsSection}>
+              <Text style={styles.sectionTitle}>Lời mời kết bạn</Text>
+              {friendSystem.requests.map(request => (
+                <View key={request.id} style={styles.friendRequest}>
+                  <Image source={request.avatar} style={styles.requestAvatar} />
+                  <Text style={styles.requestName}>{request.name}</Text>
+                  <View style={styles.requestActions}>
+                    <TouchableOpacity 
+                      style={styles.acceptButton}
+                      onPress={() => handleFriendRequest(request.id, 'accept')}
+                    >
+                      <Text style={styles.buttonText}>Đồng ý</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                      style={styles.declineButton}
+                      onPress={() => handleFriendRequest(request.id, 'decline')}
+                    >
+                      <Text style={styles.buttonText}>Từ chối</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ))}
+            </View>
+          )}
+
+          <View style={styles.friendsList}>
+            <Text style={styles.sectionTitle}>Danh sách bạn bè</Text>
+            {friendSystem.friends.map(friend => (
+              <TouchableOpacity 
+                key={friend.id} 
+                style={styles.friendItem}
+                onPress={() => {
+                  setShowFriendModal(false);
+                  setShowChatModal(true);
+                }}
+              >
+                <Image source={friend.avatar} style={styles.friendAvatar} />
+                <View style={styles.friendInfo}>
+                  <Text style={styles.friendName}>{friend.name}</Text>
+                  <Text style={[
+                    styles.friendStatus,
+                    {color: friend.status === 'online' ? '#4CAF50' : '#999'}
+                  ]}>
+                    {friend.status === 'online' ? 'Đang hoạt động' : friend.lastActive}
+                  </Text>
+                </View>
+                <FontAwesome5 name="comment" size={16} color="#4b46f1" />
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
+
+  const handleSocialFeaturePress = (feature) => {
+    switch(feature) {
+      case 'friends':
+        setShowFriendModal(true);
+        break;
+      case 'groups':
+        setShowGroupModal(true);
+        break;
+      case 'messages':
+        setShowChatModal(true);
+        break;
+      default:
+        setShowSocialModal(true);
+        setSelectedFeature(feature);
+    }
+  };
+
+  const renderSocialFeatures = () => (
+    <View style={styles.socialContainer}>
+      <Text style={styles.sectionTitle}>🤝 Kết nối</Text>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        {socialFeatures.map(feature => (
+          <TouchableOpacity
+            key={feature.id}
+            style={styles.socialCard}
+            onPress={() => handleSocialFeaturePress(feature.id)}
+          >
+            <View style={styles.socialIconContainer}>
+              <FontAwesome5 name={feature.icon} size={20} color="#4b46f1" />
+              {feature.count > 0 && (
+                <View style={styles.badgeContainer}>
+                  <Text style={styles.badgeText}>{feature.count}</Text>
+                </View>
+              )}
+            </View>
+            <Text style={styles.socialTitle}>{feature.title}</Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+    </View>
+  );
+
+  const renderActivityFeed = () => (
+    <View style={styles.activityContainer}>
+      <Text style={styles.sectionTitle}>📱 Bảng tin</Text>
+      {activities.map(activity => (
+        <View key={activity.id} style={styles.activityCard}>
+          <Image source={activity.avatar} style={styles.activityAvatar} />
+          <View style={styles.activityContent}>
+            <Text style={styles.activityText}>
+              <Text style={styles.activityUser}>{activity.user}</Text>
+              {" "}{activity.action}{" "}
+              <Text style={styles.activityTarget}>{activity.target}</Text>
+            </Text>
+            <Text style={styles.activityTime}>{activity.time}</Text>
+            {activity.progress && renderProgress(activity.progress)}
+          </View>
+        </View>
+      ))}
+    </View>
   );
 
   return (
@@ -170,80 +378,82 @@ const RankingsScreen = ({ navigation }) => {
         >
           <FontAwesome5 name="arrow-left" size={16} color="#4b46f1" />
         </TouchableOpacity>
-        <Text style={headerStyles.title}>Bảng xếp hạng</Text>
+        <Text style={headerStyles.title}>Cộng đồng</Text>
       </View>
 
-      <FlatList
-        data={rankings.slice(3)}
-        ListHeaderComponent={renderHeader}
-        renderItem={({ item, index }) => {
-          const rank = getRank(item.score);
-          return (
-            <TouchableOpacity 
-              style={[styles.rankCard, { borderColor: rankStyles[rank].borderColor }]}
-              onPress={() => navigation.navigate('DetailRanking', { user: {...item, rank} })}
-            >
-              <View style={styles.rankNumberContainer}>
-                <Text style={styles.rankNumber}>#{index + 4}</Text>
-              </View>
-              <Image source={item.image} style={styles.rankAvatar} />
-              <View style={styles.rankInfo}>
-                <Text style={styles.rankName} numberOfLines={1}>{item.name}</Text>
-                <View style={[styles.rankBadge, { backgroundColor: rankStyles[rank].backgroundColor }]}>
-                  <Text style={[styles.rankText, { color: rankStyles[rank].color }]}>{item.score} điểm</Text>
-                </View>
-              </View>
-              <FontAwesome5 name="chevron-right" size={16} color="#ccc" />
-            </TouchableOpacity>
-          );
-        }}
-        keyExtractor={item => item.id}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      />
-
-      {/* Modal chi tiết hạng */}
-      {modalVisible && (
-  <Modal
-    visible={modalVisible}
-    transparent
-    animationType="slide"
-    onRequestClose={() => setModalVisible(false)}
-  >
-    <View style={styles.modalOverlay}>
-      <View style={styles.modalContent}>
-        <Text style={styles.modalTitle}>🏆 Chi tiết Xếp hạng</Text>
-
-        {/* Danh sách Rank */}
-        {Object.keys(rankIcons).map((rank) => (
-          <View key={rank} style={styles.rankDetailRow}>
-            <Image source={rankIcons[rank]} style={styles.rankDetailIcon} />
-            <Text style={styles.rankDetailText}>Hạng {rank}</Text>
-            <Text style={styles.rankDetailPoints}>
-              {rank === "S" && "1500+ điểm"}
-              {rank === "A" && "1000 - 1499 điểm"}
-              {rank === "B" && "500 - 999 điểm"}
-              {rank === "C" && "0 - 499 điểm"}
-            </Text>
-          </View>
-        ))}
-
-        {/* Nút Đóng */}
-        <TouchableOpacity
-          onPress={() => setModalVisible(false)}
-          style={styles.closeButton}
+      <View style={styles.tabContainer}>
+        <TouchableOpacity 
+          style={[styles.tab, activeTab === 'rankings' && styles.activeTab]}
+          onPress={() => setActiveTab('rankings')}
         >
-          <Text style={styles.closeButtonText}>Đóng</Text>
+          <Text style={[styles.tabText, activeTab === 'rankings' && styles.activeTabText]}>
+            Xếp hạng
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={[styles.tab, activeTab === 'social' && styles.activeTab]}
+          onPress={() => setActiveTab('social')}
+        >
+          <Text style={[styles.tabText, activeTab === 'social' && styles.activeTabText]}>
+            Cộng đồng
+          </Text>
         </TouchableOpacity>
       </View>
-    </View>
-  </Modal>
-)}
+
+      {activeTab === 'rankings' ? (
+        <FlatList
+          data={rankings.slice(3)}
+          ListHeaderComponent={renderHeader}
+          renderItem={({ item, index }) => {
+            const rank = getRank(item.score);
+            return (
+              <TouchableOpacity 
+                style={[styles.rankCard, { borderColor: rankStyles[rank].borderColor }]}
+                onPress={() => navigation.navigate('DetailRanking', { user: {...item, rank} })}
+              >
+                <View style={styles.rankNumberContainer}>
+                  <Text style={styles.rankNumber}>#{index + 4}</Text>
+                </View>
+                <Image source={item.image} style={styles.rankAvatar} />
+                <View style={styles.rankInfo}>
+                  <Text style={styles.rankName} numberOfLines={1}>{item.name}</Text>
+                  <View style={[styles.rankBadge, { backgroundColor: rankStyles[rank].backgroundColor }]}>
+                    <Text style={[styles.rankText, { color: rankStyles[rank].color }]}>{item.score} điểm</Text>
+                  </View>
+                </View>
+                <FontAwesome5 name="chevron-right" size={16} color="#ccc" />
+              </TouchableOpacity>
+            );
+          }}
+          keyExtractor={item => item.id}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        />
+      ) : (
+        <ScrollView style={styles.socialContent}>
+          {renderSocialFeatures()}
+          {renderActivityFeed()}
+        </ScrollView>
+      )}
+
+      <Modal
+        visible={showSocialModal}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowSocialModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            {/* Modal content based on selectedFeature */}
+          </View>
+        </View>
+      </Modal>
+
+      {renderFriendModal()}
     </View>
   );
 };
 
-// 🎨 Styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -301,6 +511,7 @@ const styles = StyleSheet.create({
   rankingListContainer: {
     flex: 1,
     paddingHorizontal: 16,
+    marginBottom: 24,
   },
   rankCard: {
     flexDirection: "row",
@@ -309,6 +520,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginVertical: 5,
     borderRadius: 10,
+    elevation: 4,
     borderWidth: 1,
   },
   rankNumberContainer: {
@@ -405,8 +617,195 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: 20
+    paddingBottom: 20,
   },
+  tabContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  tab: {
+    flex: 1,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  activeTab: {
+    borderBottomWidth: 2,
+    borderBottomColor: '#4b46f1',
+  },
+  tabText: {
+    fontSize: 15,
+    color: '#666',
+    fontWeight: '500',
+  },
+  activeTabText: {
+    color: '#4b46f1',
+    fontWeight: '600',
+  },
+  socialContainer: {
+    padding: 16,
+    backgroundColor: '#fff',
+    marginBottom: 8,
+  },
+  socialCard: {
+    alignItems: 'center',
+    marginRight: 20,
+  },
+  socialIconContainer: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#f0f1fe',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  badgeContainer: {
+    position: 'absolute',
+    top: -5,
+    right: -5,
+    backgroundColor: '#ff4444',
+    borderRadius: 10,
+    minWidth: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  badgeText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  socialTitle: {
+    fontSize: 13,
+    color: '#333',
+  },
+  activityContainer: {
+    backgroundColor: '#fff',
+    padding: 16,
+  },
+  activityCard: {
+    flexDirection: 'row',
+    marginBottom: 16,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  activityAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 12,
+  },
+  activityContent: {
+    flex: 1,
+  },
+  activityText: {
+    fontSize: 14,
+    color: '#666',
+    lineHeight: 20,
+  },
+  activityUser: {
+    fontWeight: '600',
+    color: '#333',
+  },
+  activityTarget: {
+    color: '#4b46f1',
+  },
+  activityTime: {
+    fontSize: 12,
+    color: '#999',
+    marginTop: 4,
+  },
+  progressContainer: {
+    marginTop: 8,
+  },
+  progressBar: {
+    height: 4,
+    backgroundColor: '#eee',
+    borderRadius: 2,
+  },
+  progressFill: {
+    height: '100%',
+    backgroundColor: '#4b46f1',
+    borderRadius: 2,
+  },
+  progressText: {
+    fontSize: 12,
+    color: '#666',
+    marginTop: 4,
+  },
+  friendRequest: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  requestAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 12,
+  },
+  requestName: {
+    fontSize: 16,
+    color: '#333',
+  },
+  requestActions: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  acceptButton: {
+    backgroundColor: '#4b46f1',
+    padding: 8,
+    borderRadius: 8,
+  },
+  declineButton: {
+    backgroundColor: '#ff4444',
+    padding: 8,
+    borderRadius: 8,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 14,
+  },
+  requestsSection: {
+    marginBottom: 20,
+    width: '100%',
+  },
+  friendsList: {
+    width: '100%',
+  },
+  friendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  friendAvatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 12,
+  },
+  friendInfo: {
+    flex: 1,
+  },
+  friendName: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 4,
+  },
+  friendStatus: {
+    fontSize: 12,
+  }
 });
 
 export default RankingsScreen;
