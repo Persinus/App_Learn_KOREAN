@@ -26,7 +26,10 @@ const LoginScreen = ({ navigation }) => {
     try {
       await AsyncStorage.setItem("userToken", "true");
       Alert.alert("Đăng nhập thành công!", `Chào mừng, ${email}!`);
-      navigation.navigate("TabNavigator", { screen: "HomeScreen" });
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'MainNavigator' }],
+      });
     } catch (error) {
       Alert.alert("Lỗi", "Có lỗi xảy ra khi đăng nhập. Vui lòng thử lại!");
       console.error("Login Error:", error);

@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Switch, Alert, ScrollView, Animated } from 'react-native';
 import { FontAwesome5, Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SettingsScreen = ({ navigation }) => {
   const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(true);
@@ -32,7 +33,16 @@ const SettingsScreen = ({ navigation }) => {
       "Bạn có chắc chắn muốn đăng xuất?",
       [
         { text: "Hủy", style: "cancel" },
-        { text: "Đăng xuất", onPress: () => navigation.replace('LoginScreen') }
+        { 
+          text: "Đăng xuất", 
+          onPress: () => {
+            AsyncStorage.removeItem('userToken');
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'AuthStack' }],
+            });
+          }
+        }
       ]
     );
   };
