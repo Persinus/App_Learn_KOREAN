@@ -1,16 +1,17 @@
 {
   "expo": {
-    "name": "Front-App",
-    "slug": "Front-App",
+    "name": "OwnLearning",
+    "slug": "Learn-Korean",
     "version": "1.0.0",
     "orientation": "portrait",
+    "entryPoint": "./node_modules/expo-router/index.js",
     "icon": "./assets/logo.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/logo.png", 
+      "image": "./assets/logo.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff" 
+      "backgroundColor": "#ffffff"
     },
     "ios": {
       "supportsTablet": true
@@ -19,10 +20,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/avatar2.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.nguyenmanh2004.LearnKorean"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "f362302f-94be-491c-b16b-e332147ea982"
+      }
     }
   }
 }
