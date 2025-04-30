@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ProgressBar } from 'react-native';
-import { FontAwesome5 } from '@expo/vector-icons';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useSelector } from 'react-redux';
 
 const DailyMission = ({ onPress }) => {
   const missions = [
@@ -9,33 +9,64 @@ const DailyMission = ({ onPress }) => {
     { id: 3, title: 'Luyện phát âm 10 phút', progress: 5, total: 10, reward: 20 },
   ];
 
+  const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+
+  const dynamicStyles = {
+    container: {
+      backgroundColor: isDarkMode ? '#0099FF' : '#fff', // Nền xanh cho Dark Mode
+      borderColor: isDarkMode ? '#444' : '#eee',
+    },
+    title: {
+      color: isDarkMode ? '#fff' : '#333',
+    },
+    rewards: {
+      color: isDarkMode ? '#FFD700' : '#4b46f1',
+    },
+    missionTitle: {
+      color: isDarkMode ? '#ccc' : '#666',
+    },
+    missionReward: {
+      color: isDarkMode ? '#FFD700' : '#4b46f1',
+    },
+    progressBar: {
+      backgroundColor: isDarkMode ? '#444' : '#f0f0f0',
+    },
+    progress: {
+      backgroundColor: isDarkMode ? '#FFD700' : '#4b46f1',
+    },
+    progressText: {
+      color: isDarkMode ? '#ccc' : '#666',
+    },
+  };
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, dynamicStyles.container]}>
       <View style={styles.header}>
-        <Text style={styles.title}>🎯 Nhiệm vụ hôm nay</Text>
-        <Text style={styles.rewards}>+45 điểm</Text>
+        <Text style={[styles.title, dynamicStyles.title]}>🎯 Nhiệm vụ hôm nay</Text>
+        <Text style={[styles.rewards, dynamicStyles.rewards]}>+45 điểm</Text>
       </View>
-      
+
       {missions.map((mission) => (
-        <TouchableOpacity 
-          key={mission.id} 
+        <TouchableOpacity
+          key={mission.id}
           style={styles.missionItem}
           onPress={() => onPress(mission)}
         >
           <View style={styles.missionContent}>
-            <Text style={styles.missionTitle}>{mission.title}</Text>
-            <Text style={styles.missionReward}>+{mission.reward}</Text>
+            <Text style={[styles.missionTitle, dynamicStyles.missionTitle]}>{mission.title}</Text>
+            <Text style={[styles.missionReward, dynamicStyles.missionReward]}>+{mission.reward}</Text>
           </View>
           <View style={styles.progressContainer}>
-            <View style={styles.progressBar}>
-              <View 
+            <View style={[styles.progressBar, dynamicStyles.progressBar]}>
+              <View
                 style={[
-                  styles.progress, 
-                  { width: `${(mission.progress / mission.total) * 100}%` }
-                ]} 
+                  styles.progress,
+                  dynamicStyles.progress,
+                  { width: `${(mission.progress / mission.total) * 100}%` },
+                ]}
               />
             </View>
-            <Text style={styles.progressText}>
+            <Text style={[styles.progressText, dynamicStyles.progressText]}>
               {mission.progress}/{mission.total}
             </Text>
           </View>
@@ -47,13 +78,11 @@ const DailyMission = ({ onPress }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
     borderRadius: 12,
     padding: 16,
     marginHorizontal: 16,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#eee',
   },
   header: {
     flexDirection: 'row',
@@ -64,11 +93,9 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
   },
   rewards: {
     fontSize: 14,
-    color: '#4b46f1',
     fontWeight: '600',
   },
   missionItem: {
@@ -82,11 +109,9 @@ const styles = StyleSheet.create({
   },
   missionTitle: {
     fontSize: 14,
-    color: '#666',
   },
   missionReward: {
     fontSize: 12,
-    color: '#4b46f1',
   },
   progressContainer: {
     flexDirection: 'row',
@@ -95,18 +120,15 @@ const styles = StyleSheet.create({
   progressBar: {
     flex: 1,
     height: 4,
-    backgroundColor: '#f0f0f0',
     borderRadius: 2,
     marginRight: 8,
   },
   progress: {
     height: '100%',
-    backgroundColor: '#4b46f1',
     borderRadius: 2,
   },
   progressText: {
     fontSize: 12,
-    color: '#666',
     width: 35,
   },
 });
