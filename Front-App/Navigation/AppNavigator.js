@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { MaterialIcons, FontAwesome5 } from 'react-native-vector-icons';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { useSelector } from 'react-redux';
 
 // Import các màn hình chính
 import HomeStack from './HomeStack';
@@ -53,6 +54,9 @@ const RankingsStack = () => {
 };
 
 const MainNavigator = () => {
+  // Lấy trạng thái Dark Mode từ Redux store
+  const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Tab.Navigator
@@ -83,13 +87,15 @@ const MainNavigator = () => {
           },
           tabBarShowLabel: false,
           tabBarStyle: {
-            backgroundColor: '#fff',
+            backgroundColor: isDarkMode ? '#000' : '#fff', // Nền tab bar
             borderTopWidth: 1,
-            borderTopColor: '#eee',
+            borderTopColor: isDarkMode ? '#333' : '#eee', // Đường viền tab bar
             height: 60,
             paddingBottom: 8,
             paddingTop: 8,
           },
+          tabBarActiveTintColor: isDarkMode ? '#fff' : '#000', // Màu biểu tượng khi được chọn
+          tabBarInactiveTintColor: isDarkMode ? '#888' : '#666', // Màu biểu tượng khi không được chọn
           headerShown: false,
         })}
       >

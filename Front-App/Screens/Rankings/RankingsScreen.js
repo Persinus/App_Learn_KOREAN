@@ -12,6 +12,7 @@ import {
   Alert,
 } from "react-native";
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
+import { useSelector } from "react-redux";
 import headerStyles from '../../Styles/HeaderStyles';
 
 const rankings = [
@@ -210,6 +211,36 @@ const RankingsScreen = ({ navigation }) => {
   const [showFriendModal, setShowFriendModal] = useState(false);
   const [showGroupModal, setShowGroupModal] = useState(false);
   const [showChatModal, setShowChatModal] = useState(false);
+  const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+
+  const dynamicStyles = {
+    container: {
+      flex: 1,
+      backgroundColor: isDarkMode ? '#0099FF' : '#fff', // Nền xanh cho Dark Mode
+    },
+    sectionTitle: {
+      color: isDarkMode ? '#fff' : '#333',
+    },
+    rankCard: {
+      backgroundColor: isDarkMode ? '#6666FF' : '#fff', // Màu tím cho Dark Mode
+      borderColor: isDarkMode ? '#444' : '#eee',
+    },
+    rankName: {
+      color: isDarkMode ? '#fff' : '#333',
+    },
+    rankText: {
+      color: isDarkMode ? '#ccc' : '#666',
+    },
+    tab: {
+      backgroundColor: isDarkMode ? '#6666FF' : '#fff',
+    },
+    tabText: {
+      color: isDarkMode ? '#fff' : '#666',
+    },
+    activeTabText: {
+      color: isDarkMode ? '#FFD700' : '#4b46f1',
+    },
+  };
 
   const renderProgress = (progress) => (
     <View style={styles.progressContainer}>
@@ -370,23 +401,23 @@ const RankingsScreen = ({ navigation }) => {
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, dynamicStyles.container]}>
       <View style={headerStyles.container}>
         <TouchableOpacity 
           style={headerStyles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <FontAwesome5 name="arrow-left" size={16} color="#4b46f1" />
+          <FontAwesome5 name="arrow-left" size={16} color={isDarkMode ? '#fff' : '#4b46f1'} />
         </TouchableOpacity>
-        <Text style={headerStyles.title}>Cộng đồng</Text>
+        <Text style={[headerStyles.title, { color: isDarkMode ? '#fff' : '#333' }]}>Cộng đồng</Text>
       </View>
 
-      <View style={styles.tabContainer}>
+      <View style={[styles.tabContainer, dynamicStyles.tab]}>
         <TouchableOpacity 
           style={[styles.tab, activeTab === 'rankings' && styles.activeTab]}
           onPress={() => setActiveTab('rankings')}
         >
-          <Text style={[styles.tabText, activeTab === 'rankings' && styles.activeTabText]}>
+          <Text style={[styles.tabText, dynamicStyles.tabText, activeTab === 'rankings' && dynamicStyles.activeTabText]}>
             Xếp hạng
           </Text>
         </TouchableOpacity>
@@ -394,7 +425,7 @@ const RankingsScreen = ({ navigation }) => {
           style={[styles.tab, activeTab === 'social' && styles.activeTab]}
           onPress={() => setActiveTab('social')}
         >
-          <Text style={[styles.tabText, activeTab === 'social' && styles.activeTabText]}>
+          <Text style={[styles.tabText, dynamicStyles.tabText, activeTab === 'social' && dynamicStyles.activeTabText]}>
             Cộng đồng
           </Text>
         </TouchableOpacity>
@@ -408,7 +439,7 @@ const RankingsScreen = ({ navigation }) => {
             const rank = getRank(item.score);
             return (
               <TouchableOpacity 
-                style={[styles.rankCard, { borderColor: rankStyles[rank].borderColor }]}
+                style={[styles.rankCard, dynamicStyles.rankCard, { borderColor: rankStyles[rank].borderColor }]}
                 onPress={() => navigation.navigate('DetailRanking', { user: {...item, rank} })}
               >
                 <View style={styles.rankNumberContainer}>
@@ -416,9 +447,9 @@ const RankingsScreen = ({ navigation }) => {
                 </View>
                 <Image source={item.image} style={styles.rankAvatar} />
                 <View style={styles.rankInfo}>
-                  <Text style={styles.rankName} numberOfLines={1}>{item.name}</Text>
+                  <Text style={[styles.rankName, dynamicStyles.rankName]} numberOfLines={1}>{item.name}</Text>
                   <View style={[styles.rankBadge, { backgroundColor: rankStyles[rank].backgroundColor }]}>
-                    <Text style={[styles.rankText, { color: rankStyles[rank].color }]}>{item.score} điểm</Text>
+                    <Text style={[styles.rankText, dynamicStyles.rankText, { color: rankStyles[rank].color }]}>{item.score} điểm</Text>
                   </View>
                 </View>
                 <FontAwesome5 name="chevron-right" size={16} color="#ccc" />
@@ -457,12 +488,10 @@ const RankingsScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#333',
     marginBottom: 16,
     paddingHorizontal: 16,
   },
@@ -516,11 +545,9 @@ const styles = StyleSheet.create({
   rankCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
-    padding: 10,
-    marginVertical: 5,
-    borderRadius: 10,
-    elevation: 4,
+    padding: 12,
+    marginVertical: 8,
+    borderRadius: 8,
     borderWidth: 1,
   },
   rankNumberContainer: {
@@ -543,7 +570,6 @@ const styles = StyleSheet.create({
   rankName: {
     fontSize: 16,
     fontWeight: '600',
-    marginBottom: 4,
   },
   rankBadge: {
     paddingVertical: 2,
@@ -552,7 +578,6 @@ const styles = StyleSheet.create({
   },
   rankText: {
     fontSize: 14,
-    fontWeight: '600',
   },
   modalOverlay: {
     flex: 1,
@@ -623,7 +648,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: 16,
     paddingVertical: 8,
-    backgroundColor: '#fff',
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
   },
@@ -638,12 +662,7 @@ const styles = StyleSheet.create({
   },
   tabText: {
     fontSize: 15,
-    color: '#666',
     fontWeight: '500',
-  },
-  activeTabText: {
-    color: '#4b46f1',
-    fontWeight: '600',
   },
   socialContainer: {
     padding: 16,
