@@ -194,27 +194,56 @@ const HomeScreen = ({ navigation }) => {
   const dynamicStyles = {
     container: {
       flex: 1,
-      backgroundColor: isDarkMode ? "#000" : "#fff",
+      backgroundColor: isDarkMode ? '#0099FF' : '#fff', // Nền xanh cho Dark Mode
     },
-    text: {
-      color: isDarkMode ? "#fff" : "#333",
+    groupTitle: {
+      color: isDarkMode ? '#fff' : '#333',
     },
-    subtitle: {
-      color: isDarkMode ? "#ccc" : "#666",
+    settingText: {
+      color: isDarkMode ? '#ccc' : '#333',
+    },
+    settingsGroup: {
+      backgroundColor: isDarkMode ? '#6666FF' : '#99FFFF', // Màu tím cho nhóm cài đặt
+      borderColor: isDarkMode ? '#444' : '#eee',
     },
     card: {
-      backgroundColor: isDarkMode ? "#333" : "#fff",
-      borderColor: isDarkMode ? "#444" : "#eee",
+      backgroundColor: isDarkMode ? '#6666FF' : '#fff', // Màu tím cho thẻ
+      borderColor: isDarkMode ? '#444' : '#eee',
+    },
+    text: {
+      color: isDarkMode ? '#fff' : '#333',
+    },
+    subtitle: {
+      color: isDarkMode ? '#ccc' : '#666',
     },
     input: {
-      backgroundColor: isDarkMode ? "#444" : "#f5f5f5",
-      color: isDarkMode ? "#fff" : "#000",
+      backgroundColor: isDarkMode ? '#444' : '#f5f5f5',
+      color: isDarkMode ? '#fff' : '#000',
+      borderColor: isDarkMode ? '#444' : '#ddd',
     },
     button: {
-      backgroundColor: isDarkMode ? "#6a0dad" : "#ffd700",
+      backgroundColor: isDarkMode ? '#FFD700' : '#4b46f1',
     },
     buttonText: {
-      color: isDarkMode ? "#fff" : "#000",
+      color: isDarkMode ? '#000' : '#fff',
+    },
+    tagButton: {
+      backgroundColor: isDarkMode ? '#444' : '#f5f5f5',
+    },
+    tagButtonActive: {
+      backgroundColor: isDarkMode ? '#FFD700' : '#4b46f1',
+    },
+    tagText: {
+      color: isDarkMode ? '#ccc' : '#666',
+    },
+    tagTextActive: {
+      color: isDarkMode ? '#000' : '#fff',
+    },
+    progressBar: {
+      backgroundColor: isDarkMode ? '#444' : '#eee',
+    },
+    progressFill: {
+      backgroundColor: isDarkMode ? '#FFD700' : '#4b46f1',
     },
   };
 
@@ -424,15 +453,15 @@ const HomeScreen = ({ navigation }) => {
       <View style={styles.progressContainer}>
         <View style={styles.progressRow}>
           <Text style={styles.progressLabel}>EXP:</Text>
-          <View style={styles.progressBar}>
-            <View style={[styles.progressFill, { width: `${levelProgress}%` }]} />
+          <View style={[styles.progressBar, dynamicStyles.progressBar]}>
+            <View style={[styles.progressFill, dynamicStyles.progressFill, { width: `${levelProgress}%` }]} />
           </View>
           <Text style={styles.progressText}>{userExp}/{maxExp}</Text>
         </View>
         <View style={styles.progressRow}>
           <Text style={styles.progressLabel}>Tổng tiến độ:</Text>
-          <View style={styles.progressBar}>
-            <View style={[styles.progressFill, { width: `${totalProgress}%` }]} />
+          <View style={[styles.progressBar, dynamicStyles.progressBar]}>
+            <View style={[styles.progressFill, dynamicStyles.progressFill, { width: `${totalProgress}%` }]} />
           </View>
           <Text style={styles.progressText}>{Math.round(totalProgress)}%</Text>
         </View>
@@ -529,13 +558,15 @@ const HomeScreen = ({ navigation }) => {
             key={tag.id}
             style={[
               styles.tagButton,
-              selectedTag === tag.id && styles.tagButtonActive
+              dynamicStyles.tagButton,
+              selectedTag === tag.id && dynamicStyles.tagButtonActive
             ]}
             onPress={() => setSelectedTag(tag.id)}
           >
             <Text style={[
               styles.tagText,
-              selectedTag === tag.id && styles.tagTextActive
+              dynamicStyles.tagText,
+              selectedTag === tag.id && dynamicStyles.tagTextActive
             ]}>
               {tag.name}
             </Text>
@@ -777,20 +808,20 @@ const HomeScreen = ({ navigation }) => {
           style={headerStyles.backButton}
           onPress={() => navigation.navigate('NotificationsScreen')}
         >
-          <FontAwesome5 name="bell" size={16} color={isDarkMode ? "#6a0dad" : "#4b46f1"} />
+          <FontAwesome5 name="bell" size={16} color={isDarkMode ? '#FFD700' : '#4b46f1'} />
           <View style={styles.notificationBadge} />
         </TouchableOpacity>
       </View>
 
       <RewardPopup />
 
-      <View style={styles.userInfo}>
+      <View style={[styles.userInfo, dynamicStyles.card]}>
         <View style={[styles.avatarContainer, { borderColor: getLevelBorderColor(userLevel) }]}>
           <Image
             source={require("../../assets/illustration1.png")}
             style={styles.avatar}
           />
-          <View style={[styles.levelBadge, { backgroundColor: isDarkMode ? "#6a0dad" : "#4b46f1" }]}>
+          <View style={[styles.levelBadge, { backgroundColor: isDarkMode ? '#FFD700' : '#4b46f1' }]}>
             <Text style={styles.levelText}>Lv.{userLevel}</Text>
           </View>
         </View>
@@ -799,57 +830,7 @@ const HomeScreen = ({ navigation }) => {
           <Text style={[styles.subtitle, dynamicStyles.subtitle]}>Hôm nay bạn muốn học gì?</Text>
           {renderProgressBar()}
         </View>
-        <TouchableOpacity 
-          style={[styles.badgesButton, dynamicStyles.button]}
-          onPress={() => setShowBadges(!showBadges)}
-        >
-          <Text style={[styles.badgesButtonText, dynamicStyles.buttonText]}>🏅</Text>
-        </TouchableOpacity>
       </View>
-
-      {showBadges && (
-        <View style={[styles.badgesContainer, dynamicStyles.card]}>
-          {badges.map(badge => (
-            <TouchableOpacity key={badge.id} style={styles.badgeItem}>
-              <Text style={styles.badgeIcon}>{badge.icon}</Text>
-              <Text style={[styles.badgeName, dynamicStyles.text]}>{badge.name}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      )}
-
-      <View style={[styles.streakContainer, dynamicStyles.card]}>
-        <FontAwesome5 name="fire" size={20} color="#f44336" />
-        <Text style={[styles.streakText, dynamicStyles.text]}>{streakDays} ngày liên tiếp 🔥</Text>
-      </View>
-
-      <View style={styles.missionHeader}>
-        <Text style={[styles.sectionTitle, dynamicStyles.text]}>🎯 Nhiệm vụ hàng ngày</Text>
-        <Text style={[styles.resetTimer, dynamicStyles.subtitle]}>Làm mới sau {timeUntilReset}</Text>
-      </View>
-
-      <DailyMission onPress={handleMissionPress} />
-      <Achievement onPress={handleAchievementPress} />
-
-      <DailyLoginReward />
-      
-      {unlockedAchievement && (
-        <AchievementUnlock
-          achievement={unlockedAchievement}
-          onComplete={() => setUnlockedAchievement(null)}
-        />
-      )}
-      
-      <LevelUpModal
-        visible={showLevelUp}
-        level={userLevel}
-        rewards={[
-          {icon: '💰', description: '1000 coins'},
-          {icon: '💎', description: '5 gems'},
-          {icon: '🎁', description: 'New avatar frame'}
-        ]}
-        onClose={() => setShowLevelUp(false)}
-      />
 
       {renderCourseSection()}
       {renderFeaturedSection()}
@@ -918,14 +899,12 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: 4,
-    backgroundColor: '#eee',
     borderRadius: 2,
     flex: 1,
     marginHorizontal: 8,
   },
   progressFill: {
     height: '100%',
-    backgroundColor: '#4b46f1',
     borderRadius: 2,
   },
   progressText: {
