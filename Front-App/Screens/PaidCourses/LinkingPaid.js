@@ -10,6 +10,7 @@ import {
   Alert 
 } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
+import { useSelector } from 'react-redux';
 import headerStyles from '../../Styles/HeaderStyles';
 
 const paymentMethods = [
@@ -37,6 +38,57 @@ const LinkingPaid = ({ route, navigation }) => {
   const { course } = route.params;
   const [selectedMethod, setSelectedMethod] = useState(null);
   const [paymentInfo, setPaymentInfo] = useState('');
+  const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+
+  const dynamicStyles = {
+    container: {
+      flex: 1,
+      backgroundColor: isDarkMode ? '#0099FF' : '#f8f9fa', // Nền xanh cho Dark Mode
+    },
+    header: {
+      backgroundColor: isDarkMode ? '#6666FF' : '#4b46f1', // Màu tím cho header
+    },
+    headerTitle: {
+      color: isDarkMode ? '#fff' : '#fff',
+    },
+    courseInfo: {
+      backgroundColor: isDarkMode ? '#6666FF' : '#f8f4ff', // Màu tím cho thông tin khóa học
+    },
+    courseName: {
+      color: isDarkMode ? '#fff' : '#333',
+    },
+    coursePrice: {
+      color: isDarkMode ? '#FFD700' : '#6a0dad',
+    },
+    sectionTitle: {
+      color: isDarkMode ? '#fff' : '#333',
+    },
+    methodItem: {
+      backgroundColor: isDarkMode ? '#444' : '#fff',
+      borderColor: isDarkMode ? '#6666FF' : '#ddd',
+    },
+    selectedMethod: {
+      backgroundColor: isDarkMode ? '#4b46f1' : '#f0e6ff',
+      borderColor: isDarkMode ? '#FFD700' : '#6a0dad',
+    },
+    methodName: {
+      color: isDarkMode ? '#fff' : '#333',
+    },
+    input: {
+      backgroundColor: isDarkMode ? '#333' : '#fff',
+      color: isDarkMode ? '#fff' : '#000',
+      borderColor: isDarkMode ? '#444' : '#ddd',
+    },
+    inputLabel: {
+      color: isDarkMode ? '#ccc' : '#666',
+    },
+    payButton: {
+      backgroundColor: isDarkMode ? '#FFD700' : '#6a0dad',
+    },
+    payButtonText: {
+      color: isDarkMode ? '#000' : '#fff',
+    },
+  };
 
   const handlePayment = () => {
     if (!selectedMethod) {
@@ -76,8 +128,8 @@ const LinkingPaid = ({ route, navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={headerStyles.container}>
+    <View style={[styles.container, dynamicStyles.container]}>
+      <View style={[headerStyles.container, dynamicStyles.header]}>
         <View style={headerStyles.headerRow}>
           <TouchableOpacity 
             style={headerStyles.backButton}
@@ -85,53 +137,55 @@ const LinkingPaid = ({ route, navigation }) => {
           >
             <FontAwesome5 name="arrow-left" size={16} color="#fff" />
           </TouchableOpacity>
-          <Text style={headerStyles.title}>Thanh toán</Text>
+          <Text style={[headerStyles.title, dynamicStyles.headerTitle]}>Thanh toán</Text>
           <View style={{width: 40}} />
         </View>
       </View>
 
       <ScrollView style={styles.content}>
-        <View style={styles.courseInfo}>
+        <View style={[styles.courseInfo, dynamicStyles.courseInfo]}>
           <Image source={{ uri: course.image }} style={styles.courseImage} />
           <View style={styles.courseDetails}>
-            <Text style={styles.courseName}>{course.name}</Text>
-            <Text style={styles.coursePrice}>{course.price}</Text>
+            <Text style={[styles.courseName, dynamicStyles.courseName]}>{course.name}</Text>
+            <Text style={[styles.coursePrice, dynamicStyles.coursePrice]}>{course.price}</Text>
           </View>
         </View>
 
-        <Text style={styles.sectionTitle}>Chọn phương thức thanh toán</Text>
+        <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>Chọn phương thức thanh toán</Text>
         {paymentMethods.map(method => (
           <TouchableOpacity
             key={method.id}
             style={[
               styles.methodItem,
-              selectedMethod?.id === method.id && styles.selectedMethod
+              dynamicStyles.methodItem,
+              selectedMethod?.id === method.id && dynamicStyles.selectedMethod
             ]}
             onPress={() => setSelectedMethod(method)}
           >
             <Text style={styles.methodIcon}>{method.icon}</Text>
-            <Text style={styles.methodName}>{method.name}</Text>
+            <Text style={[styles.methodName, dynamicStyles.methodName]}>{method.name}</Text>
           </TouchableOpacity>
         ))}
 
         {selectedMethod && (
           <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>{selectedMethod.placeholder}</Text>
+            <Text style={[styles.inputLabel, dynamicStyles.inputLabel]}>{selectedMethod.placeholder}</Text>
             <TextInput
-              style={styles.input}
+              style={[styles.input, dynamicStyles.input]}
               value={paymentInfo}
               onChangeText={setPaymentInfo}
               placeholder={`Nhập ${selectedMethod.placeholder.toLowerCase()}`}
+              placeholderTextColor={isDarkMode ? '#888' : '#aaa'}
             />
           </View>
         )}
       </ScrollView>
 
       <TouchableOpacity 
-        style={styles.payButton}
+        style={[styles.payButton, dynamicStyles.payButton]}
         onPress={handlePayment}
       >
-        <Text style={styles.payButtonText}>Thanh toán ngay</Text>
+        <Text style={[styles.payButtonText, dynamicStyles.payButtonText]}>Thanh toán ngay</Text>
       </TouchableOpacity>
     </View>
   );
@@ -140,7 +194,6 @@ const LinkingPaid = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
   },
   content: {
     flex: 1,
@@ -149,7 +202,6 @@ const styles = StyleSheet.create({
   courseInfo: {
     flexDirection: 'row',
     padding: 16,
-    backgroundColor: '#f8f4ff',
     borderRadius: 12,
     marginBottom: 24
   },
@@ -165,25 +217,21 @@ const styles = StyleSheet.create({
   courseName: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
     marginBottom: 4
   },
   coursePrice: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#6a0dad'
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
     marginBottom: 16
   },
   methodItem: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
-    backgroundColor: '#fff',
     borderRadius: 16,
     marginBottom: 12,
     elevation: 2,
@@ -193,8 +241,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   selectedMethod: {
-    backgroundColor: '#f0e6ff',
-    borderColor: '#6a0dad',
     borderWidth: 1
   },
   methodIcon: {
@@ -203,32 +249,27 @@ const styles = StyleSheet.create({
   },
   methodName: {
     fontSize: 16,
-    color: '#333'
   },
   inputContainer: {
     marginTop: 24
   },
   inputLabel: {
     fontSize: 14,
-    color: '#666',
     marginBottom: 8
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ddd',
     borderRadius: 8,
     padding: 12,
     fontSize: 16
   },
   payButton: {
-    backgroundColor: '#6a0dad',
     padding: 16,
     margin: 16,
     borderRadius: 8,
     alignItems: 'center'
   },
   payButtonText: {
-    color: '#fff',
     fontSize: 16,
     fontWeight: '600'
   }
