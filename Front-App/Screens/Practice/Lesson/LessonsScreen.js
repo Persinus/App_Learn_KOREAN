@@ -3,6 +3,7 @@ import {
   View, Text, TouchableOpacity, Image, Animated, StyleSheet, ScrollView, Modal 
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useSelector } from "react-redux";
 
 const characterList = [
     { name: "Nhân Vật 1", uri: "https://i.pinimg.com/474x/39/da/a0/39daa05b8c3389b679f31c9745f3e9c4.jpg", price: 0, isOwned: true },
@@ -33,7 +34,45 @@ const MapScreen = () => {
   }));
   const [isCharacterPanelVisible, setCharacterPanelVisible] = useState(false);
   const [gems, setGems] = useState(900);  // Kim cương ban đầu
-  const [characters, setCharacters] = useState(characterList)
+  const [characters, setCharacters] = useState(characterList);
+  const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+
+  const dynamicStyles = {
+    container: {
+      backgroundColor: isDarkMode ? "#0099FF" : "#E6F4EA",
+    },
+    header: {
+      backgroundColor: isDarkMode ? "#6666FF" : "#7AC74F",
+    },
+    headerText: {
+      color: isDarkMode ? "#fff" : "#fff",
+    },
+    node: {
+      backgroundColor: isDarkMode ? "#444" : "#FFF5CC",
+    },
+    questionCircle: {
+      backgroundColor: isDarkMode ? "#FFD700" : "#4CAF50",
+    },
+    questionText: {
+      color: isDarkMode ? "#000" : "#fff",
+    },
+    characterSelectButton: {
+      backgroundColor: isDarkMode ? "#FFD700" : "#FFCC00",
+    },
+    modalContent: {
+      backgroundColor: isDarkMode ? "#444" : "#fff",
+    },
+    modalTitle: {
+      color: isDarkMode ? "#fff" : "#000",
+    },
+    closeButton: {
+      backgroundColor: isDarkMode ? "#FFD700" : "#FF5733",
+    },
+    buttonText: {
+      color: isDarkMode ? "#000" : "#fff",
+    },
+  };
+
   // ✅ Di chuyển nhân vật và cuộn theo
   const moveCharacter = (index, x, y) => {
     Animated.timing(characterPosition, {
@@ -50,15 +89,15 @@ const MapScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, dynamicStyles.container]}>
       {/* Nút mở panel chọn nhân vật */}
-      <TouchableOpacity style={styles.characterSelectButton} onPress={() => setCharacterPanelVisible(true)}>
-        <Text style={styles.buttonText}>🎭 Chọn Nhân Vật</Text>
+      <TouchableOpacity style={[styles.characterSelectButton, dynamicStyles.characterSelectButton]} onPress={() => setCharacterPanelVisible(true)}>
+        <Text style={[styles.buttonText, dynamicStyles.buttonText]}>🎭 Chọn Nhân Vật</Text>
       </TouchableOpacity>
 
       {/* Thanh tiêu đề */}
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Hành trình 20 câu hỏi</Text>
+      <View style={[styles.header, dynamicStyles.header]}>
+        <Text style={[styles.headerText, dynamicStyles.headerText]}>Hành trình 20 câu hỏi</Text>
       </View>
 
       {/* ✅ ScrollView cuộn đúng */}
@@ -78,11 +117,11 @@ const MapScreen = () => {
           <View key={index} style={[styles.rowContainer, { top: point.y }]}>
             {/* Nút câu hỏi */}
             <TouchableOpacity 
-              style={[styles.node, { left: point.x }]} 
+              style={[styles.node, dynamicStyles.node, { left: point.x }]} 
               onPress={() => moveCharacter(index, point.x, point.y)}
             >
-              <View style={styles.questionCircle}>
-                <Text style={styles.questionText}>{point.number}</Text>
+              <View style={[styles.questionCircle, dynamicStyles.questionCircle]}>
+                <Text style={[styles.questionText, dynamicStyles.questionText]}>{point.number}</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -92,8 +131,8 @@ const MapScreen = () => {
       {/* ✅ Panel chọn nhân vật */}
       <Modal visible={isCharacterPanelVisible} transparent={true} animationType="slide">
   <View style={styles.modalContainer}>
-    <View style={styles.modalContent}>
-      <Text style={styles.modalTitle}>Chọn Nhân Vật</Text>
+    <View style={[styles.modalContent, dynamicStyles.modalContent]}>
+      <Text style={[styles.modalTitle, dynamicStyles.modalTitle]}>Chọn Nhân Vật</Text>
       <View style={styles.characterGrid}>
         {characters.map((char, index) => (
         <TouchableOpacity key={index} onPress={() => {
@@ -122,8 +161,8 @@ const MapScreen = () => {
           </TouchableOpacity>
         ))}
       </View>
-      <TouchableOpacity style={styles.closeButton} onPress={() => setCharacterPanelVisible(false)}>
-        <Text style={styles.buttonText}>Đóng</Text>
+      <TouchableOpacity style={[styles.closeButton, dynamicStyles.closeButton]} onPress={() => setCharacterPanelVisible(false)}>
+        <Text style={[styles.buttonText, dynamicStyles.buttonText]}>Đóng</Text>
       </TouchableOpacity>
     </View>
   </View>
@@ -137,18 +176,14 @@ export default MapScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#E6F4EA",
-   
   },
   header: {
-    backgroundColor: "#7AC74F",
     paddingVertical: 15,
     alignItems: "center",
   },
   headerText: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#fff",
   },
   scrollContainer: {
     flexGrow: 1,
@@ -171,7 +206,6 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: "#FFF5CC",
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
@@ -180,20 +214,17 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: "#4CAF50",
     justifyContent: "center",
     alignItems: "center",
   },
   questionText: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#fff",
   },
   characterSelectButton: {
     position: "absolute",
     top: 70,
     left: 10,
-    backgroundColor: "#FFCC00",
     padding: 10,
     borderRadius: 10,
     zIndex: 10,
@@ -209,7 +240,6 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.5)",
   },
   modalContent: {
-    backgroundColor: "#fff",
     padding: 20,
     borderRadius: 10,
     width: 300,
@@ -233,7 +263,6 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     marginTop: 10,
-    backgroundColor: "#FF5733",
     padding: 10,
     borderRadius: 10,
   },
