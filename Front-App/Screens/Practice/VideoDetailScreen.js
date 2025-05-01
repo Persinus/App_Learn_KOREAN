@@ -1,132 +1,132 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Dimensions, Button, TouchableOpacity } from 'react-native';
-import YoutubeIframe from 'react-native-youtube-iframe';
-import { useNavigation } from '@react-navigation/native';
-import { Animated } from 'react-native';
-const { width } = Dimensions.get('window');
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { FontAwesome5 } from '@expo/vector-icons';
+import { useSelector } from 'react-redux';
 
-const VideoDetailScreen = ({ route }) => {
-  const { youtubeId, title, question, jsonSub, jsonOrigin } = route.params;
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [subtitle, setSubtitle] = useState('');
-  const [subtitleOrigin, setSubtitleOrigin] = useState('');
-  const [isVideoEnded, setIsVideoEnded] = useState(false);
-  const playerRef = useRef(null);
-  const navigation = useNavigation();
-  const [subtitleAnim] = useState(new Animated.Value(0));
-  useEffect(() => {
-    const interval = setInterval(async () => {
-      if (playerRef.current) {
-        const time = await playerRef.current.getCurrentTime();
-        setCurrentTime(time);
-      }
-    }, 1000);
+const EditInfoUser = ({ navigation, route }) => {
+  const { user } = route.params;
+  const [name, setName] = useState(user?.name || '');
+  const [email, setEmail] = useState(user?.email || '');
+  const [phone, setPhone] = useState(user?.phone || '');
+  const [level, setLevel] = useState(user?.level || '');
 
-    return () => clearInterval(interval);
-  }, []);
+  const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
 
-  useEffect(() => {
-    const getDuration = async () => {
-      if (playerRef.current) {
-        const videoDuration = await playerRef.current.getDuration();
-        setDuration(videoDuration);
-      }
-    };
-    getDuration();
-  }, []);
-
-useEffect(() => {
-  if (jsonOrigin) {
-    const currentOriginSub = jsonOrigin.find(
-      (sub) => currentTime >= sub.start && currentTime <= sub.end
-    );
-    setSubtitleOrigin(currentOriginSub ? currentOriginSub.text : '');
-  }
-
-  if (jsonSub) {
-    const currentSub = jsonSub.find(
-      (sub) => currentTime >= sub.start && currentTime <= sub.end
-    );
-    setSubtitle(currentSub ? currentSub.text : '');
-
-    // Reset opacity và chạy animation
-    subtitleAnim.setValue(0);
-    Animated.timing(subtitleAnim, {
-      toValue: 1,
-      duration: 500, // Thời gian hiệu ứng
-      useNativeDriver: true,
-    }).start();
-  }
-}, [currentTime, jsonSub, jsonOrigin, subtitleAnim]);
-
-  const handleVideoStateChange = (state) => {
-    if (state === 'ended') {
-      setIsVideoEnded(true);
-    }
+  const dynamicStyles = {
+    container: {
+      backgroundColor: isDarkMode ? '#0099FF' : '#fff',
+    },
+    header: {
+      backgroundColor: isDarkMode ? '#6666FF' : '#fff',
+      borderBottomColor: isDarkMode ? '#444' : '#eee',
+    },
+    headerTitle: {
+      color: isDarkMode ? '#fff' : '#333',
+    },
+    backButton: {
+      backgroundColor: isDarkMode ? '#444' : '#f5f5f5',
+    },
+    changeAvatarButton: {
+      backgroundColor: isDarkMode ? '#444' : '#f5f5f5',
+    },
+    changeAvatarText: {
+      color: isDarkMode ? '#FFD700' : '#4b46f1',
+    },
+    label: {
+      color: isDarkMode ? '#ccc' : '#666',
+    },
+    input: {
+      backgroundColor: isDarkMode ? '#444' : '#fff',
+      borderColor: isDarkMode ? '#555' : '#ddd',
+      color: isDarkMode ? '#fff' : '#333',
+    },
+    saveButton: {
+      backgroundColor: isDarkMode ? '#FFD700' : '#4b46f1',
+    },
+    saveButtonText: {
+      color: isDarkMode ? '#000' : '#fff',
+    },
   };
-  useEffect(() => {
-    Animated.timing(subtitleAnim, {
-      toValue: 1,
-      duration: 500,
-      useNativeDriver: true,
-    }).start();
-  }, [subtitle]);
-  
-  const isLast10Seconds = duration > 0 && duration - currentTime <= 10 && currentTime > 0;
+
+  const handleSave = () => {
+    // Logic lưu thông tin ở đây
+    navigation.goBack();
+  };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.songTitle}>🎵 {title} 🎵</Text>
-      <Text style={styles.question}>{question}</Text>
-
-      <View style={styles.videoContainer}>
-      <YoutubeIframe
-  ref={playerRef}
-  videoId={youtubeId}
-  height={180}
-  onChangeState={handleVideoStateChange}
-  play={true}
-  forceAndroidAutoplay={true} // Bắt buộc autoplay trên Android
-  webViewProps={{
-    allowsInlineMediaPlayback: true,
-  }}
-  playerParams={{
-    controls: 0, // Ẩn nút điều khiển
-    modestbranding: 1, // Ẩn logo YouTube
-    showinfo: 0, // Ẩn thông tin video
-    rel: 0, // Không hiển thị video liên quan
-  }}
-/>
-
+    <View style={[styles.container, dynamicStyles.container]}>
+      <View style={[styles.header, dynamicStyles.header]}>
+        <View style={styles.headerMain}>
+          <TouchableOpacity 
+            style={[styles.backButton, dynamicStyles.backButton]}
+            onPress={() => navigation.goBack()}
+          >
+            <FontAwesome5 name="arrow-left" size={16} color={isDarkMode ? '#fff' : '#4b46f1'} />
+          </TouchableOpacity>
+          <Text style={[styles.headerTitle, dynamicStyles.headerTitle]}>Chỉnh sửa thông tin</Text>
+        </View>
       </View>
 
-      {subtitleOrigin ? (
-        <Text style={[styles.subtitle, styles.subtitleOrigin]}>{subtitleOrigin}</Text>
-      ) : null}
-
-      {subtitle ? (
-        <Text style={[styles.subtitle, styles.subtitlePrimary]}>{subtitle}</Text>
-      ) : null}
-
-      {isVideoEnded ? (
-        <View style={styles.buttonContainer}>
-          <Button
-            title="Trả lời câu hỏi"
-            color="#6C4AB6"
-            onPress={() => navigation.navigate('QuestionScreen', { question })}
+      <ScrollView style={styles.content}>
+        <View style={styles.avatarSection}>
+          <Image 
+            source={{ uri: user?.profilePicture }} 
+            style={styles.avatar}
           />
+          <TouchableOpacity style={[styles.changeAvatarButton, dynamicStyles.changeAvatarButton]}>
+            <Text style={[styles.changeAvatarText, dynamicStyles.changeAvatarText]}>Thay đổi ảnh</Text>
+          </TouchableOpacity>
         </View>
-      ) : null}
 
-      {isLast10Seconds && !isVideoEnded && (
-        <TouchableOpacity
-          style={styles.floatingButton}
-          onPress={() => navigation.navigate('QuestionScreen', { question })}
-        >
-          <Text style={styles.floatingButtonText}>Trả lời</Text>
-        </TouchableOpacity>
-      )}
+        <View style={styles.inputSection}>
+          <View style={styles.inputGroup}>
+            <Text style={[styles.label, dynamicStyles.label]}>Họ và tên</Text>
+            <TextInput
+              style={[styles.input, dynamicStyles.input]}  
+              value={name}
+              onChangeText={setName}
+              placeholder="Nhập họ và tên"
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={[styles.label, dynamicStyles.label]}>Email</Text>
+            <TextInput
+              style={[styles.input, dynamicStyles.input]}
+              value={email}
+              onChangeText={setEmail}
+              placeholder="Nhập email"
+              keyboardType="email-address"
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={[styles.label, dynamicStyles.label]}>Số điện thoại</Text>
+            <TextInput
+              style={[styles.input, dynamicStyles.input]}
+              value={phone}
+              onChangeText={setPhone}
+              placeholder="Nhập số điện thoại"
+              keyboardType="phone-pad"
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={[styles.label, dynamicStyles.label]}>Cấp độ</Text>
+            <TextInput
+              style={[styles.input, dynamicStyles.input]}
+              value={level}
+              onChangeText={setLevel}
+              placeholder="Chọn cấp độ"
+              editable={false}
+            />
+          </View>
+        </View>
+      </ScrollView>
+
+      <TouchableOpacity style={[styles.saveButton, dynamicStyles.saveButton]} onPress={handleSave}>
+        <Text style={[styles.saveButtonText, dynamicStyles.saveButtonText]}>Lưu thay đổi</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -134,88 +134,74 @@ useEffect(() => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1E1E2C', // Màu nền tối để nổi bật
+  },
+  header: {
     padding: 16,
+    paddingTop: 45,
+    borderBottomWidth: 1,
+  },
+  headerMain: {
+    flexDirection: 'row',
     alignItems: 'center',
   },
-  songTitle: {
+  backButton: {
+    padding: 8,
+    marginRight: 12,
+    borderRadius: 10,
+  },
+  headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#6A0DAD',
+  },
+  content: {
+    flex: 1,
+    padding: 20,
+  },
+  avatarSection: {
+    alignItems: 'center',
+    marginBottom: 30,
+  },
+  avatar: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 10,
+  },
+  changeAvatarButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+  },
+  changeAvatarText: {
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  inputSection: {
     marginBottom: 20,
-    textAlign: 'center',
-    backgroundColor: '#FFD700', // Màu vàng nền để nổi bật
-    padding: 10,
-    borderRadius: 10,
-    textShadowColor: '#D1C4E9',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 3,
-    elevation: 5,
   },
-  question: {
-    fontSize: 18,
-    fontStyle: 'italic',
-    color: '#6A0DAD',
-    marginBottom: 20,
-    textAlign: 'center',
-    backgroundColor: '#E0BBE4', // Nền nhẹ để nổi bật câu hỏi
-    padding: 8,
+  inputGroup: {
+    marginBottom: 16,
+  },
+  label: {
+    fontSize: 14,
+    marginBottom: 8,
+  },
+  input: {
+    borderWidth: 1,
     borderRadius: 8,
-    elevation: 3,
-  },
-  videoContainer: {
-    width: width * 0.9,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 15,
-    overflow: 'hidden',
-    shadowColor: '#6C4AB6',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.4,
-    shadowRadius: 6,
-    elevation: 8,
-    borderColor: '#FFD700', // Viền vàng
-  },
-  subtitle: {
-    fontSize: 22,
-    textAlign: 'center',
-    marginVertical: 20, // Giảm khoảng cách dọc
-    fontWeight: 'bold',
-    padding: 10, // Giảm padding để phụ đề gọn hơn
-    borderRadius: 8,
-    elevation: 3,
-  },
-  subtitlePrimary: {
-    backgroundColor: '#ADD8E6', // Nền xanh nhẹ
-    color: '#0000FF', // Chữ Việt màu xanh
-    fontSize: 20,
-  },
-  subtitleOrigin: {
-    backgroundColor: '#FFFACD', // Nền vàng nhẹ
-    color: '#FFD700', // Chữ Hàn màu vàng
-    fontSize: 20,
-  },
-  buttonContainer: {
-    marginTop: 20,
-    width: '80%',
-  },
-  floatingButton: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    backgroundColor: '#6C4AB6',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 30,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: 5,
-  },
-  floatingButtonText: {
-    color: '#FFF',
-    fontWeight: 'bold',
+    padding: 12,
     fontSize: 16,
   },
+  saveButton: {
+    margin: 16,
+    padding: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  saveButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
 });
-export default VideoDetailScreen;
+
+export default EditInfoUser;
