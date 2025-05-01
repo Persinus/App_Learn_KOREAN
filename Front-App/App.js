@@ -2,26 +2,32 @@ import React from 'react';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Provider, useSelector } from 'react-redux';
+import { SafeAreaView, StyleSheet } from 'react-native';
 
 import MainNavigator from './Navigation/AppNavigator';
 import SplashStack from './Navigation/SplashStack';
 import AuthStack from './Navigation/AuthStack';
-import store from './Store/Store'; // Đảm bảo đường dẫn đúng
+import store from './Store/Store';
 
 const RootStack = createStackNavigator();
 
 function AppContent() {
-  // Lấy trạng thái Dark Mode từ Redux store
   const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+  const language = useSelector((state) => state.language.language); // 👈 lấy ngôn ngữ từ Redux
+
+  // Có thể in log để debug (nếu cần)
+  console.log('Language đang dùng:', language);
 
   return (
-    <NavigationContainer theme={isDarkMode ? DarkTheme : DefaultTheme}>
-      <RootStack.Navigator screenOptions={{ headerShown: false }}>
-        <RootStack.Screen name="SplashStack" component={SplashStack} />
-        <RootStack.Screen name="AuthStack" component={AuthStack} />
-        <RootStack.Screen name="MainNavigator" component={MainNavigator} />
-      </RootStack.Navigator>
-    </NavigationContainer>
+    <SafeAreaView style={[styles.container, { backgroundColor: isDarkMode ? '#000' : '#fff' }]}>
+      <NavigationContainer theme={isDarkMode ? DarkTheme : DefaultTheme}>
+        <RootStack.Navigator screenOptions={{ headerShown: false }}>
+          <RootStack.Screen name="SplashStack" component={SplashStack} />
+          <RootStack.Screen name="AuthStack" component={AuthStack} />
+          <RootStack.Screen name="MainNavigator" component={MainNavigator} />
+        </RootStack.Navigator>
+      </NavigationContainer>
+    </SafeAreaView>
   );
 }
 
@@ -32,3 +38,9 @@ export default function App() {
     </Provider>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});

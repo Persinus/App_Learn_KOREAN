@@ -16,22 +16,22 @@ import headerStyles from '../../Styles/HeaderStyles';
 const paymentMethods = [
   {
     id: 'momo',
-    name: 'MoMo',
+    name: { vn: 'MoMo', en: 'MoMo' },
     icon: '🟣',
-    placeholder: 'Số điện thoại MoMo'
+    placeholder: { vn: 'Số điện thoại MoMo', en: 'MoMo Phone Number' },
   },
   {
     id: 'bank',
-    name: 'Chuyển khoản ngân hàng',
+    name: { vn: 'Chuyển khoản ngân hàng', en: 'Bank Transfer' },
     icon: '🏦',
-    placeholder: 'Số tài khoản ngân hàng'
+    placeholder: { vn: 'Số tài khoản ngân hàng', en: 'Bank Account Number' },
   },
   {
     id: 'card',
-    name: 'Thẻ tín dụng/ghi nợ',
+    name: { vn: 'Thẻ tín dụng/ghi nợ', en: 'Credit/Debit Card' },
     icon: '💳',
-    placeholder: 'Số thẻ'
-  }
+    placeholder: { vn: 'Số thẻ', en: 'Card Number' },
+  },
 ];
 
 const LinkingPaid = ({ route, navigation }) => {
@@ -39,20 +39,52 @@ const LinkingPaid = ({ route, navigation }) => {
   const [selectedMethod, setSelectedMethod] = useState(null);
   const [paymentInfo, setPaymentInfo] = useState('');
   const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+  const language = useSelector((state) => state.language.language);
+
+  const translations = {
+    vn: {
+      payment: 'Thanh toán',
+      selectMethod: 'Chọn phương thức thanh toán',
+      payNow: 'Thanh toán ngay',
+      alertTitle: 'Thông báo',
+      alertMessage: 'Vui lòng chọn phương thức thanh toán',
+      alertInfo: 'Vui lòng nhập thông tin thanh toán',
+      confirmTitle: 'Xác nhận thanh toán',
+      confirmMessage: 'Bạn có chắc chắn muốn thanh toán {price} qua {method}?',
+      successTitle: 'Thành công',
+      successMessage: 'Thanh toán thành công! Bạn đã mua khóa học.',
+      goToCourse: 'Vào học ngay',
+    },
+    en: {
+      payment: 'Payment',
+      selectMethod: 'Select Payment Method',
+      payNow: 'Pay Now',
+      alertTitle: 'Notice',
+      alertMessage: 'Please select a payment method',
+      alertInfo: 'Please enter payment information',
+      confirmTitle: 'Confirm Payment',
+      confirmMessage: 'Are you sure you want to pay {price} via {method}?',
+      successTitle: 'Success',
+      successMessage: 'Payment successful! You have purchased the course.',
+      goToCourse: 'Go to Course',
+    },
+  };
+
+  const t = translations[language];
 
   const dynamicStyles = {
     container: {
       flex: 1,
-      backgroundColor: isDarkMode ? '#0099FF' : '#f8f9fa', // Nền xanh cho Dark Mode
+      backgroundColor: isDarkMode ? '#0099FF' : '#f8f9fa',
     },
     header: {
-      backgroundColor: isDarkMode ? '#6666FF' : '#4b46f1', // Màu tím cho header
+      backgroundColor: isDarkMode ? '#6666FF' : '#4b46f1',
     },
     headerTitle: {
       color: isDarkMode ? '#fff' : '#fff',
     },
     courseInfo: {
-      backgroundColor: isDarkMode ? '#6666FF' : '#f8f4ff', // Màu tím cho thông tin khóa học
+      backgroundColor: isDarkMode ? '#6666FF' : '#f8f4ff',
     },
     courseName: {
       color: isDarkMode ? '#fff' : '#333',
@@ -92,37 +124,37 @@ const LinkingPaid = ({ route, navigation }) => {
 
   const handlePayment = () => {
     if (!selectedMethod) {
-      Alert.alert('Thông báo', 'Vui lòng chọn phương thức thanh toán');
+      Alert.alert(t.alertTitle, t.alertMessage);
       return;
     }
     if (!paymentInfo.trim()) {
-      Alert.alert('Thông báo', 'Vui lòng nhập thông tin thanh toán');
+      Alert.alert(t.alertTitle, t.alertInfo);
       return;
     }
 
     Alert.alert(
-      'Xác nhận thanh toán',
-      `Bạn có chắc chắn muốn thanh toán ${course.price} qua ${selectedMethod.name}?`,
+      t.confirmTitle,
+      t.confirmMessage.replace('{price}', course.price).replace('{method}', selectedMethod.name[language]),
       [
         {
-          text: 'Hủy',
-          style: 'cancel'
+          text: 'Cancel',
+          style: 'cancel',
         },
         {
-          text: 'Xác nhận',
+          text: 'Confirm',
           onPress: () => {
             Alert.alert(
-              'Thành công',
-              'Thanh toán thành công! Bạn đã mua khóa học.',
+              t.successTitle,
+              t.successMessage,
               [
                 {
-                  text: 'Vào học ngay',
-                  onPress: () => navigation.navigate('JoinCourse', { course })
-                }
+                  text: t.goToCourse,
+                  onPress: () => navigation.navigate('JoinCourse', { course }),
+                },
               ]
             );
-          }
-        }
+          },
+        },
       ]
     );
   };
@@ -137,8 +169,8 @@ const LinkingPaid = ({ route, navigation }) => {
           >
             <FontAwesome5 name="arrow-left" size={16} color="#fff" />
           </TouchableOpacity>
-          <Text style={[headerStyles.title, dynamicStyles.headerTitle]}>Thanh toán</Text>
-          <View style={{width: 40}} />
+          <Text style={[headerStyles.title, dynamicStyles.headerTitle]}>{t.payment}</Text>
+          <View style={{ width: 40 }} />
         </View>
       </View>
 
@@ -151,30 +183,30 @@ const LinkingPaid = ({ route, navigation }) => {
           </View>
         </View>
 
-        <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>Chọn phương thức thanh toán</Text>
-        {paymentMethods.map(method => (
+        <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>{t.selectMethod}</Text>
+        {paymentMethods.map((method) => (
           <TouchableOpacity
             key={method.id}
             style={[
               styles.methodItem,
               dynamicStyles.methodItem,
-              selectedMethod?.id === method.id && dynamicStyles.selectedMethod
+              selectedMethod?.id === method.id && dynamicStyles.selectedMethod,
             ]}
             onPress={() => setSelectedMethod(method)}
           >
             <Text style={styles.methodIcon}>{method.icon}</Text>
-            <Text style={[styles.methodName, dynamicStyles.methodName]}>{method.name}</Text>
+            <Text style={[styles.methodName, dynamicStyles.methodName]}>{method.name[language]}</Text>
           </TouchableOpacity>
         ))}
 
         {selectedMethod && (
           <View style={styles.inputContainer}>
-            <Text style={[styles.inputLabel, dynamicStyles.inputLabel]}>{selectedMethod.placeholder}</Text>
+            <Text style={[styles.inputLabel, dynamicStyles.inputLabel]}>{selectedMethod.placeholder[language]}</Text>
             <TextInput
               style={[styles.input, dynamicStyles.input]}
               value={paymentInfo}
               onChangeText={setPaymentInfo}
-              placeholder={`Nhập ${selectedMethod.placeholder.toLowerCase()}`}
+              placeholder={selectedMethod.placeholder[language]}
               placeholderTextColor={isDarkMode ? '#888' : '#aaa'}
             />
           </View>
@@ -185,7 +217,7 @@ const LinkingPaid = ({ route, navigation }) => {
         style={[styles.payButton, dynamicStyles.payButton]}
         onPress={handlePayment}
       >
-        <Text style={[styles.payButtonText, dynamicStyles.payButtonText]}>Thanh toán ngay</Text>
+        <Text style={[styles.payButtonText, dynamicStyles.payButtonText]}>{t.payNow}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -197,27 +229,27 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 16
+    padding: 16,
   },
   courseInfo: {
     flexDirection: 'row',
     padding: 16,
     borderRadius: 12,
-    marginBottom: 24
+    marginBottom: 24,
   },
   courseImage: {
     width: 80,
     height: 80,
-    borderRadius: 8
+    borderRadius: 8,
   },
   courseDetails: {
     marginLeft: 16,
-    flex: 1
+    flex: 1,
   },
   courseName: {
     fontSize: 16,
     fontWeight: '600',
-    marginBottom: 4
+    marginBottom: 4,
   },
   coursePrice: {
     fontSize: 18,
@@ -226,7 +258,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: '600',
-    marginBottom: 16
+    marginBottom: 16,
   },
   methodItem: {
     flexDirection: 'row',
@@ -241,38 +273,38 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   selectedMethod: {
-    borderWidth: 1
+    borderWidth: 1,
   },
   methodIcon: {
     fontSize: 24,
-    marginRight: 12
+    marginRight: 12,
   },
   methodName: {
     fontSize: 16,
   },
   inputContainer: {
-    marginTop: 24
+    marginTop: 24,
   },
   inputLabel: {
     fontSize: 14,
-    marginBottom: 8
+    marginBottom: 8,
   },
   input: {
     borderWidth: 1,
     borderRadius: 8,
     padding: 12,
-    fontSize: 16
+    fontSize: 16,
   },
   payButton: {
     padding: 16,
     margin: 16,
     borderRadius: 8,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   payButtonText: {
     fontSize: 16,
-    fontWeight: '600'
-  }
+    fontWeight: '600',
+  },
 });
 
 export default LinkingPaid;

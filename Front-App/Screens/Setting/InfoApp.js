@@ -5,6 +5,44 @@ import { useSelector } from 'react-redux';
 
 const InfoApp = ({ navigation }) => {
   const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+  const language = useSelector((state) => state.language.language);
+
+  const translations = {
+    vn: {
+      appInfo: 'Thông tin ứng dụng',
+      introduction: 'Giới thiệu',
+      description: 'Ứng dụng học tiếng Hàn thông minh, giúp người học tiếp cận ngôn ngữ Hàn Quốc một cách hiệu quả.',
+      features: 'Tính năng',
+      support: 'Hỗ trợ',
+      email: 'support@koreanapp.com',
+      website: 'www.koreanapp.com',
+      version: 'Phiên bản 1.0.0',
+      featuresList: [
+        { icon: 'book', text: 'Bài học tương tác' },
+        { icon: 'video', text: 'Học qua video' },
+        { icon: 'gamepad', text: 'Trò chơi học tập' },
+      ],
+      copyright: '© 2024 Korean Learning App',
+    },
+    en: {
+      appInfo: 'App Information',
+      introduction: 'Introduction',
+      description: 'A smart Korean learning app that helps learners effectively approach the Korean language.',
+      features: 'Features',
+      support: 'Support',
+      email: 'support@koreanapp.com',
+      website: 'www.koreanapp.com',
+      version: 'Version 1.0.0',
+      featuresList: [
+        { icon: 'book', text: 'Interactive Lessons' },
+        { icon: 'video', text: 'Learn through Videos' },
+        { icon: 'gamepad', text: 'Educational Games' },
+      ],
+      copyright: '© 2024 Korean Learning App',
+    },
+  };
+
+  const t = translations[language];
 
   const dynamicStyles = {
     container: {
@@ -56,7 +94,7 @@ const InfoApp = ({ navigation }) => {
           >
             <FontAwesome5 name="arrow-left" size={16} color={isDarkMode ? '#fff' : '#4b46f1'} />
           </TouchableOpacity>
-          <Text style={[styles.headerTitle, dynamicStyles.headerTitle]}>Thông tin ứng dụng</Text>
+          <Text style={[styles.headerTitle, dynamicStyles.headerTitle]}>{t.appInfo}</Text>
         </View>
       </View>
 
@@ -67,24 +105,18 @@ const InfoApp = ({ navigation }) => {
             style={styles.appLogo}
           />
           <Text style={[styles.appName, dynamicStyles.appName]}>Korean Learning App</Text>
-          <Text style={[styles.version, dynamicStyles.version]}>Phiên bản 1.0.0</Text>
+          <Text style={[styles.version, dynamicStyles.version]}>{t.version}</Text>
         </View>
 
         <View style={styles.infoContainer}>
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>Giới thiệu</Text>
-            <Text style={[styles.description, dynamicStyles.description]}>
-              Ứng dụng học tiếng Hàn thông minh, giúp người học tiếp cận ngôn ngữ Hàn Quốc một cách hiệu quả.
-            </Text>
+            <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>{t.introduction}</Text>
+            <Text style={[styles.description, dynamicStyles.description]}>{t.description}</Text>
           </View>
 
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>Tính năng</Text>
-            {[
-              { icon: 'book', text: 'Bài học tương tác' },
-              { icon: 'video', text: 'Học qua video' },
-              { icon: 'gamepad', text: 'Trò chơi học tập' },
-            ].map((item, index) => (
+            <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>{t.features}</Text>
+            {t.featuresList.map((item, index) => (
               <View key={index} style={styles.featureItem}>
                 <FontAwesome5 name={item.icon} size={18} color={isDarkMode ? '#fff' : '#4b46f1'} />
                 <Text style={[styles.featureText, dynamicStyles.featureText]}>{item.text}</Text>
@@ -93,20 +125,20 @@ const InfoApp = ({ navigation }) => {
           </View>
 
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>Hỗ trợ</Text>
+            <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>{t.support}</Text>
             <View style={styles.contactItem}>
               <FontAwesome5 name="envelope" size={18} color={isDarkMode ? '#fff' : '#4b46f1'} style={styles.contactIcon} />
-              <Text style={[styles.contactText, dynamicStyles.contactText]}>support@koreanapp.com</Text>
+              <Text style={[styles.contactText, dynamicStyles.contactText]}>{t.email}</Text>
             </View>
             <View style={styles.contactItem}>
               <FontAwesome5 name="globe" size={18} color={isDarkMode ? '#fff' : '#4b46f1'} style={styles.contactIcon} />
-              <Text style={[styles.contactText, dynamicStyles.contactText]}>www.koreanapp.com</Text>
+              <Text style={[styles.contactText, dynamicStyles.contactText]}>{t.website}</Text>
             </View>
           </View>
         </View>
       </ScrollView>
       <Text style={[styles.copyright, dynamicStyles.copyright]}>
-        © 2024 Korean Learning App
+        {t.copyright}
       </Text>
     </View>
   );

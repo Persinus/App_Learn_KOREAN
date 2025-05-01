@@ -136,7 +136,7 @@ const DailyReward = ({ navigation }) => {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: isDarkMode ? '#0099FF' : '#fff' }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: isDarkMode ? '#0099FF' : '#fff' }]}>
       <TouchableOpacity
         style={[styles.backButton, { backgroundColor: isDarkMode ? '#6666FF' : '#4b46f1' }]}
         onPress={() => navigation.goBack()}
@@ -177,7 +177,7 @@ const DailyReward = ({ navigation }) => {
           </TouchableOpacity>
         </View>
       </Modal>
-    </View>
+    </SafeAreaView>
   );
 };
 

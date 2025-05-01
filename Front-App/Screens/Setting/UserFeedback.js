@@ -18,28 +18,52 @@ const UserFeedback = () => {
   const [selectedCategory, setSelectedCategory] = useState('');
 
   const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+  const language = useSelector((state) => state.language.language);
 
-  const categories = [
-    'Lỗi ứng dụng',
-    'Góp ý cải thiện',
-    'Đánh giá nội dung',
-    'Khác'
-  ];
+  const translations = {
+    vn: {
+      feedback: 'Phản hồi',
+      selectCategory: 'Chọn danh mục',
+      categories: ['Lỗi ứng dụng', 'Góp ý cải thiện', 'Đánh giá nội dung', 'Khác'],
+      feedbackContent: 'Nội dung phản hồi',
+      placeholder: 'Nhập nội dung phản hồi của bạn...',
+      submit: 'Gửi phản hồi',
+      success: 'Thành công',
+      successMessage: 'Cảm ơn bạn đã gửi phản hồi!',
+      errorCategory: 'Vui lòng chọn danh mục phản hồi',
+      errorContent: 'Vui lòng nhập nội dung phản hồi',
+    },
+    en: {
+      feedback: 'Feedback',
+      selectCategory: 'Select Category',
+      categories: ['App Bug', 'Improvement Suggestion', 'Content Review', 'Other'],
+      feedbackContent: 'Feedback Content',
+      placeholder: 'Enter your feedback...',
+      submit: 'Submit Feedback',
+      success: 'Success',
+      successMessage: 'Thank you for your feedback!',
+      errorCategory: 'Please select a feedback category',
+      errorContent: 'Please enter feedback content',
+    },
+  };
+
+  const t = translations[language];
+  const categories = t.categories;
 
   const handleSubmit = () => {
     if (!selectedCategory) {
-      Alert.alert('Thông báo', 'Vui lòng chọn danh mục phản hồi');
+      Alert.alert(t.errorCategory);
       return;
     }
     if (!feedback.trim()) {
-      Alert.alert('Thông báo', 'Vui lòng nhập nội dung phản hồi');
+      Alert.alert(t.errorContent);
       return;
     }
 
     // Xử lý gửi feedback ở đây
     Alert.alert(
-      'Thành công',
-      'Cảm ơn bạn đã gửi phản hồi!',
+      t.success,
+      t.successMessage,
       [{ text: 'OK', onPress: () => navigation.goBack() }]
     );
   };
@@ -93,11 +117,11 @@ const UserFeedback = () => {
         >
           <FontAwesome5 name="arrow-left" size={16} color={isDarkMode ? '#fff' : '#4b46f1'} />
         </TouchableOpacity>
-        <Text style={[styles.title, dynamicStyles.title]}>Phản hồi</Text>
+        <Text style={[styles.title, dynamicStyles.title]}>{t.feedback}</Text>
       </View>
 
       <ScrollView style={styles.content}>
-        <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>Chọn danh mục</Text>
+        <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>{t.selectCategory}</Text>
         <View style={styles.categories}>
           {categories.map((category) => (
             <TouchableOpacity
@@ -122,12 +146,12 @@ const UserFeedback = () => {
           ))}
         </View>
 
-        <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>Nội dung phản hồi</Text>
+        <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>{t.feedbackContent}</Text>
         <TextInput
           style={[styles.input, dynamicStyles.input]}
           multiline
           numberOfLines={6}
-          placeholder="Nhập nội dung phản hồi của bạn..."
+          placeholder={t.placeholder}
           placeholderTextColor={isDarkMode ? '#888' : '#aaa'}
           value={feedback}
           onChangeText={setFeedback}
@@ -139,7 +163,7 @@ const UserFeedback = () => {
         style={[styles.submitButton, dynamicStyles.submitButton]} 
         onPress={handleSubmit}
       >
-        <Text style={[styles.submitButtonText, dynamicStyles.submitButtonText]}>Gửi phản hồi</Text>
+        <Text style={[styles.submitButtonText, dynamicStyles.submitButtonText]}>{t.submit}</Text>
       </TouchableOpacity>
     </View>
   );
