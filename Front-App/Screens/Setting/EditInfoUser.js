@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
 
 const EditInfoUser = ({ navigation, route }) => {
   const { user } = route.params;
@@ -10,23 +10,60 @@ const EditInfoUser = ({ navigation, route }) => {
   const [phone, setPhone] = useState(user?.phone || '');
   const [level, setLevel] = useState(user?.level || '');
 
+  const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+
+  const dynamicStyles = {
+    container: {
+      backgroundColor: isDarkMode ? '#0099FF' : '#fff',
+    },
+    header: {
+      backgroundColor: isDarkMode ? '#6666FF' : '#fff',
+      borderBottomColor: isDarkMode ? '#444' : '#eee',
+    },
+    headerTitle: {
+      color: isDarkMode ? '#fff' : '#333',
+    },
+    backButton: {
+      backgroundColor: isDarkMode ? '#444' : '#f5f5f5',
+    },
+    changeAvatarButton: {
+      backgroundColor: isDarkMode ? '#444' : '#f5f5f5',
+    },
+    changeAvatarText: {
+      color: isDarkMode ? '#FFD700' : '#4b46f1',
+    },
+    label: {
+      color: isDarkMode ? '#ccc' : '#666',
+    },
+    input: {
+      backgroundColor: isDarkMode ? '#444' : '#fff',
+      borderColor: isDarkMode ? '#555' : '#ddd',
+      color: isDarkMode ? '#fff' : '#333',
+    },
+    saveButton: {
+      backgroundColor: isDarkMode ? '#FFD700' : '#4b46f1',
+    },
+    saveButtonText: {
+      color: isDarkMode ? '#000' : '#fff',
+    },
+  };
+
   const handleSave = () => {
     // Logic lưu thông tin ở đây
-    // Sau khi lưu thành công thì quay lại
     navigation.goBack();
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
+    <View style={[styles.container, dynamicStyles.container]}>
+      <View style={[styles.header, dynamicStyles.header]}>
         <View style={styles.headerMain}>
           <TouchableOpacity 
-            style={styles.backButton}
+            style={[styles.backButton, dynamicStyles.backButton]}
             onPress={() => navigation.goBack()}
           >
-            <FontAwesome5 name="arrow-left" size={16} color="#4b46f1" />
+            <FontAwesome5 name="arrow-left" size={16} color={isDarkMode ? '#fff' : '#4b46f1'} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Chỉnh sửa thông tin</Text>
+          <Text style={[styles.headerTitle, dynamicStyles.headerTitle]}>Chỉnh sửa thông tin</Text>
         </View>
       </View>
 
@@ -36,16 +73,16 @@ const EditInfoUser = ({ navigation, route }) => {
             source={{ uri: user?.profilePicture }} 
             style={styles.avatar}
           />
-          <TouchableOpacity style={styles.changeAvatarButton}>
-            <Text style={styles.changeAvatarText}>Thay đổi ảnh</Text>
+          <TouchableOpacity style={[styles.changeAvatarButton, dynamicStyles.changeAvatarButton]}>
+            <Text style={[styles.changeAvatarText, dynamicStyles.changeAvatarText]}>Thay đổi ảnh</Text>
           </TouchableOpacity>
         </View>
 
         <View style={styles.inputSection}>
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Họ và tên</Text>
+            <Text style={[styles.label, dynamicStyles.label]}>Họ và tên</Text>
             <TextInput
-              style={styles.input}  
+              style={[styles.input, dynamicStyles.input]}  
               value={name}
               onChangeText={setName}
               placeholder="Nhập họ và tên"
@@ -53,9 +90,9 @@ const EditInfoUser = ({ navigation, route }) => {
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Email</Text>
+            <Text style={[styles.label, dynamicStyles.label]}>Email</Text>
             <TextInput
-              style={styles.input}
+              style={[styles.input, dynamicStyles.input]}
               value={email}
               onChangeText={setEmail}
               placeholder="Nhập email"
@@ -64,9 +101,9 @@ const EditInfoUser = ({ navigation, route }) => {
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Số điện thoại</Text>
+            <Text style={[styles.label, dynamicStyles.label]}>Số điện thoại</Text>
             <TextInput
-              style={styles.input}
+              style={[styles.input, dynamicStyles.input]}
               value={phone}
               onChangeText={setPhone}
               placeholder="Nhập số điện thoại"
@@ -75,9 +112,9 @@ const EditInfoUser = ({ navigation, route }) => {
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Cấp độ</Text>
+            <Text style={[styles.label, dynamicStyles.label]}>Cấp độ</Text>
             <TextInput
-              style={styles.input}
+              style={[styles.input, dynamicStyles.input]}
               value={level}
               onChangeText={setLevel}
               placeholder="Chọn cấp độ"
@@ -87,8 +124,8 @@ const EditInfoUser = ({ navigation, route }) => {
         </View>
       </ScrollView>
 
-      <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-        <Text style={styles.saveButtonText}>Lưu thay đổi</Text>
+      <TouchableOpacity style={[styles.saveButton, dynamicStyles.saveButton]} onPress={handleSave}>
+        <Text style={[styles.saveButtonText, dynamicStyles.saveButtonText]}>Lưu thay đổi</Text>
       </TouchableOpacity>
     </View>
   );
@@ -97,14 +134,11 @@ const EditInfoUser = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   header: {
     padding: 16,
     paddingTop: 45,
-    backgroundColor: '#fff',
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
   },
   headerMain: {
     flexDirection: 'row',
@@ -113,13 +147,11 @@ const styles = StyleSheet.create({
   backButton: {
     padding: 8,
     marginRight: 12,
-    backgroundColor: '#f5f5f5',
     borderRadius: 10,
   },
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
   },
   content: {
     flex: 1,
@@ -139,10 +171,8 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 20,
-    backgroundColor: '#f5f5f5',
   },
   changeAvatarText: {
-    color: '#4b46f1',
     fontSize: 14,
     fontWeight: '500',
   },
@@ -154,27 +184,21 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    color: '#666',
     marginBottom: 8,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ddd',
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
-    color: '#333',
-    backgroundColor: '#fff',
   },
   saveButton: {
     margin: 16,
-    backgroundColor: '#4b46f1',
     padding: 16,
     borderRadius: 8,
     alignItems: 'center',
   },
   saveButtonText: {
-    color: '#fff',
     fontSize: 16,
     fontWeight: '600',
   },
