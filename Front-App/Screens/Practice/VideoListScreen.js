@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { useSelector } from 'react-redux';
 
 // Dữ liệu video
 const movieVideos = [
@@ -21,57 +22,91 @@ const musicVideos = [
   },
 ];
 
-const VideoList = ({ videos, navigation }) => (
-  <View style={styles.container}>
-    {videos.map((video) => (
-      <TouchableOpacity
-        key={video.id}
-        style={styles.card}
-        onPress={() => navigation.navigate('VideoDetailScreen', {
-          youtubeId: video.youtubeId,
-          title: video.title,
-          question: video.question,
-          jsonSub: video.jsonSub, // 🟢 Truyền JSON phụ đề tiếng Việt
-          jsonOrigin: video.jsonOrigin, // 🔵 Truyền JSON phụ đề tiếng Hàn
-        })}
-      >
-        <Image source={{ uri: video.thumbnail }} style={styles.thumbnail} />
-        <View style={styles.cardContent}>
-          <Text style={styles.title}>{video.title}</Text>
-          <Text style={styles.question}>{video.question}</Text>
-        </View>
-      </TouchableOpacity>
-    ))}
-  </View>
-);
+const VideoList = ({ videos, navigation }) => {
+  const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+
+  const dynamicStyles = {
+    container: {
+      backgroundColor: isDarkMode ? '#0099FF' : '#f8f9fa',
+    },
+    card: {
+      backgroundColor: isDarkMode ? '#444' : '#fff',
+    },
+    title: {
+      color: isDarkMode ? '#fff' : '#333',
+    },
+    question: {
+      color: isDarkMode ? '#ccc' : '#666',
+    },
+  };
+
+  return (
+    <View style={[styles.container, dynamicStyles.container]}>
+      {videos.map((video) => (
+        <TouchableOpacity
+          key={video.id}
+          style={[styles.card, dynamicStyles.card]}
+          onPress={() => navigation.navigate('VideoDetailScreen', {
+            youtubeId: video.youtubeId,
+            title: video.title,
+            question: video.question,
+            jsonSub: video.jsonSub, // 🟢 Truyền JSON phụ đề tiếng Việt
+            jsonOrigin: video.jsonOrigin, // 🔵 Truyền JSON phụ đề tiếng Hàn
+          })}
+        >
+          <Image source={{ uri: video.thumbnail }} style={styles.thumbnail} />
+          <View style={styles.cardContent}>
+            <Text style={[styles.title, dynamicStyles.title]}>{video.title}</Text>
+            <Text style={[styles.question, dynamicStyles.question]}>{video.question}</Text>
+          </View>
+        </TouchableOpacity>
+      ))}
+    </View>
+  );
+};
 
 const Tab = createMaterialTopTabNavigator();
 
-const VideoListScreen = ({ navigation }) => (
-  <Tab.Navigator
-    screenOptions={{
-      tabBarStyle: { backgroundColor: '#4b46f1' },
-      tabBarActiveTintColor: '#fff',
-      tabBarInactiveTintColor: '#ccc',
-      tabBarIndicatorStyle: { backgroundColor: '#fff' },
-    }}
-  >
-    <Tab.Screen name="Phim">
-      {() => <VideoList videos={movieVideos} navigation={navigation} />}
-    </Tab.Screen>
-    <Tab.Screen name="Nhạc">
-      {() => <VideoList videos={musicVideos} navigation={navigation} />}
-    </Tab.Screen>
-  </Tab.Navigator>
-);
+const VideoListScreen = ({ navigation }) => {
+  const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+
+  const dynamicStyles = {
+    tabBarStyle: {
+      backgroundColor: isDarkMode ? '#444' : '#4b46f1',
+    },
+    tabBarActiveTintColor: isDarkMode ? '#FFD700' : '#fff',
+    tabBarInactiveTintColor: isDarkMode ? '#ccc' : '#ccc',
+    tabBarIndicatorStyle: {
+      backgroundColor: isDarkMode ? '#FFD700' : '#fff',
+    },
+  };
+
+  return (
+    <Tab.Navigator
+      screenOptions={{
+        tabBarStyle: dynamicStyles.tabBarStyle,
+        tabBarActiveTintColor: dynamicStyles.tabBarActiveTintColor,
+        tabBarInactiveTintColor: dynamicStyles.tabBarInactiveTintColor,
+        tabBarIndicatorStyle: dynamicStyles.tabBarIndicatorStyle,
+      }}
+    >
+      <Tab.Screen name="Phim">
+        {() => <VideoList videos={movieVideos} navigation={navigation} />}
+      </Tab.Screen>
+      <Tab.Screen name="Nhạc">
+        {() => <VideoList videos={musicVideos} navigation={navigation} />}
+      </Tab.Screen>
+    </Tab.Navigator>
+  );
+};
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f8f9fa', padding: 16 },
-  card: { flexDirection: 'row', backgroundColor: '#fff', borderRadius: 10, marginBottom: 15, overflow: 'hidden', elevation: 4 },
+  container: { flex: 1, padding: 16 },
+  card: { flexDirection: 'row', borderRadius: 10, marginBottom: 15, overflow: 'hidden', elevation: 4 },
   thumbnail: { width: 120, height: 80 },
   cardContent: { flex: 1, padding: 10, justifyContent: 'center' },
-  title: { fontSize: 18, fontWeight: 'bold', color: '#333', marginBottom: 5 },
-  question: { fontSize: 14, color: '#666' },
+  title: { fontSize: 18, fontWeight: 'bold', marginBottom: 5 },
+  question: { fontSize: 14 },
 });
 
 export default VideoListScreen;
