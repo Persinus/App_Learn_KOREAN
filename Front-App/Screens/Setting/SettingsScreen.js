@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -10,9 +10,11 @@ import {
 import { FontAwesome5, Ionicons } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleDarkMode } from '../../Store/DarkMode';
+import { toggleLanguage } from '../../Store/Language';
 
 const SettingsScreen = ({ navigation }) => {
   const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+  const language = useSelector((state) => state.language.language);
   const dispatch = useDispatch();
 
   const dynamicStyles = {
@@ -32,41 +34,64 @@ const SettingsScreen = ({ navigation }) => {
     },
   };
 
+  const translations = {
+    vn: {
+      appSettings: 'Cài đặt ứng dụng',
+      notifications: 'Thông báo',
+      location: 'Vị trí',
+      darkMode: 'Giao diện tối',
+      language: 'Ngôn ngữ',
+      feedback: 'Phản hồi',
+      appInfo: 'Thông tin ứng dụng',
+    },
+    en: {
+      appSettings: 'App Settings',
+      notifications: 'Notifications',
+      location: 'Location',
+      darkMode: 'Dark Mode',
+      language: 'Language',
+      feedback: 'Feedback',
+      appInfo: 'App Info',
+    },
+  };
+
+  const t = translations[language];
+
   return (
     <ScrollView style={dynamicStyles.container}>
       <View style={[styles.settingsGroup, dynamicStyles.settingsGroup]}>
         <Text style={[styles.groupTitle, dynamicStyles.groupTitle]}>
-          Cài đặt ứng dụng
+          {t.appSettings}
         </Text>
 
-        {/* Thông báo */}
+        {/* Notifications */}
         <View style={styles.settingItem}>
           <View style={styles.settingLabel}>
             <Ionicons name="notifications-outline" size={20} color="#4b46f1" />
             <Text style={[styles.settingText, dynamicStyles.settingText]}>
-              Thông báo
+              {t.notifications}
             </Text>
           </View>
           <Switch value={true} onValueChange={() => {}} />
         </View>
 
-        {/* Vị trí */}
+        {/* Location */}
         <View style={styles.settingItem}>
           <View style={styles.settingLabel}>
             <Ionicons name="location-outline" size={20} color="#4b46f1" />
             <Text style={[styles.settingText, dynamicStyles.settingText]}>
-              Vị trí
+              {t.location}
             </Text>
           </View>
           <Switch value={false} onValueChange={() => {}} />
         </View>
 
-        {/* Giao diện tối */}
+        {/* Dark Mode */}
         <View style={styles.settingItem}>
           <View style={styles.settingLabel}>
             <Ionicons name="moon-outline" size={20} color="#4b46f1" />
             <Text style={[styles.settingText, dynamicStyles.settingText]}>
-              Giao diện tối
+              {t.darkMode}
             </Text>
           </View>
           <Switch
@@ -77,7 +102,23 @@ const SettingsScreen = ({ navigation }) => {
           />
         </View>
 
-        {/* Phản hồi */}
+        {/* Language */}
+        <View style={styles.settingItem}>
+          <View style={styles.settingLabel}>
+            <Ionicons name="language-outline" size={20} color="#4b46f1" />
+            <Text style={[styles.settingText, dynamicStyles.settingText]}>
+              {t.language}
+            </Text>
+          </View>
+          <Switch
+            value={language === 'en'}
+            onValueChange={() => dispatch(toggleLanguage())}
+            thumbColor={language === 'en' ? '#fff' : '#000'}
+            trackColor={{ false: '#767577', true: '#81b0ff' }}
+          />
+        </View>
+
+        {/* Feedback */}
         <TouchableOpacity
           style={styles.settingItem}
           onPress={() => navigation.navigate('UserFeedback')}
@@ -85,13 +126,13 @@ const SettingsScreen = ({ navigation }) => {
           <View style={styles.settingLabel}>
             <Ionicons name="chatbubble-outline" size={20} color="#4b46f1" />
             <Text style={[styles.settingText, dynamicStyles.settingText]}>
-              Phản hồi
+              {t.feedback}
             </Text>
           </View>
           <FontAwesome5 name="chevron-right" size={16} color="#666" />
         </TouchableOpacity>
 
-        {/* Thông tin ứng dụng */}
+        {/* App Info */}
         <TouchableOpacity
           style={styles.settingItem}
           onPress={() => navigation.navigate('InfoApp')}
@@ -99,7 +140,7 @@ const SettingsScreen = ({ navigation }) => {
           <View style={styles.settingLabel}>
             <Ionicons name="information-circle-outline" size={20} color="#4b46f1" />
             <Text style={[styles.settingText, dynamicStyles.settingText]}>
-              Thông tin ứng dụng
+              {t.appInfo}
             </Text>
           </View>
           <FontAwesome5 name="chevron-right" size={16} color="#666" />

@@ -70,6 +70,94 @@ const subscriptionOptions = [
 
 const PracticeScreen = ({ navigation }) => {
   const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+  const language = useSelector((state) => state.language.language);
+
+  const translations = {
+    vn: {
+      header: "📚 Gói đăng ký",
+      subscriptionOptions: [
+        {
+          title: "Bài học hàng tháng",
+          description: "Truy cập tất cả các bài học và tài nguyên trong một tháng.",
+        },
+        {
+          title: "Mini Games",
+          description: "Học thông qua các trò chơi tương tác thú vị.",
+        },
+        {
+          title: "Thư viện Video",
+          description: "Học qua video K-pop và phim Hàn Quốc có phụ đề.",
+        },
+        {
+          title: "Phần thưởng",
+          description: "Nhận thưởng đăng nhập và thành tích học tập.",
+        },
+        {
+          title: "Thách đấu",
+          description: "Thi đấu với bạn bè và tham gia giải đấu hàng tuần.",
+        },
+        {
+          title: "Daily Rewards",
+          description: "Đăng nhập hàng ngày để nhận thưởng.",
+        },
+        {
+          title: "Milestones",
+          description: "Đạt cột mốc để nhận phần thưởng đặc biệt.",
+        },
+        {
+          title: "PvP Arena",
+          description: "Thách đấu với người chơi khác.",
+        },
+        {
+          title: "Tournament",
+          description: "Tham gia giải đấu tuần để nhận thưởng lớn.",
+        },
+      ],
+    },
+    en: {
+      header: "📚 Subscription Plans",
+      subscriptionOptions: [
+        {
+          title: "Monthly Lessons",
+          description: "Access all lessons and resources for one month.",
+        },
+        {
+          title: "Mini Games",
+          description: "Learn through fun interactive games.",
+        },
+        {
+          title: "Video Library",
+          description: "Learn through K-pop videos and Korean movies with subtitles.",
+        },
+        {
+          title: "Rewards",
+          description: "Earn login rewards and learning achievements.",
+        },
+        {
+          title: "Challenges",
+          description: "Compete with friends and join weekly tournaments.",
+        },
+        {
+          title: "Daily Rewards",
+          description: "Log in daily to claim rewards.",
+        },
+        {
+          title: "Milestones",
+          description: "Reach milestones to earn special rewards.",
+        },
+        {
+          title: "PvP Arena",
+          description: "Challenge other players.",
+        },
+        {
+          title: "Tournament",
+          description: "Join weekly tournaments to win big rewards.",
+        },
+      ],
+    },
+  };
+
+  const t = translations[language];
 
   const dynamicStyles = {
     container: {
@@ -97,17 +185,17 @@ const PracticeScreen = ({ navigation }) => {
 
   return (
     <View style={[styles.container, dynamicStyles.container]}>
-      <Text style={[styles.header, dynamicStyles.header]}>📚 Subscription Plans</Text>
+      <Text style={[styles.header, dynamicStyles.header]}>{t.header}</Text>
       <FlatList
-        data={subscriptionOptions}
+        data={t.subscriptionOptions}
         keyExtractor={(item) => item.title}
-        renderItem={({ item }) => (
-          <TouchableOpacity 
-            style={[styles.card, dynamicStyles.card, { backgroundColor: item.color }]} 
-            onPress={() => item.onPress && item.onPress(navigation)}
+        renderItem={({ item, index }) => (
+          <TouchableOpacity
+            style={[styles.card, dynamicStyles.card, { backgroundColor: subscriptionOptions[index].color }]}
+            onPress={() => subscriptionOptions[index].onPress && subscriptionOptions[index].onPress(navigation)}
             activeOpacity={0.7}
           >
-            <Image source={item.icon} style={styles.icon} />
+            <Image source={subscriptionOptions[index].icon} style={styles.icon} />
             <View style={styles.textContainer}>
               <Text style={[styles.title, dynamicStyles.title]}>{item.title}</Text>
               <Text style={[styles.description, dynamicStyles.description]}>{item.description}</Text>

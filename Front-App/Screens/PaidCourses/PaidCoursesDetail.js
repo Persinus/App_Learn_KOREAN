@@ -15,10 +15,50 @@ import headerStyles from '../../Styles/HeaderStyles';
 const PaidCoursesDetail = ({ route, navigation }) => {
   const { course } = route.params;
   const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+  const language = useSelector((state) => state.language.language);
+
+  const translations = {
+    vn: {
+      courseDetails: 'Chi tiết khóa học',
+      description: 'Mô tả khóa học',
+      content: 'Nội dung bao gồm',
+      purchase: 'Mua khóa học',
+      confirmTitle: 'Xác nhận mua khóa học',
+      confirmMessage: 'Bạn có chắc chắn muốn mua khóa học "{course}" với giá {price}?',
+      cancel: 'Hủy',
+      proceed: 'Tiếp tục',
+      features: [
+        '✓ 50+ bài học video',
+        '✓ Tài liệu PDF đầy đủ',
+        '✓ Bài tập tương tác',
+        '✓ Chứng chỉ hoàn thành',
+        '✓ Hỗ trợ trực tuyến 24/7',
+      ],
+    },
+    en: {
+      courseDetails: 'Course Details',
+      description: 'Course Description',
+      content: 'Content Includes',
+      purchase: 'Purchase Course',
+      confirmTitle: 'Confirm Purchase',
+      confirmMessage: 'Are you sure you want to purchase the course "{course}" for {price}?',
+      cancel: 'Cancel',
+      proceed: 'Proceed',
+      features: [
+        '✓ 50+ video lessons',
+        '✓ Full PDF materials',
+        '✓ Interactive exercises',
+        '✓ Completion certificate',
+        '✓ 24/7 online support',
+      ],
+    },
+  };
+
+  const t = translations[language];
 
   const dynamicStyles = {
     container: {
-      backgroundColor: isDarkMode ? '#0099FF' : '#f8f9fa', // Nền xanh cho Dark Mode
+      backgroundColor: isDarkMode ? '#0099FF' : '#f8f9fa',
     },
     infoSection: {
       backgroundColor: isDarkMode ? '#6666FF' : '#fff',
@@ -59,15 +99,15 @@ const PaidCoursesDetail = ({ route, navigation }) => {
 
   const handlePurchase = () => {
     Alert.alert(
-      'Xác nhận mua khóa học',
-      `Bạn có chắc chắn muốn mua khóa học "${course.name}" với giá ${course.price}?`,
+      t.confirmTitle,
+      t.confirmMessage.replace('{course}', course.name).replace('{price}', course.price),
       [
         {
-          text: 'Hủy',
+          text: t.cancel,
           style: 'cancel',
         },
         {
-          text: 'Tiếp tục',
+          text: t.proceed,
           onPress: () => {
             navigation.navigate('LinkingPaid', { course });
           },
@@ -86,7 +126,7 @@ const PaidCoursesDetail = ({ route, navigation }) => {
           >
             <FontAwesome5 name="arrow-left" size={16} color="#fff" />
           </TouchableOpacity>
-          <Text style={headerStyles.title}>Chi tiết khóa học</Text>
+          <Text style={headerStyles.title}>{t.courseDetails}</Text>
           <View style={{ width: 40 }} />
         </View>
       </View>
@@ -107,19 +147,13 @@ const PaidCoursesDetail = ({ route, navigation }) => {
         </View>
 
         <View style={styles.descriptionSection}>
-          <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>Mô tả khóa học</Text>
+          <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>{t.description}</Text>
           <Text style={[styles.description, dynamicStyles.description]}>{course.description}</Text>
         </View>
 
         <View style={styles.contentSection}>
-          <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>Nội dung bao gồm</Text>
-          {[
-            '✓ 50+ bài học video',
-            '✓ Tài liệu PDF đầy đủ',
-            '✓ Bài tập tương tác',
-            '✓ Chứng chỉ hoàn thành',
-            '✓ Hỗ trợ trực tuyến 24/7'
-          ].map((item, index) => (
+          <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>{t.content}</Text>
+          {t.features.map((item, index) => (
             <Text key={index} style={[styles.contentItem, dynamicStyles.contentItem]}>{item}</Text>
           ))}
         </View>
@@ -130,7 +164,7 @@ const PaidCoursesDetail = ({ route, navigation }) => {
           style={[styles.purchaseButton, dynamicStyles.purchaseButton]}
           onPress={handlePurchase}
         >
-          <Text style={[styles.purchaseButtonText, dynamicStyles.purchaseButtonText]}>Mua khóa học</Text>
+          <Text style={[styles.purchaseButtonText, dynamicStyles.purchaseButtonText]}>{t.purchase}</Text>
         </TouchableOpacity>
       </View>
     </View>

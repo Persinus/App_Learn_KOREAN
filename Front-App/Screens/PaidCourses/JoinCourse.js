@@ -15,30 +15,52 @@ import headerStyles from '../../Styles/HeaderStyles';
 const lessonData = [
   {
     id: '1',
-    title: 'Bài 1: Giới thiệu',
-    duration: '15 phút',
+    title: { vn: 'Bài 1: Giới thiệu', en: 'Lesson 1: Introduction' },
+    duration: { vn: '15 phút', en: '15 minutes' },
     isLocked: false,
-    type: 'video'
+    type: 'video',
   },
   {
     id: '2',
-    title: 'Bài 2: Ngữ pháp cơ bản',
-    duration: '25 phút',
+    title: { vn: 'Bài 2: Ngữ pháp cơ bản', en: 'Lesson 2: Basic Grammar' },
+    duration: { vn: '25 phút', en: '25 minutes' },
     isLocked: false,
-    type: 'lesson'
+    type: 'lesson',
   },
   {
     id: '3',
-    title: 'Bài 3: Luyện tập',
-    duration: '20 phút',
+    title: { vn: 'Bài 3: Luyện tập', en: 'Lesson 3: Practice' },
+    duration: { vn: '20 phút', en: '20 minutes' },
     isLocked: true,
-    type: 'exercise'
-  }
+    type: 'exercise',
+  },
 ];
 
 const JoinCourse = ({ route, navigation }) => {
   const { course } = route.params;
   const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+  const language = useSelector((state) => state.language.language);
+
+  const translations = {
+    vn: {
+      myCourses: 'Khóa học của tôi',
+      progress: 'Tiến độ học tập',
+      complete: 'hoàn thành',
+      lessonList: 'Danh sách bài học',
+      alertTitle: 'Thông báo',
+      alertMessage: 'Hoàn thành các bài học trước để mở khóa!',
+    },
+    en: {
+      myCourses: 'My Courses',
+      progress: 'Learning Progress',
+      complete: 'completed',
+      lessonList: 'Lesson List',
+      alertTitle: 'Notice',
+      alertMessage: 'Complete previous lessons to unlock!',
+    },
+  };
+
+  const t = translations[language];
 
   const dynamicStyles = {
     container: {
@@ -95,7 +117,7 @@ const JoinCourse = ({ route, navigation }) => {
 
   const handleStartLesson = (lesson) => {
     if (lesson.isLocked) {
-      Alert.alert('Thông báo', 'Hoàn thành các bài học trước để mở khóa!');
+      Alert.alert(t.alertTitle, t.alertMessage);
       return;
     }
 
@@ -127,9 +149,9 @@ const JoinCourse = ({ route, navigation }) => {
         </View>
         <View style={styles.lessonInfo}>
           <Text style={[styles.lessonTitle, dynamicStyles.lessonTitle, item.isLocked && dynamicStyles.lockedText]}>
-            {item.title}
+            {item.title[language]}
           </Text>
-          <Text style={[styles.lessonDuration, dynamicStyles.lessonDuration]}>{item.duration}</Text>
+          <Text style={[styles.lessonDuration, dynamicStyles.lessonDuration]}>{item.duration[language]}</Text>
         </View>
         {item.isLocked && (
           <FontAwesome5 name="lock" size={16} color="#999" />
@@ -149,7 +171,7 @@ const JoinCourse = ({ route, navigation }) => {
           >
             <FontAwesome5 name="arrow-left" size={16} color="#fff" />
           </TouchableOpacity>
-          <Text style={headerStyles.title}>Khóa học của tôi</Text>
+          <Text style={headerStyles.title}>{t.myCourses}</Text>
           <View style={{width: 40}} />
         </View>
       </View>
@@ -166,15 +188,15 @@ const JoinCourse = ({ route, navigation }) => {
             </View>
 
             <View style={[styles.progressSection, dynamicStyles.progressSection]}>
-              <Text style={[styles.progressTitle, dynamicStyles.progressTitle]}>Tiến độ học tập</Text>
+              <Text style={[styles.progressTitle, dynamicStyles.progressTitle]}>{t.progress}</Text>
               <View style={[styles.progressBar, dynamicStyles.progressBar]}>
                 <View style={[styles.progressFill, dynamicStyles.progressFill, { width: '30%' }]} />
               </View>
-              <Text style={[styles.progressText, dynamicStyles.progressText]}>30% hoàn thành</Text>
+              <Text style={[styles.progressText, dynamicStyles.progressText]}>30% {t.complete}</Text>
             </View>
 
             <View style={styles.lessonsSection}>
-              <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>Danh sách bài học</Text>
+              <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>{t.lessonList}</Text>
             </View>
           </>
         )}

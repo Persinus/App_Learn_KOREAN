@@ -10,6 +10,7 @@ import {
   Animated,
   TextInput,
   Share,
+  SafeAreaView
 } from "react-native";
 import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
@@ -190,6 +191,54 @@ const HomeScreen = ({ navigation }) => {
   ];
 
   const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+  const language = useSelector((state) => state.language.language);
+
+  const translations = {
+    vn: {
+      home: "Trang chủ",
+      greeting: "Xin chào, Minh Hoàng!",
+      subtitle: "Hôm nay bạn muốn học gì?",
+      courses: "📚 Khóa học của bạn",
+      searchPlaceholder: "Tìm khóa học...",
+      all: "Tất cả",
+      beginner: "Sơ cấp",
+      intermediate: "Trung cấp",
+      advanced: "Cao cấp",
+      speaking: "Giao tiếp",
+      featured: "🔥 Bài học nổi bật",
+      viewAll: "Xem tất cả",
+      rankings: "🏆 Bảng xếp hạng",
+      week: "Tuần này",
+      month: "Tháng này",
+      friends: "Bạn bè",
+      progress: "Tổng tiến độ",
+      exp: "EXP",
+      recommended: "Đề xuất cho trình độ của bạn",
+    },
+    en: {
+      home: "Home",
+      greeting: "Hello, Minh Hoàng!",
+      subtitle: "What do you want to learn today?",
+      courses: "📚 Your Courses",
+      searchPlaceholder: "Search courses...",
+      all: "All",
+      beginner: "Beginner",
+      intermediate: "Intermediate",
+      advanced: "Advanced",
+      speaking: "Speaking",
+      featured: "🔥 Featured Lessons",
+      viewAll: "View All",
+      rankings: "🏆 Rankings",
+      week: "This Week",
+      month: "This Month",
+      friends: "Friends",
+      progress: "Total Progress",
+      exp: "EXP",
+      recommended: "Recommended for Your Level",
+    },
+  };
+
+  const t = translations[language];
 
   const dynamicStyles = {
     container: {
@@ -452,14 +501,14 @@ const HomeScreen = ({ navigation }) => {
     return (
       <View style={styles.progressContainer}>
         <View style={styles.progressRow}>
-          <Text style={styles.progressLabel}>EXP:</Text>
+          <Text style={styles.progressLabel}>{t.exp}:</Text>
           <View style={[styles.progressBar, dynamicStyles.progressBar]}>
             <View style={[styles.progressFill, dynamicStyles.progressFill, { width: `${levelProgress}%` }]} />
           </View>
           <Text style={styles.progressText}>{userExp}/{maxExp}</Text>
         </View>
         <View style={styles.progressRow}>
-          <Text style={styles.progressLabel}>Tổng tiến độ:</Text>
+          <Text style={styles.progressLabel}>{t.progress}:</Text>
           <View style={[styles.progressBar, dynamicStyles.progressBar]}>
             <View style={[styles.progressFill, dynamicStyles.progressFill, { width: `${totalProgress}%` }]} />
           </View>
@@ -538,11 +587,11 @@ const HomeScreen = ({ navigation }) => {
 
   const renderCourseSection = () => (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>📚 Khóa học của bạn</Text>
+      <Text style={styles.sectionTitle}>{t.courses}</Text>
       
       <TextInput
         style={[styles.searchInput, dynamicStyles.input]}
-        placeholder="Tìm khóa học..."
+        placeholder={t.searchPlaceholder}
         placeholderTextColor={isDarkMode ? "#888" : "#aaa"}
         value={searchQuery}
         onChangeText={setSearchQuery}
@@ -603,7 +652,7 @@ const HomeScreen = ({ navigation }) => {
       {getRecommendedCourses().length > 0 && (
         <>
           <Text style={styles.recommendedTitle}>
-            Đề xuất cho trình độ của bạn
+            {t.recommended}
           </Text>
           <FlatList
             horizontal
@@ -627,9 +676,9 @@ const HomeScreen = ({ navigation }) => {
   const renderFeaturedSection = () => (
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>🔥 Bài học nổi bật</Text>
+        <Text style={styles.sectionTitle}>{t.featured}</Text>
         <TouchableOpacity onPress={() => navigation.navigate('AllLessons')}>
-          <Text style={styles.viewAll}>Xem tất cả</Text>
+          <Text style={styles.viewAll}>{t.viewAll}</Text>
         </TouchableOpacity>
       </View>
 
@@ -703,7 +752,7 @@ const HomeScreen = ({ navigation }) => {
   const renderRankingSection = () => (
     <View style={styles.section}>
       <View style={styles.rankingHeader}>
-        <Text style={styles.sectionTitle}>🏆 Bảng xếp hạng</Text>
+        <Text style={styles.sectionTitle}>{t.rankings}</Text>
         
         <ScrollView 
           horizontal 
@@ -803,7 +852,7 @@ const HomeScreen = ({ navigation }) => {
   return (
     <ScrollView style={dynamicStyles.container}>
       <View style={headerStyles.container}>
-        <Text style={[headerStyles.title, dynamicStyles.text]}>Trang chủ</Text>
+        <Text style={[headerStyles.title, dynamicStyles.text]}>{t.home}</Text>
         <TouchableOpacity 
           style={headerStyles.backButton}
           onPress={() => navigation.navigate('NotificationsScreen')}
@@ -826,8 +875,8 @@ const HomeScreen = ({ navigation }) => {
           </View>
         </View>
         <View style={styles.textContainer}>
-          <Text style={[styles.greeting, dynamicStyles.text]}>Xin chào, Minh Hoàng!</Text>
-          <Text style={[styles.subtitle, dynamicStyles.subtitle]}>Hôm nay bạn muốn học gì?</Text>
+          <Text style={[styles.greeting, dynamicStyles.text]}>{t.greeting}</Text>
+          <Text style={[styles.subtitle, dynamicStyles.subtitle]}>{t.subtitle}</Text>
           {renderProgressBar()}
         </View>
       </View>
