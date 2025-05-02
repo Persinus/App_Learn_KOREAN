@@ -16,6 +16,38 @@ import * as Google from "expo-auth-session/providers/google";
 import { useSelector } from "react-redux";
 import authStyles from "../../Styles/AuthStyles";
 
+// Định nghĩa các chuỗi đa ngôn ngữ
+const translations = {
+  vn: {
+    title: "Đăng nhập",
+    emailLabel: "Email của bạn",
+    passwordLabel: "Mật khẩu",
+    forgotPassword: "Quên mật khẩu?",
+    loginButton: "Đăng nhập",
+    noAccount: "Chưa có tài khoản?",
+    signUp: "Đăng ký",
+    orLoginWith: "Hoặc đăng nhập bằng",
+    googleLoginSuccess: "Đăng nhập Google thành công!",
+    loginSuccess: "Đăng nhập thành công!",
+    loginError: "Có lỗi xảy ra khi đăng nhập. Vui lòng thử lại!",
+    enterEmailPassword: "Vui lòng nhập email và mật khẩu.",
+  },
+  en: {
+    title: "Log In",
+    emailLabel: "Your Email",
+    passwordLabel: "Password",
+    forgotPassword: "Forgot password?",
+    loginButton: "Log In",
+    noAccount: "Don't have an account?",
+    signUp: "Sign up",
+    orLoginWith: "Or log in with",
+    googleLoginSuccess: "Google login successful!",
+    loginSuccess: "Login successful!",
+    loginError: "An error occurred during login. Please try again!",
+    enterEmailPassword: "Please enter your email and password.",
+  },
+};
+
 // Bắt buộc để Expo xử lý redirect URL
 WebBrowser.maybeCompleteAuthSession();
 
@@ -25,10 +57,14 @@ const LoginScreen = ({ navigation }) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+  const language = useSelector((state) => state.language.language);
+
+  // Lấy chuỗi dịch dựa trên ngôn ngữ hiện tại
+  const t = translations[language];
 
   const dynamicStyles = {
     container: {
-      backgroundColor: isDarkMode ? "#0099FF" : "#fff", // Nền xanh cho Dark Mode
+      backgroundColor: isDarkMode ? "#0099FF" : "#fff",
     },
     title: {
       color: isDarkMode ? "#fff" : "#333",
@@ -63,7 +99,7 @@ const LoginScreen = ({ navigation }) => {
   useEffect(() => {
     if (response?.type === "success") {
       const { authentication } = response;
-      Alert.alert("Đăng nhập Google thành công!");
+      Alert.alert(t.googleLoginSuccess);
       AsyncStorage.setItem("userToken", "true");
       navigation.reset({
         index: 0,
@@ -74,18 +110,18 @@ const LoginScreen = ({ navigation }) => {
 
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert("Lỗi", "Vui lòng nhập email và mật khẩu.");
+      Alert.alert("Error", t.enterEmailPassword);
       return;
     }
     try {
       await AsyncStorage.setItem("userToken", "true");
-      Alert.alert("Đăng nhập thành công!", `Chào mừng, ${email}!`);
+      Alert.alert(t.loginSuccess, `${t.emailLabel}: ${email}`);
       navigation.reset({
         index: 0,
         routes: [{ name: "MainNavigator" }],
       });
     } catch (error) {
-      Alert.alert("Lỗi", "Có lỗi xảy ra khi đăng nhập. Vui lòng thử lại!");
+      Alert.alert("Error", t.loginError);
       console.error("Login Error:", error);
     }
   };
@@ -96,23 +132,23 @@ const LoginScreen = ({ navigation }) => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView contentContainerStyle={authStyles.container} keyboardShouldPersistTaps="handled">
-        <Text style={[authStyles.title, dynamicStyles.title]}>Log In</Text>
+        <Text style={[authStyles.title, dynamicStyles.title]}>{t.title}</Text>
 
-        <Text style={[authStyles.label, dynamicStyles.label]}>Your Email</Text>
+        <Text style={[authStyles.label, dynamicStyles.label]}>{t.emailLabel}</Text>
         <TextInput
           style={[authStyles.input, dynamicStyles.input]}
-          placeholder="Enter your email"
+          placeholder={t.emailLabel}
           placeholderTextColor={isDarkMode ? "#888" : "#aaa"}
           keyboardType="email-address"
           value={email}
           onChangeText={setEmail}
         />
 
-        <Text style={[authStyles.label, dynamicStyles.label]}>Password</Text>
+        <Text style={[authStyles.label, dynamicStyles.label]}>{t.passwordLabel}</Text>
         <View style={authStyles.passwordContainer}>
           <TextInput
             style={[authStyles.input, authStyles.passwordInput, dynamicStyles.input]}
-            placeholder="Enter your password"
+            placeholder={t.passwordLabel}
             placeholderTextColor={isDarkMode ? "#888" : "#aaa"}
             secureTextEntry={!isPasswordVisible}
             value={password}
@@ -127,24 +163,26 @@ const LoginScreen = ({ navigation }) => {
         </View>
 
         <TouchableOpacity style={authStyles.forgotPassword}>
-          <Text style={[authStyles.link, dynamicStyles.link]}>Forgot password?</Text>
+          <Text style={[authStyles.link, dynamicStyles.link]}>{t.forgotPassword}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={[authStyles.primaryButton, dynamicStyles.primaryButton]}
           onPress={handleLogin}
         >
-          <Text style={[authStyles.primaryButtonText, dynamicStyles.primaryButtonText]}>Log In</Text>
+          <Text style={[authStyles.primaryButtonText, dynamicStyles.primaryButtonText]}>
+            {t.loginButton}
+          </Text>
         </TouchableOpacity>
 
         <View style={authStyles.secondaryContainer}>
-          <Text style={authStyles.text}>Don't have an account? </Text>
+          <Text style={authStyles.text}>{t.noAccount} </Text>
           <TouchableOpacity onPress={() => navigation.navigate("SignInScreen")}>
-            <Text style={[authStyles.link, dynamicStyles.link]}>Sign up</Text>
+            <Text style={[authStyles.link, dynamicStyles.link]}>{t.signUp}</Text>
           </TouchableOpacity>
         </View>
 
-        <Text style={authStyles.orText}>Or log in with</Text>
+        <Text style={authStyles.orText}>{t.orLoginWith}</Text>
         <View style={authStyles.socialContainer}>
           <TouchableOpacity
             style={[authStyles.socialButton, dynamicStyles.socialButton, { backgroundColor: "#db4437" }]}
