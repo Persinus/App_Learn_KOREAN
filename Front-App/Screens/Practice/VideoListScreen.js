@@ -5,16 +5,34 @@ import { useSelector } from 'react-redux';
 
 // Dữ liệu video
 const movieVideos = [
-  { id: '1', title: 'Phim 1', question: 'What do you think about this movie?', youtubeId: 'dTDzDxv-YDo', thumbnail: 'https://img.youtube.com/vi/dTDzDxv-YDo/0.jpg' },
-  { id: '2', title: 'Phim 2', question: 'How can this concept be applied in movies?', youtubeId: 'HLk38k25EhU', thumbnail: 'https://img.youtube.com/vi/HLk38k25EhU/0.jpg' },
+  { 
+    id: '1', 
+    title: { vn: 'Phim 1', en: 'Movie 1' }, 
+    question: { vn: 'Bạn nghĩ gì về bộ phim này?', en: 'What do you think about this movie?' }, 
+    youtubeId: 'dTDzDxv-YDo', 
+    thumbnail: 'https://img.youtube.com/vi/dTDzDxv-YDo/0.jpg' 
+  },
+  { 
+    id: '2', 
+    title: { vn: 'Phim 2', en: 'Movie 2' }, 
+    question: { vn: 'Khái niệm này có thể áp dụng vào phim như thế nào?', en: 'How can this concept be applied in movies?' }, 
+    youtubeId: 'HLk38k25EhU', 
+    thumbnail: 'https://img.youtube.com/vi/HLk38k25EhU/0.jpg' 
+  },
 ];
 
 const musicVideos = [
-  { id: '3', title: 'SAY MY NAME', question: '2nd EP title song "ShaLala" OUT NOW', youtubeId: 'rPEfIvfmCxM', thumbnail: 'https://img.youtube.com/vi/rPEfIvfmCxM/0.jpg' },
+  { 
+    id: '3', 
+    title: { vn: 'SAY MY NAME', en: 'SAY MY NAME' }, 
+    question: { vn: 'Bài hát chủ đề EP thứ 2 "ShaLala" đã phát hành', en: '2nd EP title song "ShaLala" OUT NOW' }, 
+    youtubeId: 'rPEfIvfmCxM', 
+    thumbnail: 'https://img.youtube.com/vi/rPEfIvfmCxM/0.jpg' 
+  },
   { 
     id: '4', 
-    title: "Can't Stop Shining MV", 
-    question: 'Xem Bài Hát và trả lời câu hỏi bên dưới ', 
+    title: { vn: 'Không thể ngừng tỏa sáng', en: "Can't Stop Shining" }, 
+    question: { vn: 'Xem bài hát và trả lời câu hỏi bên dưới', en: 'Watch the song and answer the question below' }, 
     youtubeId: 'JOiri4g1MnE', 
     thumbnail: 'https://img.youtube.com/vi/JOiri4g1MnE/0.jpg',
     jsonSub: require('../../assets/BaiHat2VietSub.json'), // 🟢 Đường dẫn JSON phụ đề tiếng Việt
@@ -24,6 +42,7 @@ const musicVideos = [
 
 const VideoList = ({ videos, navigation }) => {
   const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+  const language = useSelector((state) => state.language.language);
 
   const dynamicStyles = {
     container: {
@@ -48,16 +67,16 @@ const VideoList = ({ videos, navigation }) => {
           style={[styles.card, dynamicStyles.card]}
           onPress={() => navigation.navigate('VideoDetailScreen', {
             youtubeId: video.youtubeId,
-            title: video.title,
-            question: video.question,
+            title: video.title[language],
+            question: video.question[language],
             jsonSub: video.jsonSub, // 🟢 Truyền JSON phụ đề tiếng Việt
             jsonOrigin: video.jsonOrigin, // 🔵 Truyền JSON phụ đề tiếng Hàn
           })}
         >
           <Image source={{ uri: video.thumbnail }} style={styles.thumbnail} />
           <View style={styles.cardContent}>
-            <Text style={[styles.title, dynamicStyles.title]}>{video.title}</Text>
-            <Text style={[styles.question, dynamicStyles.question]}>{video.question}</Text>
+            <Text style={[styles.title, dynamicStyles.title]}>{video.title[language]}</Text>
+            <Text style={[styles.question, dynamicStyles.question]}>{video.question[language]}</Text>
           </View>
         </TouchableOpacity>
       ))}
@@ -69,6 +88,14 @@ const Tab = createMaterialTopTabNavigator();
 
 const VideoListScreen = ({ navigation }) => {
   const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+  const language = useSelector((state) => state.language.language);
+
+  const translations = {
+    vn: { movies: 'Phim', music: 'Nhạc' },
+    en: { movies: 'Movies', music: 'Music' },
+  };
+
+  const t = translations[language];
 
   const dynamicStyles = {
     tabBarStyle: {
@@ -90,10 +117,10 @@ const VideoListScreen = ({ navigation }) => {
         tabBarIndicatorStyle: dynamicStyles.tabBarIndicatorStyle,
       }}
     >
-      <Tab.Screen name="Phim">
+      <Tab.Screen name={t.movies}>
         {() => <VideoList videos={movieVideos} navigation={navigation} />}
       </Tab.Screen>
-      <Tab.Screen name="Nhạc">
+      <Tab.Screen name={t.music}>
         {() => <VideoList videos={musicVideos} navigation={navigation} />}
       </Tab.Screen>
     </Tab.Navigator>
