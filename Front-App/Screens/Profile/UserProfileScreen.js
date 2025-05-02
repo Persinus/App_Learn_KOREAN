@@ -11,6 +11,19 @@ const UserProfileScreen = ({ navigation }) => {
   };
 
   const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+  const language = useSelector((state) => state.language.language);
+
+  // Đa ngôn ngữ
+  const translations = {
+    vn: {
+      editProfile: 'Chỉnh sửa hồ sơ',
+      level: 'Cấp độ',
+    },
+    en: {
+      editProfile: 'Edit Profile',
+      level: 'Level',
+    },
+  };
 
   const dynamicStyles = {
     container: {
@@ -38,13 +51,17 @@ const UserProfileScreen = ({ navigation }) => {
       <Image source={{ uri: user.profilePicture }} style={styles.profilePicture} />
       <Text style={[styles.name, dynamicStyles.name]}>{user.name}</Text>
       <Text style={[styles.email, dynamicStyles.email]}>{user.email}</Text>
-      <Text style={[styles.level, dynamicStyles.level]}>Level: {user.level}</Text>
+      <Text style={[styles.level, dynamicStyles.level]}>
+        {translations[language].level}: {user.level}
+      </Text>
 
       <TouchableOpacity
         style={[styles.editButton, dynamicStyles.editButton]}
         onPress={() => navigation.navigate('EditProfileScreen', { user })}
       >
-        <Text style={[styles.editButtonText, dynamicStyles.editButtonText]}>Chỉnh sửa hồ sơ</Text>
+        <Text style={[styles.editButtonText, dynamicStyles.editButtonText]}>
+          {translations[language].editProfile}
+        </Text>
       </TouchableOpacity>
     </View>
   );
