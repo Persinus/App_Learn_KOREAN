@@ -35,7 +35,7 @@ const DailyReward = ({ navigation }) => {
   const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
 
   const today = new Date();
-  const currentDay = new Date().getDate();
+  const currentDay = today.getDate();
   const currentMonth = today.getMonth();
   const currentYear = today.getFullYear();
   const daysInMonth = getDaysInMonth(currentMonth, currentYear);
@@ -136,7 +136,7 @@ const DailyReward = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDarkMode ? '#0099FF' : '#fff' }]}>
+    <View style={[styles.container, { backgroundColor: isDarkMode ? '#0099FF' : '#fff' }]}>
       <TouchableOpacity
         style={[styles.backButton, { backgroundColor: isDarkMode ? '#6666FF' : '#4b46f1' }]}
         onPress={() => navigation.goBack()}
@@ -177,7 +177,7 @@ const DailyReward = ({ navigation }) => {
           </TouchableOpacity>
         </View>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 };
 
