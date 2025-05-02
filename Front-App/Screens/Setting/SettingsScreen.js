@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -6,7 +6,10 @@ import {
   TouchableOpacity,
   Switch,
   ScrollView,
+  Alert,
 } from 'react-native';
+import * as Location from 'expo-location';
+import * as Notifications from 'expo-notifications';
 import { FontAwesome5, Ionicons } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleDarkMode } from '../../Store/DarkMode';
@@ -16,6 +19,9 @@ const SettingsScreen = ({ navigation }) => {
   const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
   const language = useSelector((state) => state.language.language);
   const dispatch = useDispatch();
+
+  const [isLocationEnabled, setIsLocationEnabled] = useState(false);
+  const [isNotificationEnabled, setIsNotificationEnabled] = useState(false);
 
   const dynamicStyles = {
     container: {
@@ -43,6 +49,12 @@ const SettingsScreen = ({ navigation }) => {
       language: 'Ngôn ngữ',
       feedback: 'Phản hồi',
       appInfo: 'Thông tin ứng dụng',
+      enableLocation: 'Bật vị trí',
+      locationError: 'Không thể lấy vị trí. Vui lòng kiểm tra cài đặt quyền.',
+      locationSuccess: 'Vị trí của bạn đã được lấy thành công!',
+      enableNotifications: 'Bật thông báo',
+      notificationError: 'Không thể bật thông báo. Vui lòng kiểm tra cài đặt quyền.',
+      notificationSuccess: 'Thông báo đã được bật thành công!',
     },
     en: {
       appSettings: 'App Settings',
@@ -52,10 +64,43 @@ const SettingsScreen = ({ navigation }) => {
       language: 'Language',
       feedback: 'Feedback',
       appInfo: 'App Info',
+      enableLocation: 'Enable Location',
+      locationError: 'Unable to fetch location. Please check permission settings.',
+      locationSuccess: 'Your location has been successfully retrieved!',
+      enableNotifications: 'Enable Notifications',
+      notificationError: 'Unable to enable notifications. Please check permission settings.',
+      notificationSuccess: 'Notifications have been successfully enabled!',
     },
   };
 
   const t = translations[language];
+
+  const handleLocationToggle = async () => {
+    if (!isLocationEnabled) {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Error', t.locationError);
+        return;
+      }
+
+      const location = await Location.getCurrentPositionAsync({});
+      Alert.alert('Success', `${t.locationSuccess}\nLatitude: ${location.coords.latitude}, Longitude: ${location.coords.longitude}`);
+    }
+    setIsLocationEnabled(!isLocationEnabled);
+  };
+
+  const handleNotificationToggle = async () => {
+    if (!isNotificationEnabled) {
+      const { status } = await Notifications.requestPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Error', t.notificationError);
+        return;
+      }
+
+      Alert.alert('Success', t.notificationSuccess);
+    }
+    setIsNotificationEnabled(!isNotificationEnabled);
+  };
 
   return (
     <ScrollView style={dynamicStyles.container}>
@@ -69,10 +114,15 @@ const SettingsScreen = ({ navigation }) => {
           <View style={styles.settingLabel}>
             <Ionicons name="notifications-outline" size={20} color="#4b46f1" />
             <Text style={[styles.settingText, dynamicStyles.settingText]}>
-              {t.notifications}
+              {t.enableNotifications}
             </Text>
           </View>
-          <Switch value={true} onValueChange={() => {}} />
+          <Switch
+            value={isNotificationEnabled}
+            onValueChange={handleNotificationToggle}
+            thumbColor={isNotificationEnabled ? '#fff' : '#000'}
+            trackColor={{ false: '#767577', true: '#81b0ff' }}
+          />
         </View>
 
         {/* Location */}
@@ -80,10 +130,15 @@ const SettingsScreen = ({ navigation }) => {
           <View style={styles.settingLabel}>
             <Ionicons name="location-outline" size={20} color="#4b46f1" />
             <Text style={[styles.settingText, dynamicStyles.settingText]}>
-              {t.location}
+              {t.enableLocation}
             </Text>
           </View>
-          <Switch value={false} onValueChange={() => {}} />
+          <Switch
+            value={isLocationEnabled}
+            onValueChange={handleLocationToggle}
+            thumbColor={isLocationEnabled ? '#fff' : '#000'}
+            trackColor={{ false: '#767577', true: '#81b0ff' }}
+          />
         </View>
 
         {/* Dark Mode */}
