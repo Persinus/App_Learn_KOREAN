@@ -200,6 +200,20 @@ const SettingsScreen = ({ navigation }) => {
           </View>
           <FontAwesome5 name="chevron-right" size={16} color="#666" />
         </TouchableOpacity>
+
+        {/* Edit Info User */}
+        <TouchableOpacity
+          style={styles.settingItem}
+          onPress={() => navigation.navigate('EditInfoUser')}
+        >
+          <View style={styles.settingLabel}>
+            <Ionicons name="person-outline" size={20} color="#4b46f1" />
+            <Text style={[styles.settingText, dynamicStyles.settingText]}>
+              Edit Information
+            </Text>
+          </View>
+          <FontAwesome5 name="chevron-right" size={16} color="#666" />
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
