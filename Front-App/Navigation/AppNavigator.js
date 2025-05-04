@@ -1,105 +1,94 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator } from '@react-navigation/stack';
 import { MaterialIcons, FontAwesome5 } from 'react-native-vector-icons';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { useSelector } from 'react-redux';
+import { SafeAreaView } from 'react-native';
 
-// Import các màn hình chính
+// Stack imports
 import HomeStack from './HomeStack';
 import PracticeStackNavigator from './PracticeStackNavigator';
-import RankingsScreen from '../Screens/Rankings/RankingsScreen';
-import SettingsScreen from '../Screens/Setting/SettingsScreen';
-import PaidCoursesScreen from '../Screens/PaidCourses/PaidCoursesScreen';
-import InfoApp from '../Screens/Setting/InfoApp';
-import EditInfoUser from '../Screens/Setting/EditInfoUser';
-import UserFeedback from '../Screens/Setting/UserFeedback';
-import PaidCoursesDetail from '../Screens/PaidCourses/PaidCoursesDetail';
-import LinkingPaid from '../Screens/PaidCourses/LinkingPaid';
-import JoinCourse from '../Screens/PaidCourses/JoinCourse';
-import DetailRanking from '../Screens/Rankings/DetailRanking';
+import SettingsStack from './SettingStack';
+import PaidCoursesStack from './PaidCoursesStack';
+import RankingsStack from './RankingsStack';
 
 const Tab = createBottomTabNavigator();
-const Stack = createStackNavigator();
-
-const SettingsStack = () => {
-  return (
-    <Stack.Navigator >
-      <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
-      <Stack.Screen name="InfoApp" component={InfoApp} />
-      <Stack.Screen name="EditInfoUser" component={EditInfoUser} />
-      <Stack.Screen name="UserFeedback" component={UserFeedback} />
-    </Stack.Navigator>
-  );
-};
-
-const PaidCoursesStack = () => {
-  return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="PaidCoursesScreen" component={PaidCoursesScreen} />
-      <Stack.Screen name="PaidCoursesDetail" component={PaidCoursesDetail} />
-      <Stack.Screen name="LinkingPaid" component={LinkingPaid} />
-      <Stack.Screen name="JoinCourse" component={JoinCourse} />
-    </Stack.Navigator>
-  );
-};
-
-const RankingsStack = () => {
-  return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="RankingsScreen" component={RankingsScreen} />
-      <Stack.Screen name="DetailRanking" component={DetailRanking} />
-    </Stack.Navigator>
-  );
-};
 
 const MainNavigator = () => {
-  return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <Tab.Navigator
-        initialRouteName="Home"
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ color }) => {
-            let iconName;
+  const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+  const language = useSelector((state) => state.language.language);
 
-            switch (route.name) {
-              case 'Home':
-                iconName = 'home';
-                return <MaterialIcons name={iconName} size={24} color={color} />;
-              case 'Practice':
-                iconName = 'clipboard-list';
-                return <FontAwesome5 name={iconName} size={20} color={color} />;
-              case 'Rankings':
-                iconName = 'trophy';
-                return <FontAwesome5 name={iconName} size={20} color={color} />;
-              case 'PaidCourses':
-                iconName = 'shopping-cart';
-                return <FontAwesome5 name={iconName} size={20} color={color} />;
-              case 'Settings':
-                iconName = 'cog';
-                return <FontAwesome5 name={iconName} size={20} color={color} />;
-              default:
-                return null;
-            }
-          },
-          tabBarShowLabel: false,
-          tabBarStyle: {
-            backgroundColor: '#fff',
-            borderTopWidth: 1,
-            borderTopColor: '#eee',
-            height: 60,
-            paddingBottom: 8,
-            paddingTop: 8,
-          },
-          headerShown: false,
-        })}
-      >
-        <Tab.Screen name="Home" component={HomeStack} />
-        <Tab.Screen name="Practice" component={PracticeStackNavigator} />
-        <Tab.Screen name="Rankings" component={RankingsStack} />
-        <Tab.Screen name="PaidCourses" component={PaidCoursesStack} />
-        <Tab.Screen name="Settings" component={SettingsStack} />
-      </Tab.Navigator>
-    </GestureHandlerRootView>
+  const translations = {
+    vn: {
+      Home: 'Trang chủ',
+      Practice: 'Luyện tập',
+      Rankings: 'Xếp hạng',
+      PaidCourses: 'Khóa học',
+      Settings: 'Cài đặt',
+    },
+    en: {
+      Home: 'Home',
+      Practice: 'Practice',
+      Rankings: 'Rankings',
+      PaidCourses: 'Courses',
+      Settings: 'Settings',
+    },
+  };
+
+  const t = translations[language];
+
+  return (
+    <SafeAreaView style={{ flex: 1 }}>  {/* Thêm SafeAreaView tại đây */}
+
+        <Tab.Navigator
+          initialRouteName="Home"
+          screenOptions={({ route }) => ({
+            tabBarIcon: ({ color }) => {
+              let iconName;
+
+              switch (route.name) {
+                case 'Home':
+                  iconName = 'home';
+                  return <MaterialIcons name={iconName} size={24} color={color} />;
+                case 'Practice':
+                  iconName = 'clipboard-list';
+                  return <FontAwesome5 name={iconName} size={20} color={color} />;
+                case 'Rankings':
+                  iconName = 'trophy';
+                  return <FontAwesome5 name={iconName} size={20} color={color} />;
+                case 'PaidCourses':
+                  iconName = 'shopping-cart';
+                  return <FontAwesome5 name={iconName} size={20} color={color} />;
+                case 'Settings':
+                  iconName = 'cog';
+                  return <FontAwesome5 name={iconName} size={20} color={color} />;
+                default:
+                  return null;
+              }
+            },
+            tabBarLabel: t[route.name], // Hiển thị tên tab theo ngôn ngữ
+            tabBarShowLabel: true,
+            tabBarStyle: {
+              backgroundColor: isDarkMode ? '#4b46f1' : '#7AC74F', // Nền tím cho Dark Mode, xanh lá cho Light Mode
+              borderTopWidth: 1,
+              borderTopColor: isDarkMode ? '#333' : '#eee',
+              height: 60,
+              paddingBottom: 8,
+              paddingTop: 8,
+            },
+            tabBarActiveTintColor: isDarkMode ? '#fff' : '#000', // Màu chữ khi được chọn
+            tabBarInactiveTintColor: isDarkMode ? '#ccc' : '#666', // Màu chữ khi không được chọn
+            headerShown: false,
+          })}
+        >
+          <Tab.Screen name="Home" component={HomeStack} />
+          <Tab.Screen name="Practice" component={PracticeStackNavigator} />
+          <Tab.Screen name="Rankings" component={RankingsStack} />
+          <Tab.Screen name="PaidCourses" component={PaidCoursesStack} />
+          <Tab.Screen name="Settings" component={SettingsStack} />
+        </Tab.Navigator>
+     
+    </SafeAreaView>
   );
 };
 

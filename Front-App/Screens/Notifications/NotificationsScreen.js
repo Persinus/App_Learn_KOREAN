@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Animated } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { useSelector } from "react-redux";
 
 const notificationsData = [
   { id: "1", title: "🎉 Nhận thưởng", message: "Bạn đã nhận được 50 điểm thưởng!", time: "5 phút trước", seen: false },
@@ -12,6 +13,39 @@ const notificationsData = [
 const NotificationsScreen = ({ navigation }) => {
   const [notifications, setNotifications] = useState(notificationsData);
   const [fadeAnim] = useState(new Animated.Value(1));
+  const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+
+  const dynamicStyles = {
+    container: {
+      backgroundColor: isDarkMode ? "#0099FF" : "#fff", // Nền xanh cho Dark Mode
+    },
+    header: {
+      backgroundColor: isDarkMode ? "#6666FF" : "#fff", // Màu tím cho header
+      borderBottomColor: isDarkMode ? "#444" : "#eee",
+    },
+    title: {
+      color: isDarkMode ? "#fff" : "#333",
+    },
+    backButton: {
+      backgroundColor: isDarkMode ? "#444" : "#f5f5f5",
+    },
+    notificationItem: {
+      backgroundColor: isDarkMode ? "#333" : "#fff",
+      borderColor: isDarkMode ? "#444" : "#eee",
+    },
+    unseenNotification: {
+      borderLeftColor: isDarkMode ? "#FFD700" : "#4b46f1",
+    },
+    notificationTitle: {
+      color: isDarkMode ? "#fff" : "#333",
+    },
+    message: {
+      color: isDarkMode ? "#ccc" : "#666",
+    },
+    time: {
+      color: isDarkMode ? "#aaa" : "#999",
+    },
+  };
 
   const handlePress = (id) => {
     setNotifications(notifications.map(notification =>
@@ -24,15 +58,15 @@ const NotificationsScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
+    <View style={[styles.container, dynamicStyles.container]}>
+      <View style={[styles.header, dynamicStyles.header]}>
         <TouchableOpacity 
-          style={styles.backButton}
+          style={[styles.backButton, dynamicStyles.backButton]}
           onPress={() => navigation.goBack()}
         >
-          <FontAwesome5 name="arrow-left" size={16} color="#4b46f1" />
+          <FontAwesome5 name="arrow-left" size={16} color={isDarkMode ? "#fff" : "#4b46f1"} />
         </TouchableOpacity>
-        <Text style={styles.title}>Thông báo</Text>
+        <Text style={[styles.title, dynamicStyles.title]}>Thông báo</Text>
       </View>
 
       <FlatList
@@ -41,12 +75,16 @@ const NotificationsScreen = ({ navigation }) => {
         contentContainerStyle={styles.listContainer}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => handlePress(item.id)} activeOpacity={0.7}>
-            <Animated.View style={[styles.notificationItem, item.seen ? styles.seenNotification : styles.unseenNotification]}>
+            <Animated.View style={[
+              styles.notificationItem,
+              dynamicStyles.notificationItem,
+              item.seen ? styles.seenNotification : [styles.unseenNotification, dynamicStyles.unseenNotification]
+            ]}>
               <View style={styles.notificationContent}>
-                <Text style={styles.notificationTitle}>{item.title}</Text>
-                <Text style={styles.time}>{item.time}</Text>
+                <Text style={[styles.notificationTitle, dynamicStyles.notificationTitle]}>{item.title}</Text>
+                <Text style={[styles.time, dynamicStyles.time]}>{item.time}</Text>
               </View>
-              <Text style={styles.message}>{item.message}</Text>
+              <Text style={[styles.message, dynamicStyles.message]}>{item.message}</Text>
             </Animated.View>
           </TouchableOpacity>
         )}
@@ -58,7 +96,6 @@ const NotificationsScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
   },
   header: {
     flexDirection: 'row',
@@ -66,20 +103,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 45,
     paddingBottom: 12,
-    backgroundColor: '#fff',
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
   },
   backButton: {
     padding: 8,
     marginRight: 12,
-    backgroundColor: '#f5f5f5',
     borderRadius: 8,
   },
   title: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#333",
   },
   listContainer: {
     padding: 16,
@@ -88,9 +121,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 8,
     marginBottom: 8,
-    backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: '#eee',
   },
   notificationContent: {
     flexDirection: 'row',
@@ -100,7 +131,6 @@ const styles = StyleSheet.create({
   },
   unseenNotification: {
     borderLeftWidth: 3,
-    borderLeftColor: "#4b46f1",
   },
   seenNotification: {
     opacity: 0.8,
@@ -108,17 +138,14 @@ const styles = StyleSheet.create({
   notificationTitle: {
     fontSize: 15,
     fontWeight: "600",
-    color: "#333",
     flex: 1,
   },
   message: {
     fontSize: 13,
-    color: "#666",
     lineHeight: 18,
   },
   time: {
     fontSize: 12,
-    color: "#999",
     marginLeft: 8,
   },
 });

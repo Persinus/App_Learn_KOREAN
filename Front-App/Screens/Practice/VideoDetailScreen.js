@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Dimensions, Button, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Animated, Button } from 'react-native';
 import YoutubeIframe from 'react-native-youtube-iframe';
 import { useNavigation } from '@react-navigation/native';
-import { Animated } from 'react-native';
+
 const { width } = Dimensions.get('window');
 
 const VideoDetailScreen = ({ route }) => {
@@ -15,6 +15,7 @@ const VideoDetailScreen = ({ route }) => {
   const playerRef = useRef(null);
   const navigation = useNavigation();
   const [subtitleAnim] = useState(new Animated.Value(0));
+
   useEffect(() => {
     const interval = setInterval(async () => {
       if (playerRef.current) {
@@ -22,7 +23,6 @@ const VideoDetailScreen = ({ route }) => {
         setCurrentTime(time);
       }
     }, 1000);
-
     return () => clearInterval(interval);
   }, []);
 
@@ -36,79 +36,71 @@ const VideoDetailScreen = ({ route }) => {
     getDuration();
   }, []);
 
-useEffect(() => {
-  if (jsonOrigin) {
-    const currentOriginSub = jsonOrigin.find(
-      (sub) => currentTime >= sub.start && currentTime <= sub.end
-    );
-    setSubtitleOrigin(currentOriginSub ? currentOriginSub.text : '');
-  }
+  useEffect(() => {
+    if (jsonOrigin) {
+      const currentOriginSub = jsonOrigin.find(
+        (sub) => currentTime >= sub.start && currentTime <= sub.end
+      );
+      setSubtitleOrigin(currentOriginSub ? currentOriginSub.text : '');
+    }
 
-  if (jsonSub) {
-    const currentSub = jsonSub.find(
-      (sub) => currentTime >= sub.start && currentTime <= sub.end
-    );
-    setSubtitle(currentSub ? currentSub.text : '');
+    if (jsonSub) {
+      const currentSub = jsonSub.find(
+        (sub) => currentTime >= sub.start && currentTime <= sub.end
+      );
+      setSubtitle(currentSub ? currentSub.text : '');
 
-    // Reset opacity và chạy animation
-    subtitleAnim.setValue(0);
-    Animated.timing(subtitleAnim, {
-      toValue: 1,
-      duration: 500, // Thời gian hiệu ứng
-      useNativeDriver: true,
-    }).start();
-  }
-}, [currentTime, jsonSub, jsonOrigin, subtitleAnim]);
+      // Reset opacity và chạy animation
+      subtitleAnim.setValue(0);
+      Animated.timing(subtitleAnim, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [currentTime, jsonSub, jsonOrigin, subtitleAnim]);
 
   const handleVideoStateChange = (state) => {
     if (state === 'ended') {
       setIsVideoEnded(true);
     }
   };
-  useEffect(() => {
-    Animated.timing(subtitleAnim, {
-      toValue: 1,
-      duration: 500,
-      useNativeDriver: true,
-    }).start();
-  }, [subtitle]);
-  
+
   const isLast10Seconds = duration > 0 && duration - currentTime <= 10 && currentTime > 0;
 
   return (
     <View style={styles.container}>
       <Text style={styles.songTitle}>🎵 {title} 🎵</Text>
       <Text style={styles.question}>{question}</Text>
-
       <View style={styles.videoContainer}>
-      <YoutubeIframe
-  ref={playerRef}
-  videoId={youtubeId}
-  height={180}
-  onChangeState={handleVideoStateChange}
-  play={true}
-  forceAndroidAutoplay={true} // Bắt buộc autoplay trên Android
-  webViewProps={{
-    allowsInlineMediaPlayback: true,
-  }}
-  playerParams={{
-    controls: 0, // Ẩn nút điều khiển
-    modestbranding: 1, // Ẩn logo YouTube
-    showinfo: 0, // Ẩn thông tin video
-    rel: 0, // Không hiển thị video liên quan
-  }}
-/>
-
+        <YoutubeIframe
+          ref={playerRef}
+          videoId={youtubeId}
+          height={180}
+          onChangeState={handleVideoStateChange}
+          play={true}
+          forceAndroidAutoplay={true}
+          webViewProps={{
+            allowsInlineMediaPlayback: true,
+          }}
+          playerParams={{
+            controls: 0,
+            modestbranding: 1,
+            showinfo: 0,
+            rel: 0,
+          }}
+        />
       </View>
-
       {subtitleOrigin ? (
-        <Text style={[styles.subtitle, styles.subtitleOrigin]}>{subtitleOrigin}</Text>
+        <Animated.Text style={[styles.subtitle, styles.subtitleOrigin, { opacity: subtitleAnim }]}>
+          {subtitleOrigin}
+        </Animated.Text>
       ) : null}
-
       {subtitle ? (
-        <Text style={[styles.subtitle, styles.subtitlePrimary]}>{subtitle}</Text>
+        <Animated.Text style={[styles.subtitle, styles.subtitlePrimary, { opacity: subtitleAnim }]}>
+          {subtitle}
+        </Animated.Text>
       ) : null}
-
       {isVideoEnded ? (
         <View style={styles.buttonContainer}>
           <Button
@@ -118,7 +110,6 @@ useEffect(() => {
           />
         </View>
       ) : null}
-
       {isLast10Seconds && !isVideoEnded && (
         <TouchableOpacity
           style={styles.floatingButton}
@@ -134,9 +125,9 @@ useEffect(() => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1E1E2C', // Màu nền tối để nổi bật
-    padding: 16,
     alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#F5F5F5',
   },
   songTitle: {
     fontSize: 24,
@@ -144,7 +135,7 @@ const styles = StyleSheet.create({
     color: '#6A0DAD',
     marginBottom: 20,
     textAlign: 'center',
-    backgroundColor: '#FFD700', // Màu vàng nền để nổi bật
+    backgroundColor: '#FFD700',
     padding: 10,
     borderRadius: 10,
     textShadowColor: '#D1C4E9',
@@ -158,7 +149,7 @@ const styles = StyleSheet.create({
     color: '#6A0DAD',
     marginBottom: 20,
     textAlign: 'center',
-    backgroundColor: '#E0BBE4', // Nền nhẹ để nổi bật câu hỏi
+    backgroundColor: '#E0BBE4',
     padding: 8,
     borderRadius: 8,
     elevation: 3,
@@ -173,25 +164,24 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.4,
     shadowRadius: 6,
     elevation: 8,
-    borderColor: '#FFD700', // Viền vàng
+    borderColor: '#FFD700',
   },
   subtitle: {
     fontSize: 22,
     textAlign: 'center',
-    marginVertical: 20, // Giảm khoảng cách dọc
+    marginVertical: 20,
     fontWeight: 'bold',
-    padding: 10, // Giảm padding để phụ đề gọn hơn
-    borderRadius: 8,
+    padding: 10,
     elevation: 3,
   },
   subtitlePrimary: {
-    backgroundColor: '#ADD8E6', // Nền xanh nhẹ
-    color: '#0000FF', // Chữ Việt màu xanh
+    backgroundColor: '#ADD8E6',
+    color: '#0000FF',
     fontSize: 20,
   },
   subtitleOrigin: {
-    backgroundColor: '#FFFACD', // Nền vàng nhẹ
-    color: '#FFD700', // Chữ Hàn màu vàng
+    backgroundColor: '#FFFACD',
+    color: '#FFD700',
     fontSize: 20,
   },
   buttonContainer: {
@@ -215,7 +205,7 @@ const styles = StyleSheet.create({
   floatingButtonText: {
     color: '#FFF',
     fontWeight: 'bold',
-    fontSize: 16,
   },
 });
+
 export default VideoDetailScreen;

@@ -1,240 +1,239 @@
-import React, { useState, useRef } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Switch, Alert, ScrollView, Animated } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Switch,
+  ScrollView,
+  Alert,
+} from 'react-native';
+import * as Location from 'expo-location';
+import * as Notifications from 'expo-notifications';
 import { FontAwesome5, Ionicons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSelector, useDispatch } from 'react-redux';
+import { toggleDarkMode } from '../../Store/DarkMode';
+import { toggleLanguage } from '../../Store/Language';
 
 const SettingsScreen = ({ navigation }) => {
-  const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(true);
-  const [isLocationEnabled, setIsLocationEnabled] = useState(true);
-  const scrollY = useRef(new Animated.Value(0)).current;
+  const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+  const language = useSelector((state) => state.language.language);
+  const dispatch = useDispatch();
 
-  const headerHeight = scrollY.interpolate({
-    inputRange: [0, 100],
-    outputRange: [120, 60],
-    extrapolate: 'clamp'
-  });
+  const [isLocationEnabled, setIsLocationEnabled] = useState(false);
+  const [isNotificationEnabled, setIsNotificationEnabled] = useState(false);
 
-  const headerOpacity = scrollY.interpolate({
-    inputRange: [0, 100],
-    outputRange: [1, 0.9],
-    extrapolate: 'clamp'
-  });
-
-  const user = {
-    name: 'Kim Seokjin',
-    email: 'kimseokjin@example.com',
-    level: 'Intermediate',
-    profilePicture: 'https://i.pinimg.com/474x/e7/37/61/e73761b05e3921a209960b591787aa9c.jpg',
+  const dynamicStyles = {
+    container: {
+      flex: 1,
+      backgroundColor: isDarkMode ? '#0099FF' : '#fff',
+    },
+    groupTitle: {
+      color: isDarkMode ? '#fff' : '#333',
+    },
+    settingText: {
+      color: isDarkMode ? '#ccc' : '#333',
+    },
+    settingsGroup: {
+      backgroundColor: isDarkMode ? '#6666FF' : '#99FFFF',
+      borderColor: isDarkMode ? '#444' : '#eee',
+    },
   };
 
-  const handleLogout = () => {
-    Alert.alert(
-      "Đăng xuất",
-      "Bạn có chắc chắn muốn đăng xuất?",
-      [
-        { text: "Hủy", style: "cancel" },
-        { 
-          text: "Đăng xuất", 
-          onPress: () => {
-            AsyncStorage.removeItem('userToken');
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'AuthStack' }],
-            });
-          }
-        }
-      ]
-    );
+  const translations = {
+    vn: {
+      appSettings: 'Cài đặt ứng dụng',
+      notifications: 'Thông báo',
+      location: 'Vị trí',
+      darkMode: 'Giao diện tối',
+      language: 'Ngôn ngữ',
+      feedback: 'Phản hồi',
+      appInfo: 'Thông tin ứng dụng',
+      enableLocation: 'Bật vị trí',
+      locationError: 'Không thể lấy vị trí. Vui lòng kiểm tra cài đặt quyền.',
+      locationSuccess: 'Vị trí của bạn đã được lấy thành công!',
+      enableNotifications: 'Bật thông báo',
+      notificationError: 'Không thể bật thông báo. Vui lòng kiểm tra cài đặt quyền.',
+      notificationSuccess: 'Thông báo đã được bật thành công!',
+    },
+    en: {
+      appSettings: 'App Settings',
+      notifications: 'Notifications',
+      location: 'Location',
+      darkMode: 'Dark Mode',
+      language: 'Language',
+      feedback: 'Feedback',
+      appInfo: 'App Info',
+      enableLocation: 'Enable Location',
+      locationError: 'Unable to fetch location. Please check permission settings.',
+      locationSuccess: 'Your location has been successfully retrieved!',
+      enableNotifications: 'Enable Notifications',
+      notificationError: 'Unable to enable notifications. Please check permission settings.',
+      notificationSuccess: 'Notifications have been successfully enabled!',
+    },
+  };
+
+  const t = translations[language];
+
+  const handleLocationToggle = async () => {
+    if (!isLocationEnabled) {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Error', t.locationError);
+        return;
+      }
+
+      const location = await Location.getCurrentPositionAsync({});
+      Alert.alert('Success', `${t.locationSuccess}\nLatitude: ${location.coords.latitude}, Longitude: ${location.coords.longitude}`);
+    }
+    setIsLocationEnabled(!isLocationEnabled);
+  };
+
+  const handleNotificationToggle = async () => {
+    if (!isNotificationEnabled) {
+      const { status } = await Notifications.requestPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Error', t.notificationError);
+        return;
+      }
+
+      Alert.alert('Success', t.notificationSuccess);
+    }
+    setIsNotificationEnabled(!isNotificationEnabled);
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <View style={styles.headerMain}>
-          <Text style={styles.headerTitle}>Cài đặt</Text>
-          <TouchableOpacity
-            style={styles.helpButton}
-            onPress={() => navigation.navigate('InfoApp')}
-          >
-            <FontAwesome5 name="question-circle" size={16} color="#4b46f1" />
-          </TouchableOpacity>
-        </View>
-      </View>
+    <ScrollView style={dynamicStyles.container}>
+      <View style={[styles.settingsGroup, dynamicStyles.settingsGroup]}>
+        <Text style={[styles.groupTitle, dynamicStyles.groupTitle]}>
+          {t.appSettings}
+        </Text>
 
-      <ScrollView 
-        style={styles.content}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
-        <View style={styles.profileCard}>
-          <Image source={{ uri: user.profilePicture }} style={styles.avatar} />
-          <View style={styles.userInfo}>
-            <Text style={styles.userName}>{user.name}</Text>
-            <Text style={styles.userEmail}>{user.email}</Text>
-            <Text style={styles.userLevel}>🌟 Cấp độ: {user.level}</Text>
+        {/* Notifications */}
+        <View style={styles.settingItem}>
+          <View style={styles.settingLabel}>
+            <Ionicons name="notifications-outline" size={20} color="#4b46f1" />
+            <Text style={[styles.settingText, dynamicStyles.settingText]}>
+              {t.enableNotifications}
+            </Text>
           </View>
-          <TouchableOpacity 
-            style={styles.editButton}
-            onPress={() => navigation.navigate('EditInfoUser', { user })}
-          >
-            <FontAwesome5 name="pen" size={16} color="#fff" />
-          </TouchableOpacity>
+          <Switch
+            value={isNotificationEnabled}
+            onValueChange={handleNotificationToggle}
+            thumbColor={isNotificationEnabled ? '#fff' : '#000'}
+            trackColor={{ false: '#767577', true: '#81b0ff' }}
+          />
         </View>
 
-        <View style={styles.settingsGroup}>
-          <Text style={styles.groupTitle}>Cài đặt ứng dụng</Text>
-          <View style={styles.settingItem}>
-            <View style={styles.settingLabel}>
-              <Ionicons name="notifications-outline" size={20} color="#4b46f1" />
-              <Text style={styles.settingText}>Thông báo</Text>
-            </View>
-            <Switch value={isNotificationsEnabled} onValueChange={setIsNotificationsEnabled} />
+        {/* Location */}
+        <View style={styles.settingItem}>
+          <View style={styles.settingLabel}>
+            <Ionicons name="location-outline" size={20} color="#4b46f1" />
+            <Text style={[styles.settingText, dynamicStyles.settingText]}>
+              {t.enableLocation}
+            </Text>
           </View>
-
-          <View style={styles.settingItem}>
-            <View style={styles.settingLabel}>
-              <Ionicons name="location-outline" size={20} color="#4b46f1" />
-              <Text style={styles.settingText}>Vị trí</Text>
-            </View>
-            <Switch value={isLocationEnabled} onValueChange={setIsLocationEnabled} />
-          </View>
-
-          <TouchableOpacity 
-            style={styles.settingItem}
-            onPress={() => navigation.navigate('UserFeedback')}
-          >
-            <View style={styles.settingLabel}>
-              <Ionicons name="chatbubble-outline" size={20} color="#4b46f1" />
-              <Text style={styles.settingText}>Phản hồi</Text>
-            </View>
-            <FontAwesome5 name="chevron-right" size={16} color="#666" />
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-            style={styles.settingItem}
-            onPress={() => navigation.navigate('InfoApp')}
-          >
-            <View style={styles.settingLabel}>
-              <Ionicons name="information-circle-outline" size={20} color="#4b46f1" />
-              <Text style={styles.settingText}>Thông tin ứng dụng</Text>
-            </View>
-            <FontAwesome5 name="chevron-right" size={16} color="#666" />
-          </TouchableOpacity>
+          <Switch
+            value={isLocationEnabled}
+            onValueChange={handleLocationToggle}
+            thumbColor={isLocationEnabled ? '#fff' : '#000'}
+            trackColor={{ false: '#767577', true: '#81b0ff' }}
+          />
         </View>
 
-        <TouchableOpacity 
-          style={styles.logoutButton} 
-          onPress={handleLogout}
+        {/* Dark Mode */}
+        <View style={styles.settingItem}>
+          <View style={styles.settingLabel}>
+            <Ionicons name="moon-outline" size={20} color="#4b46f1" />
+            <Text style={[styles.settingText, dynamicStyles.settingText]}>
+              {t.darkMode}
+            </Text>
+          </View>
+          <Switch
+            value={isDarkMode}
+            onValueChange={() => dispatch(toggleDarkMode())}
+            thumbColor={isDarkMode ? '#fff' : '#000'}
+            trackColor={{ false: '#767577', true: '#81b0ff' }}
+          />
+        </View>
+
+        {/* Language */}
+        <View style={styles.settingItem}>
+          <View style={styles.settingLabel}>
+            <Ionicons name="language-outline" size={20} color="#4b46f1" />
+            <Text style={[styles.settingText, dynamicStyles.settingText]}>
+              {t.language}
+            </Text>
+          </View>
+          <Switch
+            value={language === 'en'}
+            onValueChange={() => dispatch(toggleLanguage())}
+            thumbColor={language === 'en' ? '#fff' : '#000'}
+            trackColor={{ false: '#767577', true: '#81b0ff' }}
+          />
+        </View>
+
+        {/* Feedback */}
+        <TouchableOpacity
+          style={styles.settingItem}
+          onPress={() => navigation.navigate('UserFeedback')}
         >
-          <FontAwesome5 name="sign-out-alt" size={18} color="#ff4444" />
-          <Text style={styles.logoutText}>Đăng xuất</Text>  
+          <View style={styles.settingLabel}>
+            <Ionicons name="chatbubble-outline" size={20} color="#4b46f1" />
+            <Text style={[styles.settingText, dynamicStyles.settingText]}>
+              {t.feedback}
+            </Text>
+          </View>
+          <FontAwesome5 name="chevron-right" size={16} color="#666" />
         </TouchableOpacity>
-      </ScrollView>
-    </View>
+
+        {/* App Info */}
+        <TouchableOpacity
+          style={styles.settingItem}
+          onPress={() => navigation.navigate('InfoApp')}
+        >
+          <View style={styles.settingLabel}>
+            <Ionicons name="information-circle-outline" size={20} color="#4b46f1" />
+            <Text style={[styles.settingText, dynamicStyles.settingText]}>
+              {t.appInfo}
+            </Text>
+          </View>
+          <FontAwesome5 name="chevron-right" size={16} color="#666" />
+        </TouchableOpacity>
+
+        {/* Edit Info User */}
+        <TouchableOpacity
+          style={styles.settingItem}
+          onPress={() => navigation.navigate('EditInfoUser')}
+        >
+          <View style={styles.settingLabel}>
+            <Ionicons name="person-outline" size={20} color="#4b46f1" />
+            <Text style={[styles.settingText, dynamicStyles.settingText]}>
+              Edit Information
+            </Text>
+          </View>
+          <FontAwesome5 name="chevron-right" size={16} color="#666" />
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  headerContainer: {
-    paddingTop: 45,
-    paddingHorizontal: 16, 
-    paddingBottom: 16,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-  },
-  headerMain: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  helpButton: {
-    padding: 8,
-    backgroundColor: '#f5f5f5',
-    borderRadius: 10,
-  },
-  content: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingBottom: 20
-  },
-  profileCard: {
-    margin: 16,
-    padding: 16,
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
-    borderWidth: 1,
-    borderColor: '#eee',
-  },
-  avatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    borderWidth: 2,
-    borderColor: '#4b46f1',
-  },
-  userInfo: {
-    marginLeft: 16,
-    flex: 1,
-  },
-  userName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  userEmail: {
-    fontSize: 14,
-    color: '#666',
-    marginTop: 4,
-  },
-  userLevel: {
-    fontSize: 14,
-    color: '#4b46f1',
-    marginTop: 4,
-  },
-  editButton: {
-    position: 'absolute',
-    top: 16,
-    right: 16,
-    backgroundColor: '#4b46f1',
-    padding: 8,
-    borderRadius: 8,
-  },
   settingsGroup: {
     margin: 16,
     padding: 16,
-    backgroundColor: "#fff",
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#eee",
     elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
-    elevation: 3,
   },
   groupTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
     marginBottom: 16,
   },
   settingItem: {
@@ -251,29 +250,6 @@ const styles = StyleSheet.create({
   },
   settingText: {
     fontSize: 16,
-    color: '#333',
-    marginLeft: 12,
-  },
-  logoutButton: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 16,
-    margin: 16,
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#eee',
-    elevation: 2,
-    shadowColor: '#000', 
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-  logoutText: {
-    fontSize: 16,
-    color: '#ff4444',
     marginLeft: 12,
   },
 });
