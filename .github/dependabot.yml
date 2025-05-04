@@ -1,0 +1,17 @@
+version: 2
+updates:
+  # Cấu hình cho phần Front-End React Native
+  - package-ecosystem: "npm"   # Hoặc "yarn" nếu bạn sử dụng Yarn cho React Native
+    directory: "/Front-App"     # Đường dẫn đến thư mục Front-End chứa package.json
+    schedule:
+      interval: "daily"         # Tần suất cập nhật hàng ngày
+    ignore:
+      - dependency-name: "react-native"  # Nếu bạn không muốn Dependabot cập nhật react-native (tùy chọn)
+
+  # Cấu hình cho phần Back-End Fastify
+  - package-ecosystem: "npm"   # Hoặc "yarn" nếu bạn sử dụng Yarn cho Fastify
+    directory: "/Back-End"      # Đường dẫn đến thư mục Back-End chứa package.json
+    schedule:
+      interval: "daily"         # Tần suất cập nhật hàng ngày
+    ignore:
+      - dependency-name: "fastify"  # Nếu bạn không muốn Dependabot cập nhật fastify (tùy chọn)
