@@ -10,7 +10,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@expo/metro-runtime": "~4.0.1",
+    "@expo/metro-runtime": "~5.0.4",
     "@react-native-async-storage/async-storage": "^2.1.2",
     "@react-native-community/datetimepicker": "^8.3.0",
     "@react-native-community/masked-view": "^0.1.11",
@@ -19,7 +19,7 @@
     "@react-navigation/drawer": "^7.2.1",
     "@react-navigation/material-top-tabs": "^7.2.1",
     "@react-navigation/native": "^7.0.17",
-    "@react-navigation/stack": "^7.2.3",
+    "@react-navigation/stack": "^7.3.1",
     "@reduxjs/toolkit": "^2.6.1",
     "axios": "^1.8.4",
     "expo": "~52.0.37",
@@ -29,7 +29,7 @@
     "expo-location": "~18.0.10",
     "expo-modules-core": "~2.2.3",
     "expo-notifications": "^0.29.14",
-    "expo-router": "^4.0.20",
+    "expo-router": "^5.0.5",
     "expo-speech": "~13.0.1",
     "expo-status-bar": "~2.0.1",
     "expo-web-browser": "~14.0.2",
