@@ -32,7 +32,7 @@
     "expo-router": "^5.0.5",
     "expo-speech": "~13.0.1",
     "expo-status-bar": "~2.0.1",
-    "expo-web-browser": "~14.0.2",
+    "expo-web-browser": "~14.1.6",
     "lottie-react-native": "^7.2.2",
     "react": "^18.3.1",
     "react-dom": "18.3.1",
