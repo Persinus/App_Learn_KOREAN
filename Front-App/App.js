@@ -14,7 +14,7 @@ const RootStack = createStackNavigator();
 function AppContent() {
   const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
   const language = useSelector((state) => state.language.language); // 👈 lấy ngôn ngữ từ Redux
-
+// siuuuuuuuuuuuuuuuusiuuuuuuuuuuuuuuuu
   // Có thể in log để debug (nếu cần)
   console.log('Language đang dùng:', language);
 
