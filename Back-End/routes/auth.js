@@ -2,8 +2,8 @@ const bcrypt = require('bcrypt');
 const fp = require('fastify-plugin');
 const path = require('path');
 const multer = require('fastify-multer');
-const registerSchema = require('../registerSchema'); // Đảm bảo đúng đường dẫn
-const loginSchema = require('../loginSchema'); // Đảm bảo đúng đường dẫn
+const registerSchema = require('../Schema/registerSchema'); // Đảm bảo đúng đường dẫn
+const loginSchema = require('../Schema/loginSchema'); // Đảm bảo đúng đường dẫn
 
 // File upload config
 const storage = multer.diskStorage({
@@ -31,17 +31,21 @@ module.exports = fp(async function (fastify, opts) {
     if (existing) return reply.code(400).send({ msg: 'Username already exists' });
   
     const hashed = await bcrypt.hash(password, 10);
-    const avatar = avatarUrl || '/uploads/default-avatar.png';
   
     const newUser = {
       username,
       email: email || '',
       password: hashed,
+      avatar: avatarUrl || '/uploads/default-avatar.png',
       score: 0,
       gold: 0,
       diamond: 0,
       lessons: [],
-      avatar: avatar,
+      level: 1,
+      experience: 0,
+      dailyStreak: 0,
+      lastLogin: new Date(),
+      achievements: [],
     };
   
     await collection.insertOne(newUser);
@@ -58,14 +62,23 @@ module.exports = fp(async function (fastify, opts) {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return reply.code(400).send({ msg: 'Invalid credentials' });
   
-    const token = fastify.jwt.sign({ username });
+    // Tạo JWT chứa thông tin người dùng
+    const token = fastify.jwt.sign({ username, role: user.role || 'user' });
+  
+    // Cập nhật thời gian đăng nhập cuối
+    await collection.updateOne(
+      { username },
+      { $set: { lastLogin: new Date() } }
+    );
+  
+    // Gửi JWT về client
     reply.send({ token });
   });
 
   // Upload avatar
   fastify.post('/upload-avatar', {
     preValidation: [fastify.authenticate],
-    preHandler: upload.single('avatar')
+    preHandler: upload.single('avatar'),
   }, async (req, reply) => {
     const filePath = '/' + req.file.path.replace(/\\/g, '/');
     await collection.updateOne(
@@ -88,30 +101,61 @@ module.exports = fp(async function (fastify, opts) {
               properties: {
                 username: { type: 'string' },
                 email: { type: 'string' },
+                avatar: { type: 'string' },
                 score: { type: 'number' },
                 gold: { type: 'number' },
                 diamond: { type: 'number' },
                 lessons: { type: 'array', items: { type: 'string' } },
-                avatar: { type: 'string' },
-              }
-            }
-          }
-        }
-      }
-    }
+                level: { type: 'number' },
+                experience: { type: 'number' },
+                dailyStreak: { type: 'number' },
+                lastLogin: { type: 'string', format: 'date-time' },
+                achievements: { type: 'array', items: { type: 'string' } },
+              },
+            },
+          },
+        },
+      },
+    },
   }, async (req, reply) => {
     const user = await collection.findOne(
       { username: req.user.username },
-      { projection: { password: 0 } } // chỉ bỏ password đi
+      { projection: { password: 0 } } // Loại bỏ trường password
     );
     reply.send({ user });
   });
    
-    // Đăng xuất
-    fastify.post('/logout', { preValidation: [fastify.authenticate] }, async (req, reply) => {
-        reply.send({ msg: 'Logged out' });
-    });
+  // Đăng xuất
+  fastify.post('/logout', { preValidation: [fastify.authenticate] }, async (req, reply) => {
+    reply.send({ msg: 'Logged out' });
+  });
+
+  // Cập nhật profile
+  fastify.put('/update-profile', {
+    preValidation: [fastify.authenticate],
+    schema: {
+      body: {
+        type: 'object',
+        properties: {
+          email: { type: 'string', nullable: true },
+          avatar: { type: 'string', nullable: true },
+          score: { type: 'number', nullable: true },
+          gold: { type: 'number', nullable: true },
+          diamond: { type: 'number', nullable: true },
+        },
+      },
+    },
+  }, async (req, reply) => {
+    const updates = req.body;
+
+    await collection.updateOne(
+      { username: req.user.username },
+      { $set: updates }
+    );
+
+    const token = fastify.jwt.sign({ username: req.user.username });
+    reply.send({ msg: 'Profile updated successfully', token });
+  });
 });
-    
-   
-    
+
+
