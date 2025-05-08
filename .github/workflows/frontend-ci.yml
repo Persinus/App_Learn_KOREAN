@@ -1,0 +1,37 @@
+name: Front-End CI
+
+on:
+  push:
+    paths:
+      - 'Front-App/**'
+    branches: [ "main" ]
+  pull_request:
+    paths:
+      - 'Front-App/**'
+    branches: [ "main" ]
+
+jobs:
+  frontend-build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18.x
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+      working-directory: ./Front-App
+
+    - name: Run Expo lint and tests
+      run: |
+        npm run lint
+        npm test
+      working-directory: ./Front-App
+
+    - name: Build Front-End
+      run: npm run build
+      working-directory: ./Front-App
