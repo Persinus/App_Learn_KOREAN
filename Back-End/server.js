@@ -6,10 +6,10 @@ const fastify = require('fastify')({ logger: true });
 fastify.register(require('@fastify/cors'), { origin: '*' });
 fastify.register(require('fastify-mongodb'), {
   forceClose: true,
-  url: process.env.MONGO_URL
+  url: process.env.MONGO_URL,
 });
 fastify.register(require('@fastify/jwt'), {
-  secret: process.env.JWT_SECRET
+  secret: process.env.JWT_SECRET,
 });
 fastify.register(require('@fastify/static'), {
   root: path.join(__dirname, 'uploads'),
@@ -18,6 +18,12 @@ fastify.register(require('@fastify/static'), {
 
 // Đăng ký routes
 fastify.register(require('./routes/auth'), { prefix: '/auth' });
+fastify.register(require('./routes/Lesson'), { prefix: '/lesson' });
+fastify.register(require('./routes/User'), { prefix: '/user' });
+fastify.register(require('./routes/Achivement'), { prefix: '/achievements' });
+fastify.register(require('./routes/Nofication'), { prefix: '/notifications' });
+fastify.register(require('./routes/DailyMission'), { prefix: '/daily-missions' });
+
 
 const PORT = process.env.PORT || 3000;
 fastify.listen({ port: PORT }, (err) => {

@@ -160,6 +160,7 @@ dailyStreak: Number (số ngày học liên tiếp)
 lastLogin: Date (thời gian đăng nhập cuối)
 achievements: Array (thành tựu đã đạt được)
 
+
 2. Lesson (Bài học)
 lessonId: String (mã định danh bài học)
 title: String (tiêu đề bài học)
