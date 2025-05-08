@@ -292,4 +292,5 @@ Thông báo về các sự kiện và giải đấu
 Kiểm tra đầu vào với JSON Schema (đã thấy trong loginSchema.js và registerSchema.js)
 Xử lý tải lên file an toàn (đã thấy trong routes/auth.js)
 Cần thêm xác thực email và khôi phục mật khẩu
+xem lại database nhé 
 #####################################################################################################################################
