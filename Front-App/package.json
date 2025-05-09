@@ -59,7 +59,7 @@
     "react-native-vector-icons": "^10.2.0",
     "react-native-video": "^6.13.0",
     "react-native-web": "~0.20.0",
-    "react-native-webview": "^13.13.4",
+    "react-native-webview": "^13.13.5",
     "react-native-youtube-iframe": "^2.3.0",
     "react-redux": "^9.2.0",
     "socket.io-client": "^4.8.1"
