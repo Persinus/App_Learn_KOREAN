@@ -27,7 +27,7 @@
     "expo-av": "~15.1.4",
     "expo-device": "~7.1.4",
     "expo-location": "~18.0.10",
-    "expo-modules-core": "~2.2.3",
+    "expo-modules-core": "~2.3.13",
     "expo-notifications": "^0.31.2",
     "expo-router": "^5.0.6",
     "expo-speech": "~13.0.1",
