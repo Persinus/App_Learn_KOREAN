@@ -31,7 +31,7 @@
     "expo-notifications": "^0.29.14",
     "expo-router": "^5.0.6",
     "expo-speech": "~13.0.1",
-    "expo-status-bar": "~2.0.1",
+    "expo-status-bar": "~2.2.3",
     "expo-web-browser": "~14.1.6",
     "lottie-react-native": "^7.2.2",
     "react": "^18.3.1",
