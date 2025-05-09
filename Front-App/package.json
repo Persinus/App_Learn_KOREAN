@@ -25,7 +25,7 @@
     "expo": "~52.0.37",
     "expo-auth-session": "~6.0.3",
     "expo-av": "~15.1.4",
-    "expo-device": "~7.0.2",
+    "expo-device": "~7.1.4",
     "expo-location": "~18.0.10",
     "expo-modules-core": "~2.2.3",
     "expo-notifications": "^0.29.14",
