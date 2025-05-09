@@ -5,7 +5,8 @@ import { Provider, useSelector } from 'react-redux';
 import { SafeAreaView, StyleSheet } from 'react-native';
 
 import MainNavigator from './Navigation/AppNavigator';
-import SplashStack from './Navigation/SplashStack';
+import OpenStack from './Navigation/OpenStack';
+import { SplashScreen } from './Screens/SplashScreen';
 import AuthStack from './Navigation/AuthStack';
 import store from './Store/Store';
 
@@ -22,7 +23,8 @@ function AppContent() {
     <SafeAreaView style={[styles.container, { backgroundColor: isDarkMode ? '#000' : '#fff' }]}>
       <NavigationContainer theme={isDarkMode ? DarkTheme : DefaultTheme}>
         <RootStack.Navigator screenOptions={{ headerShown: false }}>
-          <RootStack.Screen name="SplashStack" component={SplashStack} />
+          <RootStack.Screen name="SplashScreen" component={SplashScreen} />
+          <RootStack.Screen name="OpenStack" component={OpenStack}/>
           <RootStack.Screen name="AuthStack" component={AuthStack} />
           <RootStack.Screen name="MainNavigator" component={MainNavigator} />
         </RootStack.Navigator>
