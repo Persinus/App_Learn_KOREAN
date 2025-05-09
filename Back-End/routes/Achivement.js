@@ -43,7 +43,53 @@ module.exports = fp(async function (fastify, opts) {
 
     reply.send(achievementsWithStatus);
   });
+  // Thêm Route POST để Tạo Thành Tựu
+fastify.post('/achievements', {
+  schema: {
+    body: {
+      type: 'object',
+      required: ['title', 'description', 'icon', 'reward', 'requirement'],
+      properties: {
+        title: { type: 'string' },
+        description: { type: 'string' },
+        icon: { type: 'string' },
+        reward: { 
+          type: 'object', 
+          properties: {
+            gold: { type: 'number' },
+            coin: { type: 'number' },
+          },
+          required: ['gold', 'coin']
+        },
+        requirement: { type: 'object', additionalProperties: true },
+      },
+    },
+    response: {
+      201: {
+        type: 'object',
+        properties: {
+          msg: { type: 'string' },
+          achievementId: { type: 'string' },
+        },
+      },
+    },
+  },
+}, async (req, reply) => {
+  const { title, description, icon, reward, requirement } = req.body;
 
+  const newAchievement = {
+    achievementId: new Date().getTime().toString(), // hoặc sử dụng UUID
+    title,
+    description,
+    icon,
+    reward,
+    requirement,
+  };
+
+  await achievementsCollection.insertOne(newAchievement);
+  
+  reply.code(201).send({ msg: 'Achievement created successfully', achievementId: newAchievement.achievementId });
+});
   // Nhận phần thưởng từ thành tựu
   fastify.post('/achievements/:id/claim', {
     preValidation: [fastify.authenticate],

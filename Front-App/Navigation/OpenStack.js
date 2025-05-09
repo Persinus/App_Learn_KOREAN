@@ -1,7 +1,7 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useSelector } from 'react-redux';
-import SplashScreen from '../Screens/SplashScreen';
+
 import OnboardingPage1 from '../Screens/OnBroarding/OnboardingPage1';
 import OnboardingPage2 from '../Screens/OnBroarding/OnboardingPage2';
 import OnboardingPage3 from '../Screens/OnBroarding/OnbroadingPage3';
@@ -12,7 +12,7 @@ import BridgeScreen from "../Screens/bridge";
 
 const Stack = createStackNavigator();
 
-const SplashStack = () => {
+const OpenStack = () => {
   // Lấy trạng thái Dark Mode từ Redux store
   const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
 
@@ -25,7 +25,7 @@ const SplashStack = () => {
         },
       }}
     >
-      <Stack.Screen name="SplashScreen" component={SplashScreen} />
+      
       <Stack.Screen name="BridgeScreen" component={BridgeScreen} />
       <Stack.Screen name="OnboardingPage1" component={OnboardingPage1} />
       <Stack.Screen name="OnboardingPage2" component={OnboardingPage2} />
@@ -37,4 +37,5 @@ const SplashStack = () => {
   );
 };
 
-export default SplashStack;
+
+export default OpenStack;

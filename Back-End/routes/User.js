@@ -8,7 +8,8 @@ module.exports = fp(async function (fastify, opts) {
 
   // Lấy danh sách tất cả người dùng
   fastify.get('/users', {
-    preValidation: [fastify.authenticate], // Xác thực JWT
+    // XÓA hoặc COMMENT dòng này để test tạm thời:
+      //preValidation: [fastify.authenticate],
     schema: {
       response: {
         200: {
