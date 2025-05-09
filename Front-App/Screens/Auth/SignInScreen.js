@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios"; // Thêm import axios
 import authStyles from "../../Styles/AuthStyles";
 
 const SignInScreen = ({ navigation }) => {
@@ -24,41 +25,28 @@ const SignInScreen = ({ navigation }) => {
     }
 
     try {
-      // Tạo tài khoản demo mặc định
-      const demoAccount = {
-        name: "Demo User",
-        email: "demo@gmail.com",
-        password: "123456"
-      };
-      
-      // Lưu tài khoản demo
-      await AsyncStorage.setItem('demoAccount', JSON.stringify(demoAccount));
+      // Gửi yêu cầu đăng ký đến API
+      const response = await axios.post("http://localhost:3000/register", {
+        username: name, // Tên người dùng
+        email: email,
+        password: password,
+        avatarUrl: "https://i.pinimg.com/474x/e7/37/61/e73761b05e3921a209960b591787aa9c.jpg" // URL avatar mặc định
+      });
 
-      // Lưu tài khoản người dùng đăng ký
-      const userData = {
-        name,
-        email,
-        password,
-        level: "Beginner",
-        points: 0,
-        avatar: "https://i.pinimg.com/474x/e7/37/61/e73761b05e3921a209960b591787aa9c.jpg"
-      };
+      Alert.alert("Thành công", response.data.msg);
 
-      await AsyncStorage.setItem('userData', JSON.stringify(userData));
-      await AsyncStorage.setItem('userToken', 'true');
+      // Lưu thông tin người dùng (nếu cần)
+      const userData = { name, email };
+      await AsyncStorage.setItem("userData", JSON.stringify(userData));
+      await AsyncStorage.setItem("userToken", "true"); // Thiết lập token
 
-      Alert.alert(
-        "Thành công", 
-        `Đăng ký tài khoản thành công!\n\nTài khoản demo để test:\nEmail: ${demoAccount.email}\nPassword: ${demoAccount.password}`,
-        [
-          {
-            text: "OK",
-            onPress: () => navigation.navigate("TabNavigator", { screen: "HomeScreen" })
-          }
-        ]
-      );
+      navigation.navigate("LoginScreen"); // Điều hướng đến màn hình đăng nhập
     } catch (error) {
-      Alert.alert("Lỗi", "Có lỗi xảy ra khi đăng ký. Vui lòng thử lại!");
+      if (error.response) {
+        Alert.alert("Lỗi", error.response.data.msg || "Có lỗi xảy ra khi đăng ký.");
+      } else {
+        Alert.alert("Lỗi", "Có lỗi xảy ra. Vui lòng thử lại!");
+      }
       console.error("SignUp Error:", error);
     }
   };

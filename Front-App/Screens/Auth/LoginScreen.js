@@ -113,8 +113,16 @@ const LoginScreen = ({ navigation }) => {
       Alert.alert("Error", t.enterEmailPassword);
       return;
     }
+
     try {
-      await AsyncStorage.setItem("userToken", "true");
+      const response = await axios.post("http://localhost:3000/login", {
+        username: email,
+        password: password,
+      });
+
+      const token = response.data.token; // Nhận JWT từ phản hồi
+      await AsyncStorage.setItem("userToken", token); // Lưu token vào AsyncStorage
+
       Alert.alert(t.loginSuccess, `${t.emailLabel}: ${email}`);
       navigation.reset({
         index: 0,

@@ -244,6 +244,8 @@ GET /tournaments/:id: Lấy chi tiết giải đấu
 POST /tournaments/:id/join: Tham gia giải đấu
 GET /tournaments/:id/leaderboard: Bảng xếp hạng giải đấu
 
+
+// chịu 
 8. Friend System (Hệ thống bạn bè)
 GET /friends: Lấy danh sách bạn bè
 POST /friends/add/:userId: Gửi lời mời kết bạn
@@ -262,10 +264,14 @@ III. Các chức năng chính cần phát triển
 Xác thực JWT (JSON Web Token) để bảo vệ các API endpoint
 Quản lý session và refresh token
 
+
+
 2. Hệ thống quản lý người dùng
 Lưu trữ và cập nhật thông tin người dùng
 Quản lý ảnh đại diện (upload và lưu trữ)
 Theo dõi tiến trình học tập
+
+
 
 3. Hệ thống gamification
 Tính toán và cập nhật điểm kinh nghiệm (exp)
@@ -273,6 +279,8 @@ Quản lý cấp độ và thăng cấp (level up)
 Phần thưởng đăng nhập hàng ngày (daily rewards)
 Hệ thống thành tựu (achievements)
 
+
+// rảnh à 
 4. Bảng xếp hạng và thống kê
 Tính toán và cập nhật bảng xếp hạng
 Thống kê dữ liệu học tập của người dùng
