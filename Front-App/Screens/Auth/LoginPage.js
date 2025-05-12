@@ -1,30 +1,60 @@
 import React from "react";
 import { View, Text, StyleSheet, ImageBackground, TouchableOpacity } from "react-native";
+import { useSelector } from "react-redux";
 
 const Login = ({ navigation }) => {
+  // Lấy trạng thái Dark Mode từ Redux store
+  const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+
   return (
-    <ImageBackground source={require("../../assets/background.png")} style={styles.background}>
-      <View style={styles.container}>
+    <ImageBackground
+      source={require("../../assets/background.png")}
+      style={styles.background}
+    >
+      <View
+        style={[
+          styles.container,
+          { backgroundColor: isDarkMode ? "rgba(0, 0, 0, 0.85)" : "rgba(255, 255, 255, 0.85)" },
+        ]}
+      >
         <View style={styles.content}>
-          <Text style={styles.title}>📚 Học tiếng Hàn dễ dàng hơn</Text>
-          <Text style={styles.description}>
+          <Text style={[styles.title, { color: isDarkMode ? "#fff" : "#4A148C" }]}>
+            📚 Học tiếng Hàn dễ dàng hơn
+          </Text>
+          <Text style={[styles.description, { color: isDarkMode ? "#ccc" : "#555" }]}>
             Lộ trình học tập cá nhân hóa giúp bạn tiến bộ nhanh chóng!
           </Text>
         </View>
 
         <View style={styles.buttonContainer}>
           <TouchableOpacity
-            style={styles.primaryButton}
+            style={[
+              styles.primaryButton,
+              { backgroundColor: isDarkMode ? "#4A148C" : "#6a0dad" },
+            ]}
             onPress={() => navigation.navigate("AuthStack", { screen: "SignUpScreen" })}
           >
             <Text style={styles.primaryButtonText}>Đăng ký</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.secondaryButton}
+            style={[
+              styles.secondaryButton,
+              {
+                backgroundColor: isDarkMode ? "#333" : "#ffffff",
+                borderColor: isDarkMode ? "#fff" : "#6a0dad",
+              },
+            ]}
             onPress={() => navigation.navigate("AuthStack", { screen: "LoginScreen" })}
           >
-            <Text style={styles.secondaryButtonText}>Đăng nhập</Text>
+            <Text
+              style={[
+                styles.secondaryButtonText,
+                { color: isDarkMode ? "#fff" : "#6a0dad" },
+              ]}
+            >
+              Đăng nhập
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -44,7 +74,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,
-    backgroundColor: "rgba(255, 255, 255, 0.85)", // Màu trắng mờ để làm nổi chữ
     borderRadius: 20,
   },
   content: {
@@ -57,12 +86,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 15,
-    color: "#4A148C",
   },
   description: {
     fontSize: 18,
     textAlign: "center",
-    color: "#555",
     marginBottom: 20,
   },
   buttonContainer: {
@@ -76,7 +103,6 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 10,
     borderRadius: 10,
-    backgroundColor: "#6a0dad",
     paddingVertical: 15,
     alignItems: "center",
   },
@@ -89,16 +115,13 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 10,
     borderRadius: 10,
-    backgroundColor: "#ffffff",
     paddingVertical: 15,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#6a0dad",
   },
   secondaryButtonText: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#6a0dad",
   },
 });
 

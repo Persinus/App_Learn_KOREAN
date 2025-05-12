@@ -137,146 +137,168 @@ Tên người dùng.
 Email.
 Mật khẩu.
 Xác nhận mật khẩu.
-Nút Đăng ký để tạo tài khoản.
- <Stack.Navigator initialRouteName="OnboardingPage1" screenOptions={{ headerShown: false }}>
-        {/* Onboarding Pages */}
-        <Stack.Screen name="OnboardingPage1" component={OnboardingPage1} />
-        <Stack.Screen name="OnboardingPage2" component={OnboardingPage2} />
-
-        {/* Login Stack */}
-        <Stack.Screen name="LoginStack" component={AuthStack} />
-        {/* Home Screen */}
-        <Stack.Screen name="MainApp" component={TabNavigator} />
-       
-      </Stack.Navigator>
+Nút Đăng ký để tạo tài khoản
+####################################################################################################################################################################################################
+Phân tích Back-End cho ứng dụng App_Learn_KOREAN
 
 
+I. Cấu trúc dữ liệu trong Database
+Dựa vào code Front-End, Back-End cần quản lý các model dữ liệu sau:
+
+1. User (Người dùng)
+username: String (tên đăng nhập)
+email: String (email người dùng)
+password: String (mật khẩu đã mã hóa)
+avatar: String (đường dẫn đến ảnh đại diện)
+score: Number (điểm thành tích)
+gold: Number (tiền ảo trong ứng dụng)
+diamond: Number (kim cương - loại tiền ảo cao cấp)
+lessons: Array (danh sách ID các bài học đã hoàn thành)
+level: Number (cấp độ người dùng)
+experience: Number (điểm kinh nghiệm)
+dailyStreak: Number (số ngày học liên tiếp)
+lastLogin: Date (thời gian đăng nhập cuối)
+achievements: Array (thành tựu đã đạt được)
 
 
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="SplashStack" component={SplashStack} />
-        <Stack.Screen name="AuthStack" component={AuthStack} />
-        <Stack.Screen name="TabNavigator" component={TabNavigator} />
-       
-      </Stack.Navigator>
-      
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+2. Lesson (Bài học)
+lessonId: String (mã định danh bài học)
+title: String (tiêu đề bài học)
+description: String (mô tả bài học)
+category: String (loại bài học: ngữ pháp, từ vựng, v.v.)
+level: Number (độ khó)
+content: Array (nội dung bài học)
+exercises: Array (bài tập trong bài học)
+isPremium: Boolean (bài học miễn phí hay trả phí)
 
-// Import các màn hình
-import TabNavigator from './Navigation/AppNavigator';
-import SplashStack from './Navigation/SplashStack';
-import AuthStack from './Navigation/AuthStack';
-import Admob from './Screens/admob';
+3. Achievement (Thành tựu)
+achievementId: String (mã định danh)
+title: String (tiêu đề thành tựu)
+description: String (mô tả thành tựu)
+icon: String (biểu tượng thành tựu)
+reward: Object (phần thưởng khi đạt được)
+requirement: Object (yêu cầu để đạt được)
 
-const Stack = createStackNavigator();
-export default function App() {
-  return (
-    <Admob /> // Hiển thị trực tiếp màn hình Admob
-  );
-}
+4. DailyMission (Nhiệm vụ hàng ngày)
+missionId: String (mã định danh)
+title: String (tiêu đề nhiệm vụ)
+description: String (mô tả nhiệm vụ)
+reward: Object (phần thưởng)
+requirement: Object (yêu cầu hoàn thành)
+expiryDate: Date (thời hạn)
+
+5. Vocabulary (Từ vựng)
+word: String (từ vựng tiếng Hàn)
+pronunciation: String (phát âm)
+meaning: String (nghĩa tiếng Việt/Anh)
+example: String (ví dụ)
+category: String (chủ đề)
+level: Number (độ khó)
+
+6. Tournament (Giải đấu)
+tournamentId: String (mã định danh)
+title: String (tên giải đấu)
+startDate: Date (ngày bắt đầu)
+endDate: Date (ngày kết thúc)
+participants: Array (danh sách người tham gia)
+rewards: Object (phần thưởng)
+rules: String (luật chơi)
+
+II. Các API Endpoint cần thiết
+1. Authentication (Xác thực)
+POST /register: Đăng ký tài khoản mới
+POST /login: Đăng nhập
+POST /logout: Đăng xuất
+GET /profile: Lấy thông tin profile người dùng
+POST /upload-avatar: Tải lên ảnh đại diện
+PUT /update-profile: Cập nhật thông tin cá nhân
+
+2. Lesson Management (Quản lý bài học)
+GET /lessons: Lấy danh sách bài học
+GET /lessons/:id: Lấy chi tiết một bài học
+POST /lessons/:id/complete: Đánh dấu bài học đã hoàn thành
+GET /lessons/categories: Lấy danh sách chủ đề bài học
+
+3. Ranking System (Hệ thống xếp hạng)
+GET /rankings: Lấy bảng xếp hạng người dùng
+GET /rankings/user/:id: Lấy chi tiết xếp hạng của người dùng
+
+4. Achievement System (Hệ thống thành tựu)
+GET /achievements: Lấy danh sách tất cả thành tựu
+GET /achievements/user: Lấy thành tựu của người dùng hiện tại
+POST /achievements/:id/claim: Nhận phần thưởng từ thành tựu
+
+5. Daily Mission System (Hệ thống nhiệm vụ hàng ngày)
+GET /daily-missions: Lấy danh sách nhiệm vụ hàng ngày
+POST /daily-missions/:id/complete: Đánh dấu hoàn thành nhiệm vụ
+POST /daily-missions/:id/claim: Nhận phần thưởng nhiệm vụ
+
+6. Vocabulary (Từ vựng)
+GET /vocabulary: Lấy danh sách từ vựng
+GET /vocabulary/category/:category: Lấy từ vựng theo chủ đề
+GET /vocabulary/search?q=...: Tìm kiếm từ vựng
+
+7. Tournament System (Hệ thống giải đấu)
+GET /tournaments: Lấy danh sách giải đấu
+GET /tournaments/:id: Lấy chi tiết giải đấu
+POST /tournaments/:id/join: Tham gia giải đấu
+GET /tournaments/:id/leaderboard: Bảng xếp hạng giải đấu
+
+
+// chịu 
+8. Friend System (Hệ thống bạn bè)
+GET /friends: Lấy danh sách bạn bè
+POST /friends/add/:userId: Gửi lời mời kết bạn
+POST /friends/accept/:userId: Chấp nhận lời mời kết bạn
+POST /friends/challenge/:userId: Thách đấu bạn bè
+
+9. Notification System (Hệ thống thông báo)
+GET /notifications: Lấy danh sách thông báo
+POST /notifications/mark-as-read: Đánh dấu thông báo đã đọc
+POST /notifications/mark-all-as-read: Đánh dấu tất cả thông báo đã đọc
+
+
+III. Các chức năng chính cần phát triển
+1. Hệ thống xác thực (Authentication)
+Đăng ký, đăng nhập, đăng xuất
+Xác thực JWT (JSON Web Token) để bảo vệ các API endpoint
+Quản lý session và refresh token
 
 
 
-import React from 'react';
-import { View, Button } from 'react-native';
-import * as Speech from 'expo-speech';
+2. Hệ thống quản lý người dùng
+Lưu trữ và cập nhật thông tin người dùng
+Quản lý ảnh đại diện (upload và lưu trữ)
+Theo dõi tiến trình học tập
 
-export default function App() {
-  const speakKorean = () => {
-    Speech.speak('날아올라 좀 더 멀리.', {
-      language: 'ko', // Tiếng Hàn
-      pitch: 1.5, // Cao độ giọng nói
-      rate: 0.99, // Tốc độ đọc
-    });
-  };
 
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Button title="🔊 Nghe tiếng Hàn" onPress={speakKorean} />
-    </View>
-  );
-}
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, FlatList } from 'react-native';
-import io from 'socket.io-client';
 
-const socket = io('http://localhost:3000');
+3. Hệ thống gamification
+Tính toán và cập nhật điểm kinh nghiệm (exp)
+Quản lý cấp độ và thăng cấp (level up)
+Phần thưởng đăng nhập hàng ngày (daily rewards)
+Hệ thống thành tựu (achievements)
 
-const App = () => {
-    const [roomCode, setRoomCode] = useState('');
-    const [playerId, setPlayerId] = useState(null);
-    const [room, setRoom] = useState(null);
-    const [questionIndex, setQuestionIndex] = useState(0);
-    const [questions, setQuestions] = useState([]);
-    const [answer, setAnswer] = useState('');
-    const [hp, setHp] = useState(100);
-    const [enemyHp, setEnemyHp] = useState(100);
 
-    useEffect(() => {
-        socket.on('connect', () => {
-            setPlayerId(socket.id);
-        });
+// rảnh à 
+4. Bảng xếp hạng và thống kê
+Tính toán và cập nhật bảng xếp hạng
+Thống kê dữ liệu học tập của người dùng
+Theo dõi số ngày học liên tiếp (streak)
 
-        socket.on('roomCreated', (code) => {
-            setRoomCode(code);
-            setRoom({ players: [socket.id], questions: [] });
-        });
+5. Quản lý nội dung học tập
+Tổ chức và cung cấp bài học, bài tập
+Theo dõi tiến trình bài học của người dùng
+Quản lý nội dung premium (trả phí)
 
-        socket.on('roomUpdated', (updatedRoom) => {
-            setRoom(updatedRoom);
-            setQuestions(updatedRoom.questions);
-            setHp(updatedRoom.hp[socket.id] || 100);
-            const enemy = updatedRoom.players.find(p => p !== socket.id);
-            setEnemyHp(updatedRoom.hp[enemy] || 100);
-            setQuestionIndex(updatedRoom.currentIndex || 0);
-        });
+6. Hệ thống thông báo
+Thông báo hoàn thành nhiệm vụ
+Thông báo nhận thành tựu mới
+Thông báo về các sự kiện và giải đấu
 
-        return () => {
-            socket.off('connect');
-            socket.off('roomCreated');
-            socket.off('roomUpdated');
-        };
-    }, []);
 
-    const createRoom = () => {
-        socket.emit('createRoom');
-    };
-
-    const joinRoom = () => {
-        socket.emit('joinRoom', roomCode);
-    };
-
-    const submitAnswer = () => {
-        if (!questions[questionIndex]) return;
-        const correct = answer === questions[questionIndex].answer;
-        socket.emit('submitAnswer', { roomCode, isCorrect: correct });
-        setAnswer('');
-    };
-
-    return (
-        <View style={{ padding: 20 }}>
-            <Text>Enter or Create a Room</Text>
-            <TextInput placeholder="Room Code" value={roomCode} onChangeText={setRoomCode} style={{ borderWidth: 1, marginBottom: 10 }} />
-            <Button title="Create Room" onPress={createRoom} />
-            <Button title="Join Room" onPress={joinRoom} />
-            {room && (
-                <View>
-                    <Text>Your HP: {hp} | Enemy HP: {enemyHp}</Text>
-                    <Text>Question: {questions[questionIndex]?.question}</Text>
-                    <FlatList
-                        data={questions[questionIndex]?.options || []}
-                        renderItem={({ item }) => (
-                            <Button title={item} onPress={() => setAnswer(item)} />
-                        )}
-                        keyExtractor={(item, index) => index.toString()}
-                    />
-                    <Button title="Submit Answer" onPress={submitAnswer} />
-                </View>
-            )}
-        </View>
-    );
-};
-
-export default  App;
+Kiểm tra đầu vào với JSON Schema (đã thấy trong loginSchema.js và registerSchema.js)
+Xử lý tải lên file an toàn (đã thấy trong routes/auth.js)
+Cần thêm xác thực email và khôi phục mật khẩu
+xem lại database nhé 
+#####################################################################################################################################

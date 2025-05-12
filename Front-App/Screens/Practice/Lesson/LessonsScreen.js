@@ -3,6 +3,7 @@ import {
   View, Text, TouchableOpacity, Image, Animated, StyleSheet, ScrollView, Modal 
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useSelector } from "react-redux";
 
 const characterList = [
     { name: "Nhân Vật 1", uri: "https://i.pinimg.com/474x/39/da/a0/39daa05b8c3389b679f31c9745f3e9c4.jpg", price: 0, isOwned: true },
@@ -48,7 +49,7 @@ const MapScreen = () => {
   const [isCharacterPanelVisible, setCharacterPanelVisible] = useState(false);
   const [gems, setGems] = useState(900);  // Kim cương ban đầu
   const [characters, setCharacters] = useState(characterList)
-  // ✅ Di chuyển nhân vật và cuộn theo  
+  // ✅ Di chuyển nhân vật và cuộn theo
   const moveCharacter = (index, x, y) => {
     // Nếu là câu hỏi ở tương lai (sau câu hỏi hiện tại là số 5)
     if (index > 5) {
@@ -70,27 +71,14 @@ const MapScreen = () => {
   };
   return (
     <View style={styles.container}>
-      {/* Hiển thị kim cương */}
-      <View style={styles.gemsContainer}>
-        <Text style={styles.gemsText}>💎 {gems}</Text>
-      </View>
-
       {/* Nút mở panel chọn nhân vật */}
-      <TouchableOpacity style={styles.characterSelectButton} onPress={() => setCharacterPanelVisible(true)}>
-        <Text style={styles.buttonText}>🎭 Chọn Nhân Vật</Text>
+      <TouchableOpacity style={[styles.characterSelectButton, dynamicStyles.characterSelectButton]} onPress={() => setCharacterPanelVisible(true)}>
+        <Text style={[styles.buttonText, dynamicStyles.buttonText]}>🎭 Chọn Nhân Vật</Text>
       </TouchableOpacity>
 
       {/* Thanh tiêu đề */}
       <View style={styles.header}>
-        <Text style={styles.headerText}>Hành trình học tiếng Hàn</Text>
-      </View>
-
-      {/* Thanh tiến độ */}
-      <View style={styles.progressBarContainer}>
-        <View style={styles.progressBar}>
-          <View style={[styles.progressFill, { width: `${(5/20)*100}%` }]} />
-        </View>
-        <Text style={styles.progressText}>5/20 câu hỏi</Text>
+        <Text style={styles.headerText}>Hành trình 20 câu hỏi</Text>
       </View>
 
       {/* ✅ ScrollView cuộn đúng */}
@@ -131,28 +119,12 @@ const MapScreen = () => {
           <View key={index} style={[styles.rowContainer, { top: point.y }]}>
             {/* Nút câu hỏi */}
             <TouchableOpacity 
-              style={[
-                styles.node, 
-                { left: point.x },
-                point.completed ? styles.completedNode : {}
-              ]} 
+              style={[styles.node, { left: point.x }]} 
               onPress={() => moveCharacter(index, point.x, point.y)}
             >
-              {point.completed ? (
-                <View style={styles.completedCircle}>
-                  <Text style={styles.checkmark}>✓</Text>
-                </View>
-              ) : (
-                <View style={[
-                  styles.questionCircle,
-                  index === 5 ? styles.currentQuestionCircle : {}
-                ]}>
-                  <Text style={styles.questionText}>{point.number}</Text>
-                </View>
-              )}
-              
-              {/* Hiển thị nhãn */}
-              <Text style={styles.nodeLabel}>Bài {point.number}</Text>
+              <View style={styles.questionCircle}>
+                <Text style={styles.questionText}>{point.number}</Text>
+              </View>
             </TouchableOpacity>
           </View>
         ))}
@@ -161,8 +133,8 @@ const MapScreen = () => {
       {/* ✅ Panel chọn nhân vật */}
       <Modal visible={isCharacterPanelVisible} transparent={true} animationType="slide">
   <View style={styles.modalContainer}>
-    <View style={styles.modalContent}>
-      <Text style={styles.modalTitle}>Chọn Nhân Vật</Text>
+    <View style={[styles.modalContent, dynamicStyles.modalContent]}>
+      <Text style={[styles.modalTitle, dynamicStyles.modalTitle]}>Chọn Nhân Vật</Text>
       <View style={styles.characterGrid}>
         {characters.map((char, index) => (
         <TouchableOpacity key={index} onPress={() => {
@@ -191,8 +163,8 @@ const MapScreen = () => {
           </TouchableOpacity>
         ))}
       </View>
-      <TouchableOpacity style={styles.closeButton} onPress={() => setCharacterPanelVisible(false)}>
-        <Text style={styles.buttonText}>Đóng</Text>
+      <TouchableOpacity style={[styles.closeButton, dynamicStyles.closeButton]} onPress={() => setCharacterPanelVisible(false)}>
+        <Text style={[styles.buttonText, dynamicStyles.buttonText]}>Đóng</Text>
       </TouchableOpacity>
     </View>
   </View>
@@ -206,10 +178,11 @@ export default MapScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F3F8FF", // Màu nền nhẹ nhàng hơn
+    backgroundColor: "#E6F4EA",
+   
   },
   header: {
-    backgroundColor: "#5271FF", // Màu xanh dương nhẹ hơn
+    backgroundColor: "#7AC74F",
     paddingVertical: 15,
     alignItems: "center",
     borderBottomLeftRadius: 20,
@@ -220,7 +193,6 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#fff",
   },
   gemsContainer: {
     position: "absolute",
@@ -287,8 +259,10 @@ const styles = StyleSheet.create({
     transformOrigin: "left",
   },
   node: {
-    width: 70,
-    height: 70,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: "#FFF5CC",
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
@@ -300,24 +274,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: "#5271FF", // Màu xanh dương
-    justifyContent: "center",
-    alignItems: "center",
-    elevation: 5,
-  },
-  currentQuestionCircle: {
-    backgroundColor: "#FF9800", // Màu cam cho câu hiện tại
-    width: 55,
-    height: 55,
-    borderRadius: 28,
-    borderWidth: 2,
-    borderColor: "#FFC107",
-  },
-  completedCircle: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: "#4CAF50", // Màu xanh lá
+    backgroundColor: "#4CAF50",
     justifyContent: "center",
     alignItems: "center",
     elevation: 5,
@@ -325,7 +282,6 @@ const styles = StyleSheet.create({
   questionText: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#fff",
   },
   checkmark: {
     fontSize: 24,
@@ -345,12 +301,11 @@ const styles = StyleSheet.create({
   },
   characterSelectButton: {
     position: "absolute",
-    top: 50,
-    left: 20,
-    backgroundColor: "#5271FF",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 15,
+    top: 70,
+    left: 10,
+    backgroundColor: "#FFCC00",
+    padding: 10,
+    borderRadius: 10,
     zIndex: 10,
     elevation: 5,
   },
@@ -366,9 +321,9 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: "#fff",
-    padding: 24,
-    borderRadius: 20,
-    width: 320,
+    padding: 20,
+    borderRadius: 10,
+    width: 300,
     alignItems: "center",
     elevation: 8,
   },
@@ -412,11 +367,9 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   closeButton: {
-    marginTop: 20,
-    backgroundColor: "#5271FF",
-    paddingHorizontal: 30,
-    paddingVertical: 12,
-    borderRadius: 30,
-    elevation: 3,
+    marginTop: 10,
+    backgroundColor: "#FF5733",
+    padding: 10,
+    borderRadius: 10,
   },
 });

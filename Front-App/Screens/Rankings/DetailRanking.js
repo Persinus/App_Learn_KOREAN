@@ -9,19 +9,90 @@ import {
   FlatList 
 } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
+import { useSelector } from 'react-redux';
 
 const achievements = [
-  { id: '1', title: 'Học liên tục 7 ngày', points: 100, completed: true },
-  { id: '2', title: 'Hoàn thành 10 bài học', points: 200, completed: true },
-  { id: '3', title: 'Đạt điểm tuyệt đối', points: 300, completed: false },
-  { id: '4', title: 'Giữ hạng A trong 1 tuần', points: 400, completed: false },
+  { id: '1', title: { vn: 'Học liên tục 7 ngày', en: 'Study for 7 consecutive days' }, points: 100, completed: true },
+  { id: '2', title: { vn: 'Hoàn thành 10 bài học', en: 'Complete 10 lessons' }, points: 200, completed: true },
+  { id: '3', title: { vn: 'Đạt điểm tuyệt đối', en: 'Achieve perfect score' }, points: 300, completed: false },
+  { id: '4', title: { vn: 'Giữ hạng A trong 1 tuần', en: 'Maintain rank A for 1 week' }, points: 400, completed: false },
 ];
+
+const translations = {
+  vn: {
+    detailRanking: 'Chi tiết xếp hạng',
+    score: 'Điểm số',
+    achievements: 'Thành tựu',
+    learningDays: 'Ngày học',
+    achieved: 'Thành tựu đạt được',
+    rankingHistory: 'Lịch sử xếp hạng',
+    chartPlaceholder: 'Biểu đồ xếp hạng',
+    points: 'điểm',
+  },
+  en: {
+    detailRanking: 'Ranking Details',
+    score: 'Score',
+    achievements: 'Achievements',
+    learningDays: 'Learning Days',
+    achieved: 'Achievements Earned',
+    rankingHistory: 'Ranking History',
+    chartPlaceholder: 'Ranking Chart',
+    points: 'points',
+  },
+};
 
 const DetailRanking = ({ route, navigation }) => {
   const { user } = route.params;
+  const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+  const language = useSelector((state) => state.language.language);
+
+  const t = translations[language];
+
+  const dynamicStyles = {
+    container: {
+      flex: 1,
+      backgroundColor: isDarkMode ? '#0099FF' : '#f8f9fa',
+    },
+    header: {
+      backgroundColor: isDarkMode ? '#6666FF' : '#4b46f1',
+    },
+    headerTitle: {
+      color: isDarkMode ? '#fff' : '#fff',
+    },
+    profileSection: {
+      backgroundColor: isDarkMode ? '#6666FF' : '#fff',
+    },
+    userName: {
+      color: isDarkMode ? '#fff' : '#333',
+    },
+    userRank: {
+      color: isDarkMode ? '#FFD700' : '#ffa000',
+    },
+    statValue: {
+      color: isDarkMode ? '#fff' : '#333',
+    },
+    statLabel: {
+      color: isDarkMode ? '#ccc' : '#666',
+    },
+    achievementItem: {
+      backgroundColor: isDarkMode ? '#444' : '#fff',
+    },
+    achievementTitle: {
+      color: isDarkMode ? '#fff' : '#333',
+    },
+    lockedText: {
+      color: isDarkMode ? '#999' : '#999',
+    },
+    chartPlaceholder: {
+      backgroundColor: isDarkMode ? '#333' : '#f8f9fa',
+    },
+    chartText: {
+      color: isDarkMode ? '#ccc' : '#999',
+    },
+  };
 
   const renderAchievementItem = ({ item }) => (
-    <View style={styles.achievementItem}>
+    <View style={[styles.achievementItem, dynamicStyles.achievementItem]}>
       <View style={styles.achievementIcon}>
         <FontAwesome5 
           name={item.completed ? 'trophy' : 'lock'} 
@@ -32,11 +103,12 @@ const DetailRanking = ({ route, navigation }) => {
       <View style={styles.achievementInfo}>
         <Text style={[
           styles.achievementTitle,
-          !item.completed && styles.lockedText
+          dynamicStyles.achievementTitle,
+          !item.completed && dynamicStyles.lockedText
         ]}>
-          {item.title}
+          {item.title[language]}
         </Text>
-        <Text style={styles.achievementPoints}>+{item.points} điểm</Text>
+        <Text style={styles.achievementPoints}>+{item.points} {t.points}</Text>
       </View>
       {item.completed && (
         <FontAwesome5 name="check-circle" size={20} color="#4CAF50" />
@@ -45,29 +117,29 @@ const DetailRanking = ({ route, navigation }) => {
   );
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
+    <View style={[styles.container, dynamicStyles.container]}>
+      <View style={[styles.header, dynamicStyles.header]}>
         <TouchableOpacity 
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
           <FontAwesome5 name="arrow-left" size={16} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Chi tiết xếp hạng</Text>
+        <Text style={[styles.headerTitle, dynamicStyles.headerTitle]}>{t.detailRanking}</Text>
       </View>
 
       <ScrollView style={styles.content}>
-        <View style={styles.profileSection}>
-          <View style={styles.profileBackground}>
-            {/* Xóa Image pattern và chỉ sử dụng background color */}
-          </View>
+        <View style={[styles.profileSection, dynamicStyles.profileSection]}>
+          <View style={styles.profileBackground} />
           <View style={styles.profileContent}>
             <Image source={user.image} style={styles.avatar} />
             <View style={styles.userInfo}>
-              <Text style={styles.userName}>{user.name}</Text>
+              <Text style={[styles.userName, dynamicStyles.userName]}>{user.name}</Text>
               <View style={styles.rankBadge}>
                 <FontAwesome5 name="crown" size={16} color="#FFD700" />
-                <Text style={styles.userRank}>Hạng {user.rank}</Text>
+                <Text style={[styles.userRank, dynamicStyles.userRank]}>
+                  {language === 'vn' ? `Hạng ${user.rank}` : `Rank ${user.rank}`}
+                </Text>
               </View>
             </View>
           </View>
@@ -78,29 +150,31 @@ const DetailRanking = ({ route, navigation }) => {
             <View style={styles.statIcon}>
               <FontAwesome5 name="star" size={20} color="#4b46f1" />
             </View>
-            <Text style={styles.statValue}>{user.score}</Text>
-            <Text style={styles.statLabel}>Điểm số</Text>
+            <Text style={[styles.statValue, dynamicStyles.statValue]}>{user.score}</Text>
+            <Text style={[styles.statLabel, dynamicStyles.statLabel]}>{t.score}</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
             <View style={styles.statIcon}>
               <FontAwesome5 name="trophy" size={20} color="#4b46f1" />
             </View>
-            <Text style={styles.statValue}>{achievements.filter(a => a.completed).length}</Text>
-            <Text style={styles.statLabel}>Thành tựu</Text>
+            <Text style={[styles.statValue, dynamicStyles.statValue]}>
+              {achievements.filter(a => a.completed).length}
+            </Text>
+            <Text style={[styles.statLabel, dynamicStyles.statLabel]}>{t.achievements}</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
             <View style={styles.statIcon}>
               <FontAwesome5 name="calendar-check" size={20} color="#4b46f1" />
             </View>
-            <Text style={styles.statValue}>7</Text>
-            <Text style={styles.statLabel}>Ngày học</Text>
+            <Text style={[styles.statValue, dynamicStyles.statValue]}>7</Text>
+            <Text style={[styles.statLabel, dynamicStyles.statLabel]}>{t.learningDays}</Text>
           </View>
         </View>
 
         <View style={styles.achievementsSection}>
-          <Text style={styles.sectionTitle}>Thành tựu đạt được</Text>
+          <Text style={styles.sectionTitle}>{t.achieved}</Text>
           <FlatList
             data={achievements}
             renderItem={renderAchievementItem}
@@ -110,12 +184,9 @@ const DetailRanking = ({ route, navigation }) => {
         </View>
 
         <View style={styles.historySection}>
-          <Text style={styles.sectionTitle}>Lịch sử xếp hạng</Text>
-          <View style={styles.historyChart}>
-            {/* Chart placeholder */}
-            <View style={styles.chartPlaceholder}>
-              <Text style={styles.chartText}>Biểu đồ xếp hạng</Text>
-            </View>
+          <Text style={styles.sectionTitle}>{t.rankingHistory}</Text>
+          <View style={[styles.historyChart, dynamicStyles.chartPlaceholder]}>
+            <Text style={[styles.chartText, dynamicStyles.chartText]}>{t.chartPlaceholder}</Text>
           </View>
         </View>
       </ScrollView>
@@ -164,7 +235,6 @@ const styles = StyleSheet.create({
   profileBackground: {
     height: 100,
     backgroundColor: '#4b46f1',
-    // Thêm linear gradient nếu muốn
     opacity: 0.9
   },
   profileContent: {

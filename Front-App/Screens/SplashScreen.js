@@ -1,26 +1,38 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Text, Animated } from 'react-native';
 import LottieView from 'lottie-react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useDispatch } from 'react-redux';
+import { login } from '../Store/Authorization';
 
 const SplashScreen = ({ navigation }) => {
-  const [progress, setProgress] = useState(new Animated.Value(0));
+  const [progress] = useState(new Animated.Value(0));
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    // Tăng dần progress bar từ 0 đến 1
-    Animated.timing(progress, {
-      toValue: 1,
-      duration: 3000, // Thời gian chạy splash screen
-      useNativeDriver: false,
-    }).start(() => {
-      // Chuyển sang màn hình chính sau khi hoàn thành
-      navigation.replace('BridgeScreen');
-    });
+    const checkTokenAndNavigate = async () => {
+      const storedToken = await AsyncStorage.getItem('token');
+        Animated.timing(progress, {
+        toValue: 1,
+        duration: 3000, // Thời gian chạy splash
+        useNativeDriver: false,
+      }).start(() => {
+        if (storedToken) {
+          dispatch(login(storedToken)); // Cập nhật Redux
+          navigation.replace('MainNavigator'); // Chuyển tới Home nếu đã đăng nhập
+        } else {
+          navigation.replace('OpenStack'); // Chuyển đến OpenStack, nơi có BridgeScreen
+        }
+      });
+    };
+
+    checkTokenAndNavigate();
   }, []);
 
   return (
     <View style={styles.container}>
       <LottieView
-        source={require('../assets/test.json')} // Thay bằng file JSON của bạn
+        source={require('../assets/test.json')}
         autoPlay
         loop
         style={styles.animation}
@@ -30,7 +42,12 @@ const SplashScreen = ({ navigation }) => {
         <Animated.View
           style={[
             styles.progressBar,
-            { width: progress.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] }) },
+            {
+              width: progress.interpolate({
+                inputRange: [0, 1],
+                outputRange: ['0%', '100%'],
+              }),
+            },
           ]}
         />
       </View>

@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Animated
 } from 'react-native';
-import LottieView from 'lottie-react-native';
+
 
 const LevelUpModal = ({ visible, level, rewards, onClose }) => {
   const scaleAnim = new Animated.Value(0);

@@ -1,69 +1,145 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
 
 const InfoApp = ({ navigation }) => {
+  const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+  const language = useSelector((state) => state.language.language);
+
+  const translations = {
+    vn: {
+      appInfo: 'Thông tin ứng dụng',
+      introduction: 'Giới thiệu',
+      description: 'Ứng dụng học tiếng Hàn thông minh, giúp người học tiếp cận ngôn ngữ Hàn Quốc một cách hiệu quả.',
+      features: 'Tính năng',
+      support: 'Hỗ trợ',
+      email: 'support@koreanapp.com',
+      website: 'www.koreanapp.com',
+      version: 'Phiên bản 1.0.0',
+      featuresList: [
+        { icon: 'book', text: 'Bài học tương tác' },
+        { icon: 'video', text: 'Học qua video' },
+        { icon: 'gamepad', text: 'Trò chơi học tập' },
+      ],
+      copyright: '© 2024 Korean Learning App',
+    },
+    en: {
+      appInfo: 'App Information',
+      introduction: 'Introduction',
+      description: 'A smart Korean learning app that helps learners effectively approach the Korean language.',
+      features: 'Features',
+      support: 'Support',
+      email: 'support@koreanapp.com',
+      website: 'www.koreanapp.com',
+      version: 'Version 1.0.0',
+      featuresList: [
+        { icon: 'book', text: 'Interactive Lessons' },
+        { icon: 'video', text: 'Learn through Videos' },
+        { icon: 'gamepad', text: 'Educational Games' },
+      ],
+      copyright: '© 2024 Korean Learning App',
+    },
+  };
+
+  const t = translations[language];
+
+  const dynamicStyles = {
+    container: {
+      flex: 1,
+      backgroundColor: isDarkMode ? '#0099FF' : '#fff',
+    },
+    header: {
+      backgroundColor: isDarkMode ? '#6666FF' : '#fff',
+      borderBottomColor: isDarkMode ? '#444' : '#eee',
+    },
+    headerTitle: {
+      color: isDarkMode ? '#fff' : '#333',
+    },
+    appInfoCard: {
+      backgroundColor: isDarkMode ? '#6666FF' : '#fff',
+      shadowColor: isDarkMode ? '#000' : '#000',
+    },
+    appName: {
+      color: isDarkMode ? '#fff' : '#333',
+    },
+    version: {
+      color: isDarkMode ? '#ccc' : '#666',
+    },
+    sectionTitle: {
+      color: isDarkMode ? '#fff' : '#4b46f1',
+    },
+    description: {
+      color: isDarkMode ? '#ccc' : '#666',
+    },
+    featureText: {
+      color: isDarkMode ? '#fff' : '#444',
+    },
+    contactText: {
+      color: isDarkMode ? '#ccc' : '#666',
+    },
+    copyright: {
+      color: isDarkMode ? '#ccc' : '#999',
+      borderTopColor: isDarkMode ? '#444' : '#eee',
+    },
+  };
+
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
+    <View style={[styles.container, dynamicStyles.container]}>
+      <View style={[styles.header, dynamicStyles.header]}>
         <View style={styles.headerMain}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.backButton}
             onPress={() => navigation.goBack()}
           >
-            <FontAwesome5 name="arrow-left" size={16} color="#4b46f1" />
+            <FontAwesome5 name="arrow-left" size={16} color={isDarkMode ? '#fff' : '#4b46f1'} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Thông tin ứng dụng</Text>
+          <Text style={[styles.headerTitle, dynamicStyles.headerTitle]}>{t.appInfo}</Text>
         </View>
       </View>
 
       <ScrollView style={styles.content}>
-        <View style={styles.appInfoCard}>
-          <Image 
+        <View style={[styles.appInfoCard, dynamicStyles.appInfoCard]}>
+          <Image
             source={require('../../assets/logo.png')}
             style={styles.appLogo}
           />
-          <Text style={styles.appName}>Korean Learning App</Text>
-          <Text style={styles.version}>Phiên bản 1.0.0</Text>
+          <Text style={[styles.appName, dynamicStyles.appName]}>Korean Learning App</Text>
+          <Text style={[styles.version, dynamicStyles.version]}>{t.version}</Text>
         </View>
 
         <View style={styles.infoContainer}>
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Giới thiệu</Text>
-            <Text style={styles.description}>
-              Ứng dụng học tiếng Hàn thông minh, giúp người học tiếp cận ngôn ngữ Hàn Quốc một cách hiệu quả.
-            </Text>
+            <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>{t.introduction}</Text>
+            <Text style={[styles.description, dynamicStyles.description]}>{t.description}</Text>
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Tính năng</Text>
-            {[
-              {icon: 'book', text: 'Bài học tương tác'},
-              {icon: 'video', text: 'Học qua video'},
-              {icon: 'gamepad', text: 'Trò chơi học tập'}
-            ].map((item, index) => (
+            <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>{t.features}</Text>
+            {t.featuresList.map((item, index) => (
               <View key={index} style={styles.featureItem}>
-                <FontAwesome5 name={item.icon} size={18} color="#4b46f1" />
-                <Text style={styles.featureText}>{item.text}</Text>
+                <FontAwesome5 name={item.icon} size={18} color={isDarkMode ? '#fff' : '#4b46f1'} />
+                <Text style={[styles.featureText, dynamicStyles.featureText]}>{item.text}</Text>
               </View>
             ))}
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Hỗ trợ</Text>
+            <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>{t.support}</Text>
             <View style={styles.contactItem}>
-              <FontAwesome5 name="envelope" size={18} color="#4b46f1" style={styles.contactIcon} />
-              <Text style={styles.contactText}>support@koreanapp.com</Text>
+              <FontAwesome5 name="envelope" size={18} color={isDarkMode ? '#fff' : '#4b46f1'} style={styles.contactIcon} />
+              <Text style={[styles.contactText, dynamicStyles.contactText]}>{t.email}</Text>
             </View>
             <View style={styles.contactItem}>
-              <FontAwesome5 name="globe" size={18} color="#4b46f1" style={styles.contactIcon} />
-              <Text style={styles.contactText}>www.koreanapp.com</Text>
+              <FontAwesome5 name="globe" size={18} color={isDarkMode ? '#fff' : '#4b46f1'} style={styles.contactIcon} />
+              <Text style={[styles.contactText, dynamicStyles.contactText]}>{t.website}</Text>
             </View>
           </View>
         </View>
       </ScrollView>
-      <Text style={styles.copyright}>© 2024 Korean Learning App</Text>
+      <Text style={[styles.copyright, dynamicStyles.copyright]}>
+        {t.copyright}
+      </Text>
     </View>
   );
 };
@@ -71,14 +147,11 @@ const InfoApp = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   header: {
     padding: 16,
     paddingTop: 45,
-    backgroundColor: '#fff',
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
   },
   headerMain: {
     flexDirection: 'row',
@@ -93,7 +166,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
   },
   content: {
     flex: 1,
@@ -101,10 +173,8 @@ const styles = StyleSheet.create({
   appInfoCard: {
     alignItems: 'center',
     paddingVertical: 30,
-    backgroundColor: '#fff',
     marginBottom: 20,
     borderRadius: 10,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -118,12 +188,10 @@ const styles = StyleSheet.create({
   appName: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#333',
     marginBottom: 5,
   },
   version: {
     fontSize: 14,
-    color: '#666',
   },
   infoContainer: {
     padding: 20,
@@ -134,12 +202,10 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 17,
     fontWeight: '600',
-    color: '#4b46f1',
     marginBottom: 12,
   },
   description: {
     fontSize: 15,
-    color: '#666',
     lineHeight: 22,
   },
   featureItem: {
@@ -149,7 +215,6 @@ const styles = StyleSheet.create({
   },
   featureText: {
     fontSize: 15,
-    color: '#444',
     marginLeft: 12,
   },
   contactItem: {
@@ -162,15 +227,12 @@ const styles = StyleSheet.create({
   },
   contactText: {
     fontSize: 15,
-    color: '#666',
   },
   copyright: {
     textAlign: 'center',
     padding: 15,
-    color: '#999',
     fontSize: 13,
     borderTopWidth: 1,
-    borderTopColor: '#eee',
   },
 });
 

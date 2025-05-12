@@ -6,9 +6,9 @@ import {
   Modal,
   TouchableOpacity,
   Animated,
-  Image
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSelector } from 'react-redux';
 
 const DailyLoginReward = () => {
   const [visible, setVisible] = useState(false);
@@ -19,10 +19,11 @@ const DailyLoginReward = () => {
     { day: 3, reward: '1 gem', icon: '💎' },
     { day: 4, reward: '150 coins', icon: '💰' },
     { day: 5, reward: '2 gems', icon: '💎' },
-    { day: 6, reward: '200 coins', icon: '💰' }, 
+    { day: 6, reward: '200 coins', icon: '💰' },
     { day: 7, reward: '5 gems', icon: '💎' },
   ]);
   const scaleAnim = new Animated.Value(0);
+  const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
 
   useEffect(() => {
     checkDailyLogin();
@@ -31,27 +32,26 @@ const DailyLoginReward = () => {
   const checkDailyLogin = async () => {
     const lastLogin = await AsyncStorage.getItem('lastLoginDate');
     const today = new Date().toDateString();
-    
+
     if (lastLogin !== today) {
       setVisible(true);
       await AsyncStorage.setItem('lastLoginDate', today);
-      
+
       const currentLoginStreak = await AsyncStorage.getItem('loginStreak') || '0';
       const newStreak = Math.min(parseInt(currentLoginStreak) + 1, 7);
       await AsyncStorage.setItem('loginStreak', newStreak.toString());
       setCurrentDay(newStreak);
-      
+
       Animated.spring(scaleAnim, {
         toValue: 1,
         tension: 70,
         friction: 5,
-        useNativeDriver: true
+        useNativeDriver: true,
       }).start();
     }
   };
 
   const claimReward = async () => {
-    // Handle reward claiming logic
     const reward = rewards[currentDay - 1];
     if (reward.icon === '💰') {
       const currentCoins = await AsyncStorage.getItem('coins') || '0';
@@ -65,36 +65,71 @@ const DailyLoginReward = () => {
     setVisible(false);
   };
 
+  const dynamicStyles = {
+    modalContainer: {
+      backgroundColor: isDarkMode ? 'rgba(0,0,0,0.8)' : 'rgba(0,0,0,0.5)',
+    },
+    rewardBox: {
+      backgroundColor: isDarkMode ? '#444' : '#fff',
+    },
+    title: {
+      color: isDarkMode ? '#FFD700' : '#4b46f1',
+    },
+    subtitle: {
+      color: isDarkMode ? '#ccc' : '#666',
+    },
+    rewardItem: {
+      backgroundColor: isDarkMode ? '#555' : '#f5f5f5',
+    },
+    currentDay: {
+      backgroundColor: isDarkMode ? '#FFD700' : '#4b46f1',
+    },
+    rewardDay: {
+      color: isDarkMode ? '#ccc' : '#666',
+    },
+    rewardText: {
+      color: isDarkMode ? '#fff' : '#333',
+    },
+    claimButton: {
+      backgroundColor: isDarkMode ? '#FFD700' : '#4b46f1',
+    },
+    claimText: {
+      color: isDarkMode ? '#000' : '#fff',
+    },
+  };
+
   return (
     <Modal visible={visible} transparent animationType="fade">
-      <View style={styles.modalContainer}>
-        <Animated.View 
+      <View style={[styles.modalContainer, dynamicStyles.modalContainer]}>
+        <Animated.View
           style={[
             styles.rewardBox,
-            {transform: [{scale: scaleAnim}]}
+            dynamicStyles.rewardBox,
+            { transform: [{ scale: scaleAnim }] },
           ]}
         >
-          <Text style={styles.title}>Daily Login Reward!</Text>
-          <Text style={styles.subtitle}>Day {currentDay}</Text>
-          
+          <Text style={[styles.title, dynamicStyles.title]}>Daily Login Reward!</Text>
+          <Text style={[styles.subtitle, dynamicStyles.subtitle]}>Day {currentDay}</Text>
+
           <View style={styles.rewardsContainer}>
             {rewards.map((item, index) => (
-              <View 
+              <View
                 key={index}
                 style={[
                   styles.rewardItem,
-                  index + 1 === currentDay && styles.currentDay
+                  dynamicStyles.rewardItem,
+                  index + 1 === currentDay && dynamicStyles.currentDay,
                 ]}
               >
-                <Text style={styles.rewardDay}>Day {item.day}</Text>
+                <Text style={[styles.rewardDay, dynamicStyles.rewardDay]}>Day {item.day}</Text>
                 <Text style={styles.rewardIcon}>{item.icon}</Text>
-                <Text style={styles.rewardText}>{item.reward}</Text>
+                <Text style={[styles.rewardText, dynamicStyles.rewardText]}>{item.reward}</Text>
               </View>
             ))}
           </View>
 
-          <TouchableOpacity style={styles.claimButton} onPress={claimReward}>
-            <Text style={styles.claimText}>Claim Reward</Text>
+          <TouchableOpacity style={[styles.claimButton, dynamicStyles.claimButton]} onPress={claimReward}>
+            <Text style={[styles.claimText, dynamicStyles.claimText]}>Claim Reward</Text>
           </TouchableOpacity>
         </Animated.View>
       </View>
@@ -105,68 +140,56 @@ const DailyLoginReward = () => {
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   rewardBox: {
-    backgroundColor: '#fff',
     padding: 20,
     borderRadius: 15,
     width: '90%',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#4b46f1',
-    marginBottom: 10
+    marginBottom: 10,
   },
   subtitle: {
     fontSize: 18,
-    color: '#666',
-    marginBottom: 20
+    marginBottom: 20,
   },
   rewardsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    marginBottom: 20
+    marginBottom: 20,
   },
   rewardItem: {
     width: '30%',
     padding: 10,
     margin: 5,
     borderRadius: 10,
-    backgroundColor: '#f5f5f5',
-    alignItems: 'center'
-  },
-  currentDay: {
-    backgroundColor: '#4b46f1',
+    alignItems: 'center',
   },
   rewardDay: {
     fontSize: 12,
-    color: '#666'
   },
   rewardIcon: {
     fontSize: 24,
-    marginVertical: 5
+    marginVertical: 5,
   },
   rewardText: {
     fontSize: 12,
-    color: '#333'
   },
   claimButton: {
-    backgroundColor: '#4b46f1',
     paddingHorizontal: 40,
     paddingVertical: 15,
-    borderRadius: 25
+    borderRadius: 25,
   },
   claimText: {
-    color: '#fff',
     fontSize: 16,
-    fontWeight: 'bold'
-  }
+    fontWeight: 'bold',
+  },
 });
 
 export default DailyLoginReward;

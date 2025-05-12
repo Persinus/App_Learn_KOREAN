@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList } from 'react-native';
+import { useSelector } from 'react-redux';
 
 const subscriptionOptions = [
   {
@@ -74,22 +75,136 @@ const subscriptionOptions = [
 ];
 
 const PracticeScreen = ({ navigation }) => {
+  const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+  const language = useSelector((state) => state.language.language);
+
+  const translations = {
+    vn: {
+      header: "📚 Gói đăng ký",
+      subscriptionOptions: [
+        {
+          title: "Bài học hàng tháng",
+          description: "Truy cập tất cả các bài học và tài nguyên trong một tháng.",
+        },
+        {
+          title: "Mini Games",
+          description: "Học thông qua các trò chơi tương tác thú vị.",
+        },
+        {
+          title: "Thư viện Video",
+          description: "Học qua video K-pop và phim Hàn Quốc có phụ đề.",
+        },
+        {
+          title: "Phần thưởng",
+          description: "Nhận thưởng đăng nhập và thành tích học tập.",
+        },
+        {
+          title: "Thách đấu",
+          description: "Thi đấu với bạn bè và tham gia giải đấu hàng tuần.",
+        },
+        {
+          title: "Daily Rewards",
+          description: "Đăng nhập hàng ngày để nhận thưởng.",
+        },
+        {
+          title: "Milestones",
+          description: "Đạt cột mốc để nhận phần thưởng đặc biệt.",
+        },
+        {
+          title: "PvP Arena",
+          description: "Thách đấu với người chơi khác.",
+        },
+        {
+          title: "Tournament",
+          description: "Tham gia giải đấu tuần để nhận thưởng lớn.",
+        },
+      ],
+    },
+    en: {
+      header: "📚 Subscription Plans",
+      subscriptionOptions: [
+        {
+          title: "Monthly Lessons",
+          description: "Access all lessons and resources for one month.",
+        },
+        {
+          title: "Mini Games",
+          description: "Learn through fun interactive games.",
+        },
+        {
+          title: "Video Library",
+          description: "Learn through K-pop videos and Korean movies with subtitles.",
+        },
+        {
+          title: "Rewards",
+          description: "Earn login rewards and learning achievements.",
+        },
+        {
+          title: "Challenges",
+          description: "Compete with friends and join weekly tournaments.",
+        },
+        {
+          title: "Daily Rewards",
+          description: "Log in daily to claim rewards.",
+        },
+        {
+          title: "Milestones",
+          description: "Reach milestones to earn special rewards.",
+        },
+        {
+          title: "PvP Arena",
+          description: "Challenge other players.",
+        },
+        {
+          title: "Tournament",
+          description: "Join weekly tournaments to win big rewards.",
+        },
+      ],
+    },
+  };
+
+  const t = translations[language];
+
+  const dynamicStyles = {
+    container: {
+      flex: 1,
+      backgroundColor: isDarkMode ? '#0099FF' : '#F8F8F8',
+    },
+    header: {
+      fontSize: 24,
+      fontWeight: "bold",
+      color: isDarkMode ? '#fff' : '#6A0DAD',
+      textAlign: "center",
+      marginBottom: 15,
+    },
+    card: {
+      backgroundColor: isDarkMode ? '#6666FF' : '#f8f8f8',
+      shadowColor: isDarkMode ? '#000' : '#000',
+    },
+    title: {
+      color: isDarkMode ? '#fff' : '#333',
+    },
+    description: {
+      color: isDarkMode ? '#ccc' : '#666',
+    },
+  };
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>📚 Subscription Plans</Text>
+    <View style={[styles.container, dynamicStyles.container]}>
+      <Text style={[styles.header, dynamicStyles.header]}>{t.header}</Text>
       <FlatList
-        data={subscriptionOptions}
+        data={t.subscriptionOptions}
         keyExtractor={(item) => item.title}
-        renderItem={({ item }) => (
-          <TouchableOpacity 
-            style={[styles.card, { backgroundColor: item.color }]} 
-            onPress={() => item.onPress && item.onPress(navigation)} // Xử lý điều hướng
-            activeOpacity={0.7} // Làm mờ khi nhấn
+        renderItem={({ item, index }) => (
+          <TouchableOpacity
+            style={[styles.card, dynamicStyles.card, { backgroundColor: subscriptionOptions[index].color }]}
+            onPress={() => subscriptionOptions[index].onPress && subscriptionOptions[index].onPress(navigation)}
+            activeOpacity={0.7}
           >
-            <Image source={item.icon} style={styles.icon} />
+            <Image source={subscriptionOptions[index].icon} style={styles.icon} />
             <View style={styles.textContainer}>
-              <Text style={styles.title}>{item.title}</Text>
-              <Text style={styles.description}>{item.description}</Text>
+              <Text style={[styles.title, dynamicStyles.title]}>{item.title}</Text>
+              <Text style={[styles.description, dynamicStyles.description]}>{item.description}</Text>
             </View>
           </TouchableOpacity>
         )}
@@ -101,14 +216,12 @@ const PracticeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F8F8F8",
     paddingVertical: 20,
     paddingHorizontal: 15,
   },
   header: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#6A0DAD",
     textAlign: "center",
     marginBottom: 15,
   },
@@ -116,9 +229,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderRadius: 12,
-    padding:15,
+    padding: 15,
     marginVertical: 8,
-    shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 5,
     shadowOffset: { width: 0, height: 2 },
@@ -135,11 +247,9 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#333",
   },
   description: {
     fontSize: 14,
-    color: "#666",
     marginVertical: 5,
   },
 });

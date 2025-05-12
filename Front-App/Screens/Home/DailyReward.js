@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Audio } from 'expo-av';
+import { useSelector } from 'react-redux';
 import { sendPushNotification } from '../../utils/NotificationHelper';
 
 const getDaysInMonth = (month, year) => {
@@ -31,8 +32,10 @@ const DailyReward = ({ navigation }) => {
   const [showReward, setShowReward] = useState(false);
   const [goldAmount, setGoldAmount] = useState(0);
 
+  const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+
   const today = new Date();
-  const currentDay = new Date().getDate();
+  const currentDay = today.getDate();
   const currentMonth = today.getMonth();
   const currentYear = today.getFullYear();
   const daysInMonth = getDaysInMonth(currentMonth, currentYear);
@@ -41,7 +44,6 @@ const DailyReward = ({ navigation }) => {
   useEffect(() => {
     const fetchRewards = async () => {
       try {
-        // Load stored rewards
         const storedRewards = await AsyncStorage.getItem(storageKey);
         if (storedRewards) {
           setGoldRewards(JSON.parse(storedRewards));
@@ -51,16 +53,9 @@ const DailyReward = ({ navigation }) => {
           await AsyncStorage.setItem(storageKey, JSON.stringify(newRewards));
         }
 
-        // Load claimed days
         const storedClaimedDays = await AsyncStorage.getItem('rewardClaimedDays');
         if (storedClaimedDays) {
-          let claimedDays = JSON.parse(storedClaimedDays);
-          // Reset claimed days only for testing purposes
-          claimedDays = claimedDays.filter((day) => day !== currentDay);
-          setRewardClaimedDays(claimedDays);
-
-          // Update AsyncStorage
-          await AsyncStorage.setItem('rewardClaimedDays', JSON.stringify(claimedDays));
+          setRewardClaimedDays(JSON.parse(storedClaimedDays));
         }
       } catch (error) {
         console.error('Error loading rewards:', error);
@@ -68,12 +63,12 @@ const DailyReward = ({ navigation }) => {
     };
 
     fetchRewards();
-  }, [currentMonth, currentYear, currentDay]);
+  }, [currentMonth, currentYear]);
 
   const playSound = async () => {
     const sound = new Audio.Sound();
     try {
-      await sound.loadAsync(require('../../assets/reward-sound.mp3')); // Ensure this path is correct
+      await sound.loadAsync(require('../../assets/reward-sound.mp3'));
       await sound.playAsync();
     } catch (error) {
       console.error('Error playing sound:', error);
@@ -130,30 +125,29 @@ const DailyReward = ({ navigation }) => {
       <TouchableOpacity
         style={[styles.day, dayStyle]}
         onPress={handleDayPress}
-        disabled={!isToday && !isClaimed} // Only allow press for today or claimed days
+        disabled={!isToday && !isClaimed}
       >
-        <Text style={styles.dayText}>{day}</Text>
-        <Text style={styles.goldText}>💎 +{goldRewards[day]}</Text>
+        <Text style={[styles.dayText, { color: isDarkMode ? '#fff' : '#000' }]}>{day}</Text>
+        <Text style={[styles.goldText, { color: isDarkMode ? '#FFD700' : '#FFA500' }]}>
+          💎 +{goldRewards[day]}
+        </Text>
       </TouchableOpacity>
     );
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: isDarkMode ? '#0099FF' : '#fff' }]}>
       <TouchableOpacity
-        style={styles.backButton}
+        style={[styles.backButton, { backgroundColor: isDarkMode ? '#6666FF' : '#4b46f1' }]}
         onPress={() => navigation.goBack()}
       >
-        <Text style={styles.backButtonText}>← Quay lại</Text>
+        <Text style={[styles.backButtonText, { color: '#fff' }]}>← Quay lại</Text>
       </TouchableOpacity>
 
-      <Image
-        source={require('../../assets/avatar1.png')} // Replace with your header image
-        style={styles.headerIcon}
-      />
-
-      <Text style={styles.title}>🎁 Thưởng hàng ngày</Text>
-      <Text style={styles.subtitle}>Chọn ngày để nhận thưởng</Text>
+      <Text style={[styles.title, { color: isDarkMode ? '#fff' : '#333' }]}>🎁 Thưởng hàng ngày</Text>
+      <Text style={[styles.subtitle, { color: isDarkMode ? '#ccc' : '#666' }]}>
+        Chọn ngày để nhận thưởng
+      </Text>
 
       <FlatList
         data={daysInMonth}
@@ -169,15 +163,17 @@ const DailyReward = ({ navigation }) => {
         visible={showReward}
         onRequestClose={() => setShowReward(false)}
       >
-        <View style={styles.modalView}>
-          <Text style={styles.modalText}>
+        <View style={[styles.modalView, { backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.9)' }]}>
+          <Text style={[styles.modalText, { color: isDarkMode ? '#fff' : '#000' }]}>
             🎉 Bạn đã nhận được {goldAmount} xu! 🎉
           </Text>
           <TouchableOpacity
-            style={styles.closeButton}
+            style={[styles.closeButton, { backgroundColor: isDarkMode ? '#FFD700' : '#4b46f1' }]}
             onPress={() => setShowReward(false)}
           >
-            <Text style={styles.closeButtonText}>Đóng</Text>
+            <Text style={[styles.closeButtonText, { color: isDarkMode ? '#000' : '#fff' }]}>
+              Đóng
+            </Text>
           </TouchableOpacity>
         </View>
       </Modal>
@@ -186,47 +182,35 @@ const DailyReward = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: '#1e1e2d', 
-    paddingTop: 40 
+  container: {
+    flex: 1,
+    paddingTop: 40,
   },
   backButton: {
     position: 'absolute',
     top: 40,
     left: 20,
     padding: 10,
-    backgroundColor: '#4b46f1',
     borderRadius: 8,
   },
-  backButtonText: { 
-    color: '#fff', 
-    fontSize: 16, 
-    fontWeight: 'bold' 
-  },
-  headerIcon: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    alignSelf: 'center',
-    marginBottom: 16,
+  backButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
     textAlign: 'center',
-    color: '#fff',
     marginBottom: 16,
   },
   subtitle: {
     fontSize: 18,
-    color: '#bbb',
     textAlign: 'center',
     marginBottom: 16,
   },
-  calendar: { 
-    alignItems: 'center', 
-    justifyContent: 'center' 
+  calendar: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   day: {
     width: 45,
@@ -236,47 +220,41 @@ const styles = StyleSheet.create({
     margin: 6,
     borderRadius: 8,
   },
-  dayText: { 
-    fontSize: 16, 
-    fontWeight: 'bold', 
-    color: '#fff' 
+  dayText: {
+    fontSize: 16,
+    fontWeight: 'bold',
   },
-  goldText: { 
-    fontSize: 12, 
-    color: '#ffd700' 
+  goldText: {
+    fontSize: 12,
   },
   today: {
-    backgroundColor: '#4caf50', // Green color for today
+    backgroundColor: '#4caf50',
   },
   claimed: {
-    backgroundColor: '#ffa726', // Orange for claimed days
+    backgroundColor: '#ffa726',
   },
   missed: {
-    backgroundColor: '#e0e0e0', // Gray for missed days
+    backgroundColor: '#e0e0e0',
   },
   unclaimed: {
-    backgroundColor: '#90caf9', // Light blue for unclaimed days
+    backgroundColor: '#90caf9',
   },
   modalView: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
   },
   modalText: {
     fontSize: 24,
-    color: '#fff',
     textAlign: 'center',
     marginBottom: 20,
   },
   closeButton: {
     padding: 12,
-    backgroundColor: '#4caf50',
     borderRadius: 8,
   },
-  closeButtonText: { 
-    color: '#fff', 
-    fontSize: 16 
+  closeButtonText: {
+    fontSize: 16,
   },
 });
 

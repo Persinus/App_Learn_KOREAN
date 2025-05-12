@@ -12,7 +12,46 @@ import {
   Alert,
 } from "react-native";
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
+import { useSelector } from "react-redux";
 import headerStyles from '../../Styles/HeaderStyles';
+
+// Định nghĩa các chuỗi đa ngôn ngữ
+const translations = {
+  vn: {
+    community: "Cộng đồng",
+    rankings: "Xếp hạng",
+    social: "Cộng đồng",
+    top3Players: "🏆 Top 3 Người Chơi",
+    confirm: "Xác nhận",
+    acceptFriendRequest: "Chấp nhận lời mời kết bạn?",
+    declineFriendRequest: "Từ chối lời mời kết bạn?",
+    cancel: "Hủy",
+    agree: "Đồng ý",
+    friends: "Bạn bè",
+    friendRequests: "Lời mời kết bạn",
+    friendsList: "Danh sách bạn bè",
+    online: "Đang hoạt động",
+    lastActive: "Hoạt động lần cuối",
+    points: "điểm",
+  },
+  en: {
+    community: "Community",
+    rankings: "Rankings",
+    social: "Social",
+    top3Players: "🏆 Top 3 Players",
+    confirm: "Confirm",
+    acceptFriendRequest: "Accept friend request?",
+    declineFriendRequest: "Decline friend request?",
+    cancel: "Cancel",
+    agree: "Agree",
+    friends: "Friends",
+    friendRequests: "Friend Requests",
+    friendsList: "Friends List",
+    online: "Online",
+    lastActive: "Last Active",
+    points: "points",
+  },
+};
 
 const rankings = [
   { id: "1", name: "Nguyễn Văn A", score: 1500, image: require("../../assets/avatar1.png") },
@@ -142,10 +181,10 @@ const studyGroups = [
   }
 ];
 
-const Podium = ({ topThree, navigation }) => {
+const Podium = ({ topThree, navigation, t }) => {
   return (
     <View style={styles.podiumWrapper}>
-      <Text style={styles.sectionTitle}>🏆 Top 3 Người Chơi</Text>
+      <Text style={styles.sectionTitle}>{t.top3Players}</Text>
       <View style={styles.podiumContainer}>
         {/* Hạng 2 */}
         <TouchableOpacity 
@@ -156,7 +195,7 @@ const Podium = ({ topThree, navigation }) => {
             <Image source={topThree[1].image} style={styles.podiumAvatar} />
             <Text style={styles.podiumName} numberOfLines={1}>{topThree[1].name}</Text>
             <View style={[styles.rankBadge, { backgroundColor: rankStyles.A.backgroundColor }]}>
-              <Text style={[styles.rankText, { color: rankStyles.A.color }]}>{topThree[1].score} điểm</Text>
+              <Text style={[styles.rankText, { color: rankStyles.A.color }]}>{topThree[1].score} {t.points}</Text>
             </View>
           </View>
           <View style={styles.medalContainer}>
@@ -173,7 +212,7 @@ const Podium = ({ topThree, navigation }) => {
             <Image source={topThree[0].image} style={styles.podiumAvatar} />
             <Text style={styles.podiumName} numberOfLines={1}>{topThree[0].name}</Text>
             <View style={[styles.rankBadge, { backgroundColor: rankStyles.S.backgroundColor }]}>
-              <Text style={[styles.rankText, { color: rankStyles.S.color }]}>{topThree[0].score} điểm</Text>
+              <Text style={[styles.rankText, { color: rankStyles.S.color }]}>{topThree[0].score} {t.points}</Text>
             </View>
           </View>
           <View style={styles.medalContainer}>
@@ -190,7 +229,7 @@ const Podium = ({ topThree, navigation }) => {
             <Image source={topThree[2].image} style={styles.podiumAvatar} />
             <Text style={styles.podiumName} numberOfLines={1}>{topThree[2].name}</Text>
             <View style={[styles.rankBadge, { backgroundColor: rankStyles.B.backgroundColor }]}>
-              <Text style={[styles.rankText, { color: rankStyles.B.color }]}>{topThree[2].score} điểm</Text>
+              <Text style={[styles.rankText, { color: rankStyles.B.color }]}>{topThree[2].score} {t.points}</Text>
             </View>
           </View>
           <View style={styles.medalContainer}>
@@ -211,6 +250,42 @@ const RankingsScreen = ({ navigation }) => {
   const [showGroupModal, setShowGroupModal] = useState(false);
   const [showChatModal, setShowChatModal] = useState(false);
 
+  // Lấy trạng thái ngôn ngữ từ Redux
+  const language = useSelector((state) => state.language.language);
+  const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+
+  // Lấy chuỗi dịch dựa trên ngôn ngữ hiện tại
+  const t = translations[language];
+
+  const dynamicStyles = {
+    container: {
+      flex: 1,
+      backgroundColor: isDarkMode ? '#0099FF' : '#fff', // Nền xanh cho Dark Mode
+    },
+    sectionTitle: {
+      color: isDarkMode ? '#fff' : '#333',
+    },
+    rankCard: {
+      backgroundColor: isDarkMode ? '#6666FF' : '#fff', // Màu tím cho Dark Mode
+      borderColor: isDarkMode ? '#444' : '#eee',
+    },
+    rankName: {
+      color: isDarkMode ? '#fff' : '#333',
+    },
+    rankText: {
+      color: isDarkMode ? '#ccc' : '#666',
+    },
+    tab: {
+      backgroundColor: isDarkMode ? '#6666FF' : '#fff',
+    },
+    tabText: {
+      color: isDarkMode ? '#fff' : '#666',
+    },
+    activeTabText: {
+      color: isDarkMode ? '#FFD700' : '#4b46f1',
+    },
+  };
+
   const renderProgress = (progress) => (
     <View style={styles.progressContainer}>
       <View style={styles.progressBar}>
@@ -221,17 +296,17 @@ const RankingsScreen = ({ navigation }) => {
   );
 
   const renderHeader = () => (
-    <Podium topThree={rankings.slice(0, 3)} navigation={navigation} />
+    <Podium topThree={rankings.slice(0, 3)} navigation={navigation} t={t} />
   );
 
   const handleFriendRequest = (id, action) => {
     Alert.alert(
-      'Xác nhận',
-      `${action === 'accept' ? 'Chấp nhận' : 'Từ chối'} lời mời kết bạn?`,
+      t.confirm,
+      action === 'accept' ? t.acceptFriendRequest : t.declineFriendRequest,
       [
-        { text: 'Hủy', style: 'cancel' },
+        { text: t.cancel, style: 'cancel' },
         { 
-          text: 'Đồng ý',
+          text: t.agree,
           onPress: () => {
             console.log(`Friend request ${action}ed:`, id);
           }
@@ -249,11 +324,11 @@ const RankingsScreen = ({ navigation }) => {
     >
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Bạn bè</Text>
+          <Text style={styles.modalTitle}>{t.friends}</Text>
           
           {friendSystem.requests.length > 0 && (
             <View style={styles.requestsSection}>
-              <Text style={styles.sectionTitle}>Lời mời kết bạn</Text>
+              <Text style={styles.sectionTitle}>{t.friendRequests}</Text>
               {friendSystem.requests.map(request => (
                 <View key={request.id} style={styles.friendRequest}>
                   <Image source={request.avatar} style={styles.requestAvatar} />
@@ -263,13 +338,13 @@ const RankingsScreen = ({ navigation }) => {
                       style={styles.acceptButton}
                       onPress={() => handleFriendRequest(request.id, 'accept')}
                     >
-                      <Text style={styles.buttonText}>Đồng ý</Text>
+                      <Text style={styles.buttonText}>{t.agree}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity 
                       style={styles.declineButton}
                       onPress={() => handleFriendRequest(request.id, 'decline')}
                     >
-                      <Text style={styles.buttonText}>Từ chối</Text>
+                      <Text style={styles.buttonText}>{t.cancel}</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -278,7 +353,7 @@ const RankingsScreen = ({ navigation }) => {
           )}
 
           <View style={styles.friendsList}>
-            <Text style={styles.sectionTitle}>Danh sách bạn bè</Text>
+            <Text style={styles.sectionTitle}>{t.friendsList}</Text>
             {friendSystem.friends.map(friend => (
               <TouchableOpacity 
                 key={friend.id} 
@@ -295,7 +370,7 @@ const RankingsScreen = ({ navigation }) => {
                     styles.friendStatus,
                     {color: friend.status === 'online' ? '#4CAF50' : '#999'}
                   ]}>
-                    {friend.status === 'online' ? 'Đang hoạt động' : friend.lastActive}
+                    {friend.status === 'online' ? t.online : `${t.lastActive}: ${friend.lastActive}`}
                   </Text>
                 </View>
                 <FontAwesome5 name="comment" size={16} color="#4b46f1" />
@@ -326,7 +401,7 @@ const RankingsScreen = ({ navigation }) => {
 
   const renderSocialFeatures = () => (
     <View style={styles.socialContainer}>
-      <Text style={styles.sectionTitle}>🤝 Kết nối</Text>
+      <Text style={styles.sectionTitle}>🤝 {t.social}</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         {socialFeatures.map(feature => (
           <TouchableOpacity
@@ -351,7 +426,7 @@ const RankingsScreen = ({ navigation }) => {
 
   const renderActivityFeed = () => (
     <View style={styles.activityContainer}>
-      <Text style={styles.sectionTitle}>📱 Bảng tin</Text>
+      <Text style={styles.sectionTitle}>📱 {t.social}</Text>
       {activities.map(activity => (
         <View key={activity.id} style={styles.activityCard}>
           <Image source={activity.avatar} style={styles.activityAvatar} />
@@ -370,32 +445,32 @@ const RankingsScreen = ({ navigation }) => {
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, dynamicStyles.container]}>
       <View style={headerStyles.container}>
         <TouchableOpacity 
           style={headerStyles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <FontAwesome5 name="arrow-left" size={16} color="#4b46f1" />
+          <FontAwesome5 name="arrow-left" size={16} color={isDarkMode ? '#fff' : '#4b46f1'} />
         </TouchableOpacity>
-        <Text style={headerStyles.title}>Cộng đồng</Text>
+        <Text style={[headerStyles.title, { color: isDarkMode ? '#fff' : '#333' }]}>{t.community}</Text>
       </View>
 
-      <View style={styles.tabContainer}>
+      <View style={[styles.tabContainer, dynamicStyles.tab]}>
         <TouchableOpacity 
           style={[styles.tab, activeTab === 'rankings' && styles.activeTab]}
           onPress={() => setActiveTab('rankings')}
         >
-          <Text style={[styles.tabText, activeTab === 'rankings' && styles.activeTabText]}>
-            Xếp hạng
+          <Text style={[styles.tabText, dynamicStyles.tabText, activeTab === 'rankings' && dynamicStyles.activeTabText]}>
+            {t.rankings}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity 
           style={[styles.tab, activeTab === 'social' && styles.activeTab]}
           onPress={() => setActiveTab('social')}
         >
-          <Text style={[styles.tabText, activeTab === 'social' && styles.activeTabText]}>
-            Cộng đồng
+          <Text style={[styles.tabText, dynamicStyles.tabText, activeTab === 'social' && dynamicStyles.activeTabText]}>
+            {t.social}
           </Text>
         </TouchableOpacity>
       </View>
@@ -408,7 +483,7 @@ const RankingsScreen = ({ navigation }) => {
             const rank = getRank(item.score);
             return (
               <TouchableOpacity 
-                style={[styles.rankCard, { borderColor: rankStyles[rank].borderColor }]}
+                style={[styles.rankCard, dynamicStyles.rankCard, { borderColor: rankStyles[rank].borderColor }]}
                 onPress={() => navigation.navigate('DetailRanking', { user: {...item, rank} })}
               >
                 <View style={styles.rankNumberContainer}>
@@ -416,9 +491,9 @@ const RankingsScreen = ({ navigation }) => {
                 </View>
                 <Image source={item.image} style={styles.rankAvatar} />
                 <View style={styles.rankInfo}>
-                  <Text style={styles.rankName} numberOfLines={1}>{item.name}</Text>
+                  <Text style={[styles.rankName, dynamicStyles.rankName]} numberOfLines={1}>{item.name}</Text>
                   <View style={[styles.rankBadge, { backgroundColor: rankStyles[rank].backgroundColor }]}>
-                    <Text style={[styles.rankText, { color: rankStyles[rank].color }]}>{item.score} điểm</Text>
+                    <Text style={[styles.rankText, dynamicStyles.rankText, { color: rankStyles[rank].color }]}>{item.score} {t.points}</Text>
                   </View>
                 </View>
                 <FontAwesome5 name="chevron-right" size={16} color="#ccc" />
@@ -457,12 +532,10 @@ const RankingsScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#333',
     marginBottom: 16,
     paddingHorizontal: 16,
   },
@@ -516,11 +589,9 @@ const styles = StyleSheet.create({
   rankCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
-    padding: 10,
-    marginVertical: 5,
-    borderRadius: 10,
-    elevation: 4,
+    padding: 12,
+    marginVertical: 8,
+    borderRadius: 8,
     borderWidth: 1,
   },
   rankNumberContainer: {
@@ -543,7 +614,6 @@ const styles = StyleSheet.create({
   rankName: {
     fontSize: 16,
     fontWeight: '600',
-    marginBottom: 4,
   },
   rankBadge: {
     paddingVertical: 2,
@@ -552,7 +622,6 @@ const styles = StyleSheet.create({
   },
   rankText: {
     fontSize: 14,
-    fontWeight: '600',
   },
   modalOverlay: {
     flex: 1,
@@ -623,7 +692,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: 16,
     paddingVertical: 8,
-    backgroundColor: '#fff',
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
   },
@@ -638,12 +706,7 @@ const styles = StyleSheet.create({
   },
   tabText: {
     fontSize: 15,
-    color: '#666',
     fontWeight: '500',
-  },
-  activeTabText: {
-    color: '#4b46f1',
-    fontWeight: '600',
   },
   socialContainer: {
     padding: 16,

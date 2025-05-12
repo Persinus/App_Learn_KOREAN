@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
+import { useSelector } from 'react-redux';
 
 const Achievement = ({ onPress }) => {
   const achievements = [
@@ -10,7 +11,7 @@ const Achievement = ({ onPress }) => {
       progress: 5,
       total: 7,
       icon: 'calendar-check',
-      color: '#4CAF50'
+      color: '#4CAF50',
     },
     {
       id: 2,
@@ -18,7 +19,7 @@ const Achievement = ({ onPress }) => {
       progress: 45,
       total: 100,
       icon: 'book-reader',
-      color: '#2196F3'
+      color: '#2196F3',
     },
     {
       id: 3,
@@ -26,9 +27,29 @@ const Achievement = ({ onPress }) => {
       progress: 20,
       total: 50,
       icon: 'microphone',
-      color: '#FF9800'
-    }
+      color: '#FF9800',
+    },
   ];
+
+  const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+
+  const dynamicStyles = {
+    container: {
+      backgroundColor: isDarkMode ? '#0099FF' : '#fff', // Nền xanh cho Dark Mode
+    },
+    title: {
+      color: isDarkMode ? '#fff' : '#333',
+    },
+    viewAll: {
+      color: isDarkMode ? '#FFD700' : '#4b46f1',
+    },
+    progressBar: {
+      backgroundColor: isDarkMode ? '#444' : '#f0f0f0',
+    },
+    progressText: {
+      color: isDarkMode ? '#ccc' : '#666',
+    },
+  };
 
   const renderAchievement = ({ item }) => (
     <TouchableOpacity
@@ -38,33 +59,35 @@ const Achievement = ({ onPress }) => {
       <View style={[styles.iconContainer, { backgroundColor: item.color }]}>
         <FontAwesome5 name={item.icon} size={14} color="#fff" />
       </View>
-      <View style={styles.progressBar}>
-        <View 
+      <View style={[styles.progressBar, dynamicStyles.progressBar]}>
+        <View
           style={[
-            styles.progress, 
-            { 
+            styles.progress,
+            {
               width: `${(item.progress / item.total) * 100}%`,
-              backgroundColor: item.color
-            }
-          ]} 
+              backgroundColor: item.color,
+            },
+          ]}
         />
       </View>
-      <Text style={styles.progressText}>{item.progress}/{item.total}</Text>
+      <Text style={[styles.progressText, dynamicStyles.progressText]}>
+        {item.progress}/{item.total}
+      </Text>
     </TouchableOpacity>
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, dynamicStyles.container]}>
       <View style={styles.header}>
-        <Text style={styles.title}>🏆 Thành tựu</Text>
+        <Text style={[styles.title, dynamicStyles.title]}>🏆 Thành tựu</Text>
         <TouchableOpacity onPress={() => onPress('all')}>
-          <Text style={styles.viewAll}>Tất cả</Text>
+          <Text style={[styles.viewAll, dynamicStyles.viewAll]}>Tất cả</Text>
         </TouchableOpacity>
       </View>
       <FlatList
         data={achievements}
         renderItem={renderAchievement}
-        keyExtractor={item => item.id.toString()}
+        keyExtractor={(item) => item.id.toString()}
         horizontal
         showsHorizontalScrollIndicator={false}
       />
@@ -86,11 +109,9 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
   },
   viewAll: {
     fontSize: 13,
-    color: '#4b46f1',
   },
   achievementItem: {
     width: 100,
@@ -108,7 +129,6 @@ const styles = StyleSheet.create({
   progressBar: {
     width: '100%',
     height: 3,
-    backgroundColor: '#f0f0f0',
     borderRadius: 2,
     marginBottom: 4,
   },
@@ -118,7 +138,6 @@ const styles = StyleSheet.create({
   },
   progressText: {
     fontSize: 12,
-    color: '#666',
   },
 });
 
