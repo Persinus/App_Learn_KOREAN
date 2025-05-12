@@ -4,6 +4,7 @@ import PracticeScreen from "../Screens/Practice/PracticeScreen";
 import VideoListScreen from "../Screens/Practice/VideoListScreen";
 import VideoDetailScreen from "../Screens/Practice/VideoDetailScreen";
 import LessionScreen from "../Screens/Practice/Lesson/LessonsScreen"; 
+import HanhTrinh20CauHoi from "../Screens/Practice/Lesson/HanhTrinh20CauHoi";
 import MiniGame1 from "../Screens/Practice/Game/MiniGame1";
 import DetailGame1 from "../Screens/Practice/Game/DetailGame1";
 import PracticeDailyReward from "../Screens/Practice/Rewards/PracticeDailyReward";
@@ -66,10 +67,14 @@ const PracticeStackNavigator = () => {
         name="PracticeCompetition"
         component={PracticeCompetition}
         options={{ headerShown: false }}
-      />
-      <Stack.Screen
+      /><Stack.Screen
         name="PracticeTournament"
         component={PracticeTournament}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="HanhTrinh20CauHoi"
+        component={HanhTrinh20CauHoi}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

@@ -16,12 +16,26 @@ const characterList = [
     { name: "Nhân Vật 9", uri: "https://i.pinimg.com/474x/56/f0/b3/56f0b382c9b6b16aaa94f4682c7f2803.jpg", price: 400, isOwned: false },
   ];
 
-// ✅ Tạo danh sách 20 câu hỏi
-const pathPoints = Array.from({ length: 20 }).map((_, i) => ({
-  x: i % 2 === 0 ? 70 : 220, // Zigzag trái/phải
-  y: 200 + i * 120, // Câu 1 ở y = 200, các câu sau cách 120px
-  number: i + 1,
-}));
+// ✅ Tạo danh sách 20 câu hỏi với đường đi đẹp hơn
+const pathPoints = Array.from({ length: 20 }).map((_, i) => {
+  // Vị trí x lệch trái-phải-giữa cho sinh động hơn
+  let x;
+  if (i % 3 === 0) {
+    x = 60; // Trái
+  } else if (i % 3 === 1) {
+    x = 170; // Giữa
+  } else {
+    x = 280; // Phải
+  }
+  
+  // Khoảng cách dọc giữa các câu đều đặn hơn
+  return {
+    x,
+    y: 240 + i * 150, // Khoảng cách y lớn hơn để dễ nhìn
+    number: i + 1,
+    completed: i < 5, // 5 câu đầu đã hoàn thành
+  };
+});
 
 const MapScreen = () => {
   const navigation = useNavigation();
@@ -34,8 +48,14 @@ const MapScreen = () => {
   const [isCharacterPanelVisible, setCharacterPanelVisible] = useState(false);
   const [gems, setGems] = useState(900);  // Kim cương ban đầu
   const [characters, setCharacters] = useState(characterList)
-  // ✅ Di chuyển nhân vật và cuộn theo
+  // ✅ Di chuyển nhân vật và cuộn theo  
   const moveCharacter = (index, x, y) => {
+    // Nếu là câu hỏi ở tương lai (sau câu hỏi hiện tại là số 5)
+    if (index > 5) {
+      alert("Vui lòng hoàn thành các bài học trước!");
+      return;
+    }
+    
     Animated.timing(characterPosition, {
       toValue: { x, y: y - 110 }, // ✅ Nhân vật luôn nằm phía trên nút
       duration: 800,
@@ -48,9 +68,13 @@ const MapScreen = () => {
       navigation.navigate("DetailScreen", { id: pathPoints[index].number });
     });
   };
-
   return (
     <View style={styles.container}>
+      {/* Hiển thị kim cương */}
+      <View style={styles.gemsContainer}>
+        <Text style={styles.gemsText}>💎 {gems}</Text>
+      </View>
+
       {/* Nút mở panel chọn nhân vật */}
       <TouchableOpacity style={styles.characterSelectButton} onPress={() => setCharacterPanelVisible(true)}>
         <Text style={styles.buttonText}>🎭 Chọn Nhân Vật</Text>
@@ -58,7 +82,15 @@ const MapScreen = () => {
 
       {/* Thanh tiêu đề */}
       <View style={styles.header}>
-        <Text style={styles.headerText}>Hành trình 20 câu hỏi</Text>
+        <Text style={styles.headerText}>Hành trình học tiếng Hàn</Text>
+      </View>
+
+      {/* Thanh tiến độ */}
+      <View style={styles.progressBarContainer}>
+        <View style={styles.progressBar}>
+          <View style={[styles.progressFill, { width: `${(5/20)*100}%` }]} />
+        </View>
+        <Text style={styles.progressText}>5/20 câu hỏi</Text>
       </View>
 
       {/* ✅ ScrollView cuộn đúng */}
@@ -71,19 +103,56 @@ const MapScreen = () => {
         <Animated.Image
           source={{ uri: character }}
           style={[styles.character, characterPosition.getLayout()]}
-        />
+        />        {/* ✅ Đường nối giữa các câu */}
+        {pathPoints.map((point, index) => {
+          if (index < pathPoints.length - 1) {
+            const nextPoint = pathPoints[index + 1];
+            return (
+              <View key={`path-${index}`} style={[
+                styles.pathLine,
+                {
+                  left: point.x + 25, // Điều chỉnh vị trí để khớp với node
+                  top: point.y + 25,
+                  width: Math.sqrt(Math.pow(nextPoint.x - point.x, 2) + Math.pow(nextPoint.y - point.y, 2)),
+                  transform: [
+                    { 
+                      rotate: `${Math.atan2(nextPoint.y - point.y, nextPoint.x - point.x) * (180 / Math.PI)}deg` 
+                    }
+                  ]
+                }
+              ]} />
+            );
+          }
+          return null;
+        })}
 
-        {/* ✅ Đường đi */}
+        {/* ✅ Danh sách câu hỏi */}
         {pathPoints.map((point, index) => (
           <View key={index} style={[styles.rowContainer, { top: point.y }]}>
             {/* Nút câu hỏi */}
             <TouchableOpacity 
-              style={[styles.node, { left: point.x }]} 
+              style={[
+                styles.node, 
+                { left: point.x },
+                point.completed ? styles.completedNode : {}
+              ]} 
               onPress={() => moveCharacter(index, point.x, point.y)}
             >
-              <View style={styles.questionCircle}>
-                <Text style={styles.questionText}>{point.number}</Text>
-              </View>
+              {point.completed ? (
+                <View style={styles.completedCircle}>
+                  <Text style={styles.checkmark}>✓</Text>
+                </View>
+              ) : (
+                <View style={[
+                  styles.questionCircle,
+                  index === 5 ? styles.currentQuestionCircle : {}
+                ]}>
+                  <Text style={styles.questionText}>{point.number}</Text>
+                </View>
+              )}
+              
+              {/* Hiển thị nhãn */}
+              <Text style={styles.nodeLabel}>Bài {point.number}</Text>
             </TouchableOpacity>
           </View>
         ))}
@@ -137,28 +206,72 @@ export default MapScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#E6F4EA",
-   
+    backgroundColor: "#F3F8FF", // Màu nền nhẹ nhàng hơn
   },
   header: {
-    backgroundColor: "#7AC74F",
+    backgroundColor: "#5271FF", // Màu xanh dương nhẹ hơn
     paddingVertical: 15,
     alignItems: "center",
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    marginBottom: 15,
+    elevation: 4,
   },
   headerText: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "bold",
     color: "#fff",
   },
+  gemsContainer: {
+    position: "absolute",
+    top: 50,
+    right: 20,
+    backgroundColor: "#FFD700",
+    borderRadius: 15,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    zIndex: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    elevation: 5,
+  },
+  gemsText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  progressBarContainer: {
+    paddingHorizontal: 20,
+    marginBottom: 15,
+  },
+  progressBar: {
+    height: 12,
+    backgroundColor: "#E0E0E0",
+    borderRadius: 10,
+    marginVertical: 5,
+  },
+  progressFill: {
+    height: 12,
+    backgroundColor: "#4CAF50",
+    borderRadius: 10,
+  },
+  progressText: {
+    fontSize: 14,
+    color: "#444",
+    textAlign: "right",
+  },
   scrollContainer: {
     flexGrow: 1,
-    paddingBottom: 2660, // ✅ Cuộn đủ 20 câu
+    paddingBottom: 3500, // Đủ cho 20 câu hỏi
   },
   character: {
     width: 70,
     height: 70,
     position: "absolute",
     borderRadius: 35,
+    zIndex: 10,
+    borderWidth: 2,
+    borderColor: "#FFD700",
   },
   rowContainer: {
     flexDirection: "row",
@@ -167,74 +280,143 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "center",
   },
+  pathLine: {
+    height: 4,
+    backgroundColor: "#D0D0D0",
+    position: "absolute",
+    transformOrigin: "left",
+  },
   node: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: "#FFF5CC",
+    width: 70,
+    height: 70,
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
+  },
+  completedNode: {
+    opacity: 0.9,
   },
   questionCircle: {
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#5271FF", // Màu xanh dương
     justifyContent: "center",
     alignItems: "center",
+    elevation: 5,
+  },
+  currentQuestionCircle: {
+    backgroundColor: "#FF9800", // Màu cam cho câu hiện tại
+    width: 55,
+    height: 55,
+    borderRadius: 28,
+    borderWidth: 2,
+    borderColor: "#FFC107",
+  },
+  completedCircle: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: "#4CAF50", // Màu xanh lá
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 5,
   },
   questionText: {
     fontSize: 18,
     fontWeight: "bold",
     color: "#fff",
   },
+  checkmark: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#fff",
+  },
+  nodeLabel: {
+    position: "absolute",
+    top: 60,
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#333",
+    backgroundColor: "rgba(255,255,255,0.8)",
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 10,
+  },
   characterSelectButton: {
     position: "absolute",
-    top: 70,
-    left: 10,
-    backgroundColor: "#FFCC00",
-    padding: 10,
-    borderRadius: 10,
+    top: 50,
+    left: 20,
+    backgroundColor: "#5271FF",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 15,
     zIndex: 10,
+    elevation: 5,
   },
   buttonText: {
     fontSize: 14,
     fontWeight: "bold",
-  },
-  modalContainer: {
+    color: "#fff",
+  },  modalContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: "rgba(0,0,0,0.7)",
   },
   modalContent: {
     backgroundColor: "#fff",
-    padding: 20,
-    borderRadius: 10,
-    width: 300,
+    padding: 24,
+    borderRadius: 20,
+    width: 320,
     alignItems: "center",
+    elevation: 8,
   },
   modalTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginBottom: 20,
+    color: "#5271FF",
   },
   characterGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "center",
+    justifyContent: "space-between",
+    width: "100%",
+    marginBottom: 10,
   },
   characterOption: {
-    width: 70,
-    height: 70,
+    width: 80,
+    height: 80,
     margin: 5,
-    borderRadius: 35,
+    borderRadius: 40,
+    borderWidth: 2,
+    borderColor: "#E0E0E0",
+  },
+  characterName: {
+    textAlign: "center",
+    marginTop: 4,
+    fontSize: 12,
+    fontWeight: "bold",
+  },
+  ownedText: {
+    textAlign: "center",
+    color: "#4CAF50",
+    fontWeight: "bold",
+    fontSize: 12,
+  },
+  priceText: {
+    textAlign: "center",
+    color: "#5271FF",
+    fontWeight: "bold",
+    fontSize: 12,
   },
   closeButton: {
-    marginTop: 10,
-    backgroundColor: "#FF5733",
-    padding: 10,
-    borderRadius: 10,
+    marginTop: 20,
+    backgroundColor: "#5271FF",
+    paddingHorizontal: 30,
+    paddingVertical: 12,
+    borderRadius: 30,
+    elevation: 3,
   },
 });

@@ -1,0 +1,62 @@
+{
+  "name": "react-native-collapsible",
+  "version": "1.6.2",
+  "description": "Animated collapsible component for React Native using the Animated API. Good for accordions, toggles etc",
+  "keywords": [
+    "react-native",
+    "react-component",
+    "react-native-component",
+    "react",
+    "mobile",
+    "ios",
+    "android",
+    "ui",
+    "collapse",
+    "collapsible",
+    "toggle",
+    "accordion"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://oblador@github.com/oblador/react-native-collapsible.git"
+  },
+  "author": "Joel Arvidsson <joel@oblador.se>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/oblador/react-native-collapsible/issues"
+  },
+  "homepage": "https://github.com/oblador/react-native-collapsible",
+  "main": "Collapsible.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "lint": "eslint --ext js,ts ."
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.0",
+    "@babel/preset-env": "^7.20.0",
+    "@babel/runtime": "^7.20.0",
+    "@react-native/babel-preset": "0.75.2",
+    "@react-native/eslint-config": "0.75.2",
+    "eslint": "^8.19.0",
+    "husky": "^6.0.0",
+    "lint-staged": "^10.5.4",
+    "react": "18.3.1",
+    "react-native": "0.75.2",
+    "typescript": "5.0.4"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,ts}": [
+      "eslint --fix",
+      "git add"
+    ]
+  }
+}

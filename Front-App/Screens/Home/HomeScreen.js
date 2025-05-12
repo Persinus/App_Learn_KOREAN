@@ -92,6 +92,26 @@ const HomeScreen = ({ navigation }) => {
       tag: 'speaking',
       isActive: false,
       description: "Học cách giao tiếp cơ bản hàng ngày"
+    },
+    {
+      id: "4",
+      title: "Nhập môn tiếng Hàn",
+      progress: "3/10",
+      estimatedTime: "1 tháng",
+      color: "#2196F3",
+      tag: 'beginner',
+      isActive: false,
+      description: "Làm quen với bảng chữ cái và phát âm cơ bản"
+    },
+    {
+      id: "5",
+      title: "Tiếng Hàn Nâng cao",
+      progress: "2/25",
+      estimatedTime: "4 tháng",
+      color: "#9C27B0",
+      tag: 'advanced',
+      isActive: false,
+      description: "Luyện kỹ năng ngôn ngữ nâng cao và văn học"
     }
   ];
 
@@ -522,6 +542,18 @@ const HomeScreen = ({ navigation }) => {
         renderItem={({ item }) => (
           <TouchableOpacity
             style={[styles.courseCard, { backgroundColor: item.color }]}
+            onPress={() => {
+              if (item.title === "Tiếng Hàn Cơ Bản") {
+                // Thay đổi cách gọi điều hướng, sử dụng reset để đảm bảo không có vấn đề với stack
+                navigation.navigate("BasicKoreanLessonsScreen");
+                // Ghi log để debug
+                console.log("Đang điều hướng đến BasicKoreanLessonsScreen");
+              } else if (item.title === "Nhập môn tiếng Hàn") {
+                navigation.navigate("AlphabetHomeScreen");
+              } else {
+                alert(`Bạn đã chọn khóa học: ${item.title}`);
+              }
+            }}
           >
             <Text style={styles.courseProgress}>{item.progress} bài</Text>
             <Text style={styles.courseTitle}>{item.title}</Text>
@@ -603,7 +635,7 @@ const HomeScreen = ({ navigation }) => {
                     {item.difficulty}
                   </Text>
                 </View>
-
+                
                 <View style={styles.metaItem}>
                   <FontAwesome5 name="clock" size={12} color="#666" />
                   <Text style={styles.metaText}>{item.duration}</Text>

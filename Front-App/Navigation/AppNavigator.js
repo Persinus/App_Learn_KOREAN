@@ -18,6 +18,17 @@ import LinkingPaid from '../Screens/PaidCourses/LinkingPaid';
 import JoinCourse from '../Screens/PaidCourses/JoinCourse';
 import DetailRanking from '../Screens/Rankings/DetailRanking';
 
+// Import các màn hình mới
+import AlphabetHomeScreen from '../Screens/KoreanBasics/AlphabetHomeScreen';
+import ConsonantsSingleScreen from '../Screens/KoreanBasics/ConsonantsSingleScreen';
+import ConsonantsDoubleScreen from '../Screens/KoreanBasics/ConsonantsDoubleScreen';
+import VowelsSingleScreen from '../Screens/KoreanBasics/VowelsSingleScreen';
+import VowelsDoubleScreen from '../Screens/KoreanBasics/VowelsDoubleScreen';
+import BasicKoreanLessonsScreen from '../Screens/BasicKorean/BasicKoreanLessonsScreen';
+import LessonDetailScreen from '../Screens/BasicKorean/LessonDetailScreen';
+import VocabularyTopicsScreen from '../Screens/KoreanBasics/VocabularyTopicsScreen';
+import VocabularyDetailScreen from '../Screens/KoreanBasics/VocabularyDetailScreen';
+
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
@@ -103,4 +114,21 @@ const MainNavigator = () => {
   );
 };
 
-export default MainNavigator;
+const AppNavigator = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Main" component={MainNavigator} />
+      <Stack.Screen name="AlphabetHomeScreen" component={AlphabetHomeScreen} />
+      <Stack.Screen name="ConsonantsSingle" component={ConsonantsSingleScreen} />
+      <Stack.Screen name="ConsonantsDouble" component={ConsonantsDoubleScreen} />
+      <Stack.Screen name="VowelsSingle" component={VowelsSingleScreen} />
+      <Stack.Screen name="VowelsDouble" component={VowelsDoubleScreen} />
+      <Stack.Screen name="BasicKoreanLessonsScreen" component={BasicKoreanLessonsScreen} />
+      <Stack.Screen name="LessonDetailScreen" component={LessonDetailScreen} />
+      <Stack.Screen name="VocabularyTopicsScreen" component={VocabularyTopicsScreen} />
+      <Stack.Screen name="VocabularyDetailScreen" component={VocabularyDetailScreen} />
+    </Stack.Navigator>
+  );
+};
+
+export default AppNavigator;

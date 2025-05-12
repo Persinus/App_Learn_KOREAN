@@ -8,13 +8,19 @@ const subscriptionOptions = [
     color: "#E6D6FF",
     icon: require('../../assets/avatar1.png'),
     onPress: (navigation) => navigation.navigate('LessionScreen'),
-  },
-  {
+  },  {
     title: "Mini Games",
     description: "Học thông qua các trò chơi tương tác thú vị.",
     color: "#D6E6FF", 
     icon: require('../../assets/avatar1.png'),
     onPress: (navigation) => navigation.navigate('MiniGame1'),
+  },
+  {
+    title: "Hành trình 20 câu hỏi",
+    description: "Khám phá hành trình học tiếng Hàn qua 20 câu hỏi.",
+    color: "#FFF0C5", 
+    icon: require('../../assets/avatar1.png'),
+    onPress: (navigation) => navigation.navigate('HanhTrinh20CauHoi'),
   },
   {
     title: "Thư viện Video",
