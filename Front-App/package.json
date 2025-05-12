@@ -23,7 +23,7 @@
     "@reduxjs/toolkit": "^2.8.1",
     "axios": "^1.9.0",
     "expo": "~52.0.37",
-    "expo-auth-session": "~6.0.3",
+    "expo-auth-session": "~6.1.5",
     "expo-av": "~15.1.4",
     "expo-device": "~7.1.4",
     "expo-location": "~18.0.10",
