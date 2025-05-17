@@ -54,18 +54,18 @@ const translations = {
 };
 
 const rankings = [
-  { id: "1", name: "Nguyễn Văn A", score: 1500, image: require("../../assets/avatar1.png") },
-  { id: "2", name: "Trần Thị B", score: 1400, image: require("../../assets/avatar2.png") },
-  { id: "3", name: "Lê Văn C", score: 800, image: require("../../assets/avatar3.png") },
-  { id: "4", name: "Phạm D", score: 300, image: require("../../assets/avatar4.png") },
-  { id: "5", name: "Ngô Văn E", score: 200, image: require("../../assets/avatar4.png") },
+  { id: "1", name: "Nguyễn Văn A", score: 1500, image: require("../../assets/avatar_1.jpg") },
+  { id: "2", name: "Trần Thị B", score: 1400, image: require("../../assets/avatar_2.jpg") },
+  { id: "3", name: "Lê Văn C", score: 800, image: require("../../assets/avatar_3.jpg") },
+  { id: "4", name: "Phạm D", score: 300, image: require("../../assets/avatar_4.jpg") },
+  { id: "5", name: "Ngô Văn E", score: 200, image: require("../../assets/avatar_4.jpg") },
 ];
 
 const rankIcons = {
-  S: require("../../assets/rank-s.png"),
-  A: require("../../assets/rank-a.png"),
-  B: require("../../assets/rank-b.png"),
-  C: require("../../assets/rank-c.png"),
+  S: require("../../assets/rank_s.jpg"),
+  A: require("../../assets/rank_a.jpg"),
+  B: require("../../assets/rank_b.jpg"),
+  C: require("../../assets/rank_c.jpg"),
 };
 
 const getRank = (score) => {
@@ -129,7 +129,7 @@ const activities = [
   {
     id: '1',
     user: "Nguyễn Văn A", 
-    avatar: require("../../assets/avatar1.png"),
+    avatar: require("../../assets/avatar_1.jpg"),
     action: "đã hoàn thành",
     target: "Bài học số 5",
     time: "2 giờ trước"
@@ -137,7 +137,7 @@ const activities = [
   {
     id: '2', 
     user: "Trần Thị B",
-    avatar: require("../../assets/avatar2.png"),
+    avatar: require("../../assets/avatar_2.jpg"),
     action: "đạt thành tích",
     target: "Học 7 ngày liên tiếp", 
     time: "5 giờ trước"
@@ -145,7 +145,7 @@ const activities = [
   {
     id: '3',
     user: "Kim Min Ho",
-    avatar: require("../../assets/avatar3.png"),
+    avatar: require("../../assets/avatar_3.jpg"),
     action: "đã chia sẻ tiến độ",
     target: "Hoàn thành 80% khóa học Giao tiếp cơ bản",
     time: "6 giờ trước",
@@ -155,12 +155,12 @@ const activities = [
 
 const friendSystem = {
   requests: [
-    { id: '1', name: 'Nguyen Van X', avatar: require("../../assets/avatar1.png"), status: 'pending' },
-    { id: '2', name: 'Tran Thi Y', avatar: require("../../assets/avatar2.png"), status: 'pending' }
+    { id: '1', name: 'Nguyen Van X', avatar: require("../../assets/avatar_1.jpg"), status: 'pending' },
+    { id: '2', name: 'Tran Thi Y', avatar: require("../../assets/avatar_2.jpg"), status: 'pending' }
   ],
   friends: [
-    { id: '1', name: 'Le Van A', avatar: require("../../assets/avatar3.png"), status: 'online', lastActive: 'Vừa xong' },
-    { id: '2', name: 'Pham Thi B', avatar: require("../../assets/avatar4.png"), status: 'offline', lastActive: '2 giờ trước' }
+    { id: '1', name: 'Le Van A', avatar: require("../../assets/avatar_3.jpg"), status: 'online', lastActive: 'Vừa xong' },
+    { id: '2', name: 'Pham Thi B', avatar: require("../../assets/avatar_4.jpg"), status: 'offline', lastActive: '2 giờ trước' }
   ]
 };
 
@@ -169,14 +169,14 @@ const studyGroups = [
     id: '1',
     name: 'Nhóm TOPIK 2023',
     members: 15,
-    avatar: require("../../assets/avatar1.png"), // Using existing avatar as placeholder
+    avatar: require("../../assets/avatar_1.jpg"), // Using existing avatar as placeholder
     lastActivity: 'Vừa xong'
   },
   {
     id: '2', 
     name: 'Giao tiếp cơ bản',
     members: 8,
-    avatar: require("../../assets/avatar2.png"), // Using existing avatar as placeholder 
+    avatar: require("../../assets/avatar_2.jpg"), // Using existing avatar as placeholder 
     lastActivity: '1 giờ trước'
   }
 ];

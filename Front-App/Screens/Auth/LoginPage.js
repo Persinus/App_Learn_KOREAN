@@ -8,7 +8,7 @@ const Login = ({ navigation }) => {
 
   return (
     <ImageBackground
-      source={require("../../assets/background.png")}
+      source={require("../../assets/background.jpg")}
       style={styles.background}
     >
       <View

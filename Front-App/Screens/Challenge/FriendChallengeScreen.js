@@ -16,7 +16,7 @@ const FriendChallengeScreen = () => {
       id: '1',
       name: 'Jane Doe',
       level: 15,
-      avatar: require('../../assets/avatar1.png'),
+      avatar: require('../../assets/avatar_1.jpg'),
       online: true
     },
     // Add more friends...
