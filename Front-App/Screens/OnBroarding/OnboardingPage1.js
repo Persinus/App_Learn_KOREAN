@@ -7,7 +7,7 @@ const OnboardingPage1 = ({ navigation }) => {
 
   return (
     <View style={onboardingStyles.container}>
-      <Image source={require("../../assets/illustration1.png")} style={onboardingStyles.image} />
+      <Image source={require("../../assets/illustration1.jpg")} style={onboardingStyles.image} />
       <Text style={onboardingStyles.title}>Mục tiêu học tiếng Hàn của bạn?</Text>
 
       {["Giao tiếp cơ bản", "Xem phim không phụ đề", "Thi TOPIK", "Cơ hội du học"].map((option) => (

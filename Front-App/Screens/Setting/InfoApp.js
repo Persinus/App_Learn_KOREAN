@@ -101,7 +101,7 @@ const InfoApp = ({ navigation }) => {
       <ScrollView style={styles.content}>
         <View style={[styles.appInfoCard, dynamicStyles.appInfoCard]}>
           <Image
-            source={require('../../assets/logo.png')}
+            source={require('../../assets/icon.png')}
             style={styles.appLogo}
           />
           <Text style={[styles.appName, dynamicStyles.appName]}>Korean Learning App</Text>

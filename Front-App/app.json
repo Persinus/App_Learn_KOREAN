@@ -1,15 +1,15 @@
 {
   "expo": {
-    "name": "OwnLearning",
-    "slug": "Learn-Korean",
+    "name": "LearnKorean",
+    "slug": "learn-korean",
     "version": "1.0.0",
     "orientation": "portrait",
     "entryPoint": "./node_modules/expo-router/index.js",
-    "icon": "./assets/logo.png",
+    "icon": "./assets/logo.jpg",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/logo.png",
+      "image": "./assets/logo.jpg",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -18,18 +18,36 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/avatar2.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.nguyenmanh2004.LearnKorean"
+      "package": "com.nguyenmanh2004.LearnKorean",
+      "permissions": [
+        "CAMERA",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_WIFI_STATE",
+        "CHANGE_WIFI_STATE",
+        "INTERNET",
+        "RECEIVE_BOOT_COMPLETED",
+        "POST_NOTIFICATIONS"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
+    "owner": "nguyenmanh2004",
     "extra": {
       "eas": {
-        "projectId": "f362302f-94be-491c-b16b-e332147ea982"
+        "projectId": "699972f0-9f9d-483a-b15d-e175e1ea2cb5"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/699972f0-9f9d-483a-b15d-e175e1ea2cb5"
     }
+    
+    
   }
 }

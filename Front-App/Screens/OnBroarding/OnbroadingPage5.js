@@ -7,7 +7,7 @@ const OnboardingPage5 = ({ navigation }) => {
 
   return (
     <View style={onboardingStyles.container}>
-      <Image source={require("../../assets/illustration2.png")} style={onboardingStyles.image} />
+      <Image source={require("../../assets/illustration2.jpg")} style={onboardingStyles.image} />
       <Text style={onboardingStyles.title}>Bạn muốn học bao lâu mỗi ngày?</Text>
 
       {[

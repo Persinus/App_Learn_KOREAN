@@ -101,7 +101,7 @@ const HomeScreen = ({ navigation }) => {
       id: "featured_1",
       title: "Ngữ pháp cơ bản",
       duration: "2 giờ",
-      image: require("../../assets/logo.png"),
+      image: require("../../assets/logo.jpg"),
       preview: "Học cách sử dụng các mẫu câu cơ bản trong tiếng Hàn",
       difficulty: "Dễ",
       studentsCount: 1200,
@@ -113,7 +113,7 @@ const HomeScreen = ({ navigation }) => {
       id: "featured_2", 
       title: "Từ vựng thông dụng",
       duration: "1.5 giờ",
-      image: require("../../assets/illustration2.png"),
+      image: require("../../assets/illustration2.jpg"),
       preview: "500 từ vựng thông dụng nhất trong giao tiếp",
       difficulty: "Trung bình",
       studentsCount: 980,
@@ -125,7 +125,7 @@ const HomeScreen = ({ navigation }) => {
       id: "featured_3",
       title: "Luyện nghe nâng cao",
       duration: "2.5 giờ", 
-      image: require("../../assets/illustration2.png"),
+      image: require("../../assets/illustration2.jpg"),
       preview: "Luyện nghe với tốc độ thực tế của người bản xứ",
       difficulty: "Khó",
       studentsCount: 650,
@@ -147,7 +147,7 @@ const HomeScreen = ({ navigation }) => {
       },
       isFriend: true,
       categories: ['beginner', 'speaking'],
-      avatar: require("../../assets/avatar1.png")
+      avatar: require("../../assets/avatar_1.jpg")
     },
     { 
       id: "2", 
@@ -160,7 +160,7 @@ const HomeScreen = ({ navigation }) => {
       },
       isFriend: false,
       categories: ['intermediate'],
-      avatar: require("../../assets/avatar2.png")
+      avatar: require("../../assets/avatar_2.jpg")
     },
     { 
       id: "3", 
@@ -173,7 +173,7 @@ const HomeScreen = ({ navigation }) => {
       },
       isFriend: true,
       categories: ['advanced'],
-      avatar: require("../../assets/avatar3.png")
+      avatar: require("../../assets/avatar_3.jpg")
     },
   ];
 
@@ -867,7 +867,7 @@ const HomeScreen = ({ navigation }) => {
       <View style={[styles.userInfo, dynamicStyles.card]}>
         <View style={[styles.avatarContainer, { borderColor: getLevelBorderColor(userLevel) }]}>
           <Image
-            source={require("../../assets/illustration1.png")}
+            source={require("../../assets/illustration1.jpg")}
             style={styles.avatar}
           />
           <View style={[styles.levelBadge, { backgroundColor: isDarkMode ? '#FFD700' : '#4b46f1' }]}>

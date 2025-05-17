@@ -114,24 +114,19 @@ const LoginScreen = ({ navigation }) => {
       return;
     }
 
-    try {
-      const response = await axios.post("http://localhost:3000/login", {
-        username: email,
-        password: password,
-      });
-
-      const token = response.data.token; // Nhận JWT từ phản hồi
-      await AsyncStorage.setItem("userToken", token); // Lưu token vào AsyncStorage
-
+    // Kiểm tra tài khoản test cứng
+    if (email === "testuser" && password === "123456") {
+      await AsyncStorage.setItem("userToken", "test-token");
       Alert.alert(t.loginSuccess, `${t.emailLabel}: ${email}`);
       navigation.reset({
         index: 0,
         routes: [{ name: "MainNavigator" }],
       });
-    } catch (error) {
-      Alert.alert("Error", t.loginError);
-      console.error("Login Error:", error);
+      return;
     }
+
+    // Nếu không đúng tài khoản test, báo lỗi
+    Alert.alert("Error", "Sai tài khoản test!");
   };
 
   return (
@@ -172,6 +167,19 @@ const LoginScreen = ({ navigation }) => {
 
         <TouchableOpacity style={authStyles.forgotPassword}>
           <Text style={[authStyles.link, dynamicStyles.link]}>{t.forgotPassword}</Text>
+        </TouchableOpacity>
+
+        {/* Nút tự động điền tài khoản test */}
+        <TouchableOpacity
+          style={{ alignSelf: 'flex-end', marginBottom: 10 }}
+          onPress={() => {
+            setEmail('testuser');
+            setPassword('123456');
+          }}
+        >
+          <Text style={{ color: '#4b46f1', fontWeight: 'bold' }}>
+            Dùng tài khoản test: testuser / 123456
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
