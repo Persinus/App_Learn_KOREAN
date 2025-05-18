@@ -2,6 +2,11 @@
 
 Ứng dụng học tiếng Hàn được xây dựng bằng Expo để phát triển frontend với React Native, và Fastify cho backend.
 
+<div align="center">
+  <img src="Expo.png" alt="Expo Logo" style="width: 40%; height: 240px;"/>
+  <img src="Fastify.png" alt="Fastify Logo" style="width: 40%; height: 240px;"/>
+</div>
+
 ## 📂 Cấu trúc Repository
 
 - `Front-App/`: Mã nguồn ứng dụng frontend.
