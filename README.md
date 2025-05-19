@@ -4,13 +4,20 @@
 
 <div align="center">
   <img src="Expo.png" alt="Expo Logo" style="width: 40%; height: 240px;"/>
-  <img src="Fastify.png" alt="Fastify Logo" style="width: 40%; height: 240px;"/>
 </div>
 
 ## 📂 Cấu trúc Repository
 
-- `Front-App/`: Mã nguồn ứng dụng frontend.
-- `Back-End/`: Mã nguồn ứng dụng backend.
+Mã nguồn ứng dụng frontend.
+- `Front-App/`: Thư mục chứa mã nguồn ứng dụng frontend.
+  - `assets/`: Thư mục chứa các tài nguyên như hình ảnh, âm thanh, v.v.
+  - `components/`: Thư mục chứa các thành phần giao diện người dùng.
+  - `screens/`: Thư mục chứa các màn hình của ứng dụng.
+  - `App.js`: Tệp chính của ứng dụng.
+  - `package.json`: Tệp cấu hình cho ứng dụng frontend.
+  - `app.json`: Tệp cấu hình cho Expo.
+  - `babel.config.js`: Tệp cấu hình Babel cho ứng dụng frontend.
+
 
 ## 🚀 Bắt đầu
 
@@ -31,14 +38,6 @@ npm install
 # Chạy ứng dụng
 expo start
 ```
-# Điều hướng vào thư mục Back-End
-cd Back-End
-
-# Cài đặt các phụ thuộc
-npm install
-
-# Chạy server
-node server.js
 
 ## 📚 Tài liệu tham khảo
 
