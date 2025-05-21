@@ -3,31 +3,30 @@ import { View, StyleSheet, Text, Animated } from 'react-native';
 import LottieView from 'lottie-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch } from 'react-redux';
-import { login } from '../Store/Authorization';
+
 
 const SplashScreen = ({ navigation }) => {
   const [progress] = useState(new Animated.Value(0));
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const checkTokenAndNavigate = async () => {
-      const storedToken = await AsyncStorage.getItem('token');
+    const checkUsernameAndNavigate = async () => {
+      const storedUsername = await AsyncStorage.getItem('username');
       
       Animated.timing(progress, {
         toValue: 1,
         duration: 3000, // Thời gian chạy splash
         useNativeDriver: false,
       }).start(() => {
-        if (storedToken) {
-          dispatch(login(storedToken)); // Cập nhật Redux
-          navigation.replace('Home');   // Chuyển tới Home nếu đã đăng nhập
+        if (storedUsername) {
+          navigation.replace('MainNavigator');   // Có username -> vào Home
         } else {
-          navigation.replace('BridgeScreen'); // Chưa có token -> màn trung gian
+          navigation.replace('AuthStack'); // Không có -> vào LoginPage
         }
       });
     };
 
-    checkTokenAndNavigate();
+    checkUsernameAndNavigate();
   }, []);
 
   return (
