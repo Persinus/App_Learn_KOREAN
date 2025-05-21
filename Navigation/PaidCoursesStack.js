@@ -10,7 +10,7 @@ const Stack = createStackNavigator();
 
 const PaidCoursesStack = () => {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator>
       <Stack.Screen name="PaidCoursesScreen" component={PaidCoursesScreen} />
       <Stack.Screen name="PaidCoursesDetail" component={PaidCoursesDetail} />
       <Stack.Screen name="LinkingPaid" component={LinkingPaid} />
