@@ -1,4 +1,4 @@
-export const vowelsSingle = [
+export const consonantsSingle = [
     { letter: 'ㄱ', sound: 'Giyeok', tip: 'Phát âm như "g" trong tiếng Anh.', strokeOrder: '1 -> 2 -> 3', example: '가', transliteration: '가' }, // ㅏ + 0
     { letter: 'ㄴ', sound: 'Nieun', tip: 'Phát âm như "n" trong tiếng Anh.', strokeOrder: '1 -> 2 -> 3', example: '나', transliteration: '나' }, // ㅏ + 0
     { letter: 'ㄷ', sound: 'Digeut', tip: 'Phát âm như "d" trong tiếng Anh.', strokeOrder: '1 -> 2 -> 3', example: '다', transliteration: '다' }, // ㅏ + 0
@@ -15,7 +15,7 @@ export const vowelsSingle = [
     { letter: 'ㅎ', sound: 'Hieut', tip: 'Phát âm như "h" trong tiếng Anh.', strokeOrder: '1 -> 2', example: '하', transliteration: '하' }, // ㅏ + 0
   ];
   
-  export const vowelsDouble  = [
+  export const consonantsDouble = [
     { letter: 'ㄲ', sound: 'SSang Giyeok', tip: 'Phát âm mạnh hơn ㄱ.', strokeOrder: '1 -> 2 -> 3', example: '까', transliteration: '까' }, // ㅏ + 0
     { letter: 'ㄸ', sound: 'SSang Digeut', tip: 'Phát âm mạnh hơn ㄷ.', strokeOrder: '1 -> 2 -> 3', example: '따', transliteration: '따' }, // ㅏ + 0
     { letter: 'ㅃ', sound: 'SSang Bieup', tip: 'Phát âm mạnh hơn ㅂ.', strokeOrder: '1 -> 2 -> 3', example: '빠', transliteration: '빠' }, // ㅏ + 0
@@ -23,7 +23,7 @@ export const vowelsSingle = [
     { letter: 'ㅉ', sound: 'SSang Jieut', tip: 'Phát âm mạnh hơn ㅈ.', strokeOrder: '1 -> 2 -> 3', example: '짜', transliteration: '짜' }, // ㅏ + 0
   ];
   
-  export const  consonantsSingle = [
+  export const vowelsSingle = [
     { letter: 'ㅏ', sound: 'A', tip: 'Phát âm giống như "a" trong tiếng Anh.', strokeOrder: '1 -> 2', example: '아', transliteration: '아' }, // ㅏ + 0
     { letter: 'ㅓ', sound: 'Eo', tip: 'Phát âm giống như "eo" trong tiếng Hàn.', strokeOrder: '1 -> 2', example: '어', transliteration: '어' }, // ㅓ + 0
     { letter: 'ㅗ', sound: 'O', tip: 'Phát âm giống như "o" trong tiếng Anh.', strokeOrder: '1 -> 2', example: '오', transliteration: '오' }, // ㅗ + 0
@@ -32,7 +32,7 @@ export const vowelsSingle = [
     { letter: 'ㅣ', sound: 'I', tip: 'Phát âm giống như "ee" trong tiếng Anh.', strokeOrder: '1 -> 2', example: '이', transliteration: '이' }, // ㅣ + 0
   ];
   
-  export const consonantsDouble= [
+  export const vowelsDouble = [
     { letter: 'ㅘ', sound: 'Wa', tip: 'Phát âm giống như "wa".', strokeOrder: '1 -> 2 -> 3', example: '와', transliteration: '와' }, // ㅏ + 0
     { letter: 'ㅙ', sound: 'Wae', tip: 'Phát âm giống như "wae".', strokeOrder: '1 -> 2 -> 3', example: '왜', transliteration: '왜' }, // ㅏ + 0
     { letter: 'ㅚ', sound: 'Woe', tip: 'Phát âm giống như "woe".', strokeOrder: '1 -> 2', example: '외', transliteration: '외' }, // ㅏ + 0
