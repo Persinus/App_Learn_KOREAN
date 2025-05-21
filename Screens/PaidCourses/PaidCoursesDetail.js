@@ -58,11 +58,12 @@ const PaidCoursesDetail = ({ route, navigation }) => {
 
   const dynamicStyles = {
     container: {
-      backgroundColor: isDarkMode ? '#0099FF' : '#f8f9fa',
+      flex: 1,
+      backgroundColor: isDarkMode ? '#121212' : '#f8f9fa',
     },
     infoSection: {
-      backgroundColor: isDarkMode ? '#6666FF' : '#fff',
-      shadowColor: isDarkMode ? '#000' : '#000',
+      backgroundColor: isDarkMode ? '#232323' : '#fff',
+      shadowColor: '#000',
     },
     courseName: {
       color: isDarkMode ? '#fff' : '#333',
@@ -86,7 +87,7 @@ const PaidCoursesDetail = ({ route, navigation }) => {
       color: isDarkMode ? '#fff' : '#444',
     },
     footer: {
-      backgroundColor: isDarkMode ? '#444' : '#fff',
+      backgroundColor: isDarkMode ? '#232323' : '#fff',
       borderTopColor: isDarkMode ? '#333' : '#eee',
     },
     purchaseButton: {
@@ -118,18 +119,7 @@ const PaidCoursesDetail = ({ route, navigation }) => {
 
   return (
     <View style={[styles.container, dynamicStyles.container]}>
-      <View style={headerStyles.container}>
-        <View style={headerStyles.headerRow}>
-          <TouchableOpacity 
-            style={headerStyles.backButton}
-            onPress={() => navigation.goBack()}
-          >
-            <FontAwesome5 name="arrow-left" size={16} color="#fff" />
-          </TouchableOpacity>
-          <Text style={headerStyles.title}>{t.courseDetails}</Text>
-          <View style={{ width: 40 }} />
-        </View>
-      </View>
+     
 
       <ScrollView style={styles.content}>
         <Image source={{ uri: course.cover }} style={styles.coverImage} />
