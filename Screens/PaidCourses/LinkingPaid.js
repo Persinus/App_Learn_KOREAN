@@ -75,16 +75,10 @@ const LinkingPaid = ({ route, navigation }) => {
   const dynamicStyles = {
     container: {
       flex: 1,
-      backgroundColor: isDarkMode ? '#0099FF' : '#f8f9fa',
-    },
-    header: {
-      backgroundColor: isDarkMode ? '#6666FF' : '#4b46f1',
-    },
-    headerTitle: {
-      color: isDarkMode ? '#fff' : '#fff',
+      backgroundColor: isDarkMode ? '#121212' : '#f8f9fa',
     },
     courseInfo: {
-      backgroundColor: isDarkMode ? '#6666FF' : '#f8f4ff',
+      backgroundColor: isDarkMode ? '#232323' : '#f8f4ff',
     },
     courseName: {
       color: isDarkMode ? '#fff' : '#333',
@@ -96,8 +90,8 @@ const LinkingPaid = ({ route, navigation }) => {
       color: isDarkMode ? '#fff' : '#333',
     },
     methodItem: {
-      backgroundColor: isDarkMode ? '#444' : '#fff',
-      borderColor: isDarkMode ? '#6666FF' : '#ddd',
+      backgroundColor: isDarkMode ? '#232323' : '#fff',
+      borderColor: isDarkMode ? '#4b46f1' : '#ddd',
     },
     selectedMethod: {
       backgroundColor: isDarkMode ? '#4b46f1' : '#f0e6ff',
@@ -161,18 +155,7 @@ const LinkingPaid = ({ route, navigation }) => {
 
   return (
     <View style={[styles.container, dynamicStyles.container]}>
-      <View style={[headerStyles.container, dynamicStyles.header]}>
-        <View style={headerStyles.headerRow}>
-          <TouchableOpacity 
-            style={headerStyles.backButton}
-            onPress={() => navigation.goBack()}
-          >
-            <FontAwesome5 name="arrow-left" size={16} color="#fff" />
-          </TouchableOpacity>
-          <Text style={[headerStyles.title, dynamicStyles.headerTitle]}>{t.payment}</Text>
-          <View style={{ width: 40 }} />
-        </View>
-      </View>
+     
 
       <ScrollView style={styles.content}>
         <View style={[styles.courseInfo, dynamicStyles.courseInfo]}>
