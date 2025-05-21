@@ -4,20 +4,21 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { useSelector } from 'react-redux';
 
 const EditInfoUser = ({ navigation, route }) => {
-  const { user } = route.params;
-  const [name, setName] = useState(user?.name || '');
+  const user = route?.params?.user || {};
+  const [name, setName] = useState(user?.fullName || '');
   const [email, setEmail] = useState(user?.email || '');
   const [phone, setPhone] = useState(user?.phone || '');
-  const [level, setLevel] = useState(user?.level || '');
+  const [level, setLevel] = useState(user?.level ? String(user.level) : '');
 
   const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
 
   const dynamicStyles = {
     container: {
-      backgroundColor: isDarkMode ? '#0099FF' : '#fff',
+      flex: 1,
+      backgroundColor: isDarkMode ? '#121212' : '#fff',
     },
     header: {
-      backgroundColor: isDarkMode ? '#6666FF' : '#fff',
+      backgroundColor: isDarkMode ? '#232323' : '#fff',
       borderBottomColor: isDarkMode ? '#444' : '#eee',
     },
     headerTitle: {
@@ -36,7 +37,7 @@ const EditInfoUser = ({ navigation, route }) => {
       color: isDarkMode ? '#ccc' : '#666',
     },
     input: {
-      backgroundColor: isDarkMode ? '#444' : '#fff',
+      backgroundColor: isDarkMode ? '#232323' : '#fff',
       borderColor: isDarkMode ? '#555' : '#ddd',
       color: isDarkMode ? '#fff' : '#333',
     },
@@ -57,7 +58,7 @@ const EditInfoUser = ({ navigation, route }) => {
     <View style={[styles.container, dynamicStyles.container]}>
       <View style={[styles.header, dynamicStyles.header]}>
         <View style={styles.headerMain}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[styles.backButton, dynamicStyles.backButton]}
             onPress={() => navigation.goBack()}
           >
@@ -69,8 +70,12 @@ const EditInfoUser = ({ navigation, route }) => {
 
       <ScrollView style={styles.content}>
         <View style={styles.avatarSection}>
-          <Image 
-            source={{ uri: user?.profilePicture }} 
+          <Image
+            source={
+              user?.avatar
+                ? { uri: user.avatar }
+                : { uri: 'https://example.com/default-avatar.png' }
+            }
             style={styles.avatar}
           />
           <TouchableOpacity style={[styles.changeAvatarButton, dynamicStyles.changeAvatarButton]}>
@@ -82,10 +87,11 @@ const EditInfoUser = ({ navigation, route }) => {
           <View style={styles.inputGroup}>
             <Text style={[styles.label, dynamicStyles.label]}>Họ và tên</Text>
             <TextInput
-              style={[styles.input, dynamicStyles.input]}  
+              style={[styles.input, dynamicStyles.input]}
               value={name}
               onChangeText={setName}
               placeholder="Nhập họ và tên"
+              placeholderTextColor={isDarkMode ? '#888' : '#aaa'}
             />
           </View>
 
@@ -96,6 +102,7 @@ const EditInfoUser = ({ navigation, route }) => {
               value={email}
               onChangeText={setEmail}
               placeholder="Nhập email"
+              placeholderTextColor={isDarkMode ? '#888' : '#aaa'}
               keyboardType="email-address"
             />
           </View>
@@ -107,6 +114,7 @@ const EditInfoUser = ({ navigation, route }) => {
               value={phone}
               onChangeText={setPhone}
               placeholder="Nhập số điện thoại"
+              placeholderTextColor={isDarkMode ? '#888' : '#aaa'}
               keyboardType="phone-pad"
             />
           </View>
@@ -118,6 +126,7 @@ const EditInfoUser = ({ navigation, route }) => {
               value={level}
               onChangeText={setLevel}
               placeholder="Chọn cấp độ"
+              placeholderTextColor={isDarkMode ? '#888' : '#aaa'}
               editable={false}
             />
           </View>
