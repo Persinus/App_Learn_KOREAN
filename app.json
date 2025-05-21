@@ -32,6 +32,11 @@
         "POST_NOTIFICATIONS"
       ]
     },
+    "androidNavigationBar": {
+      "visible": "immersive",
+      "barStyle": "dark-content",
+      "backgroundColor": "#000000"
+    },
     "web": {
       "favicon": "./assets/favicon.png"
     },
@@ -47,7 +52,5 @@
     "updates": {
       "url": "https://u.expo.dev/699972f0-9f9d-483a-b15d-e175e1ea2cb5"
     }
-    
-    
   }
 }
