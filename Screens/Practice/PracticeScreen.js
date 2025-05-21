@@ -24,6 +24,13 @@ const subscriptionOptions = [
     icon: require('../../assets/avatar_1.jpg'),
     onPress: (navigation) => navigation.navigate('VideoListScreen'),
   },
+   {
+    title: "Từ Điển",
+    description: "Tra cứu từ vựng.",
+    color: "#E6D6FF",
+    icon: require('../../assets/avatar_2.jpg'),
+    onPress: (navigation) => navigation.navigate('Dictionary'),
+  },
   {
     title: "Phần thưởng",
     description: "Nhận thưởng đăng nhập và thành tích học tập.",
@@ -45,6 +52,7 @@ const subscriptionOptions = [
     icon: require('../../assets/avatar_1.jpg'),
     onPress: (navigation) => navigation.navigate('PracticeDailyReward'),
   },
+ 
   {
     title: "Milestones", 
     description: "Đạt cột mốc để nhận phần thưởng đặc biệt.",
@@ -84,9 +92,14 @@ const PracticeScreen = ({ navigation }) => {
           title: "Mini Games",
           description: "Học thông qua các trò chơi tương tác thú vị.",
         },
+      
         {
           title: "Thư viện Video",
           description: "Học qua video K-pop và phim Hàn Quốc có phụ đề.",
+        },
+          {
+          title: "Từ Điển",
+          description: "Tra cứu từ vựng ",
         },
         {
           title: "Phần thưởng",
@@ -96,22 +109,12 @@ const PracticeScreen = ({ navigation }) => {
           title: "Thách đấu",
           description: "Thi đấu với bạn bè và tham gia giải đấu hàng tuần.",
         },
-        {
-          title: "Daily Rewards",
-          description: "Đăng nhập hàng ngày để nhận thưởng.",
-        },
+   
         {
           title: "Milestones",
           description: "Đạt cột mốc để nhận phần thưởng đặc biệt.",
         },
-        {
-          title: "PvP Arena",
-          description: "Thách đấu với người chơi khác.",
-        },
-        {
-          title: "Tournament",
-          description: "Tham gia giải đấu tuần để nhận thưởng lớn.",
-        },
+       
       ],
     },
     en: {
@@ -129,10 +132,15 @@ const PracticeScreen = ({ navigation }) => {
           title: "Video Library",
           description: "Learn through K-pop videos and Korean movies with subtitles.",
         },
+           {
+          title: "Dictionary",
+          description: "Look up vocabulary.",
+        },
         {
           title: "Rewards",
           description: "Earn login rewards and learning achievements.",
         },
+     
         {
           title: "Challenges",
           description: "Compete with friends and join weekly tournaments.",
@@ -162,7 +170,7 @@ const PracticeScreen = ({ navigation }) => {
   const dynamicStyles = {
     container: {
       flex: 1,
-      backgroundColor: isDarkMode ? '#0099FF' : '#F8F8F8',
+      backgroundColor: isDarkMode ? '#121212' : '#fff',
     },
     header: {
       fontSize: 24,
@@ -172,11 +180,12 @@ const PracticeScreen = ({ navigation }) => {
       marginBottom: 15,
     },
     card: {
-      backgroundColor: isDarkMode ? '#6666FF' : '#f8f8f8',
+      backgroundColor: isDarkMode ? '#232323' : '#f8f8f8',
       shadowColor: isDarkMode ? '#000' : '#000',
     },
     title: {
       color: isDarkMode ? '#fff' : '#333',
+      fontWeight: "bold",
     },
     description: {
       color: isDarkMode ? '#ccc' : '#666',
@@ -191,7 +200,13 @@ const PracticeScreen = ({ navigation }) => {
         keyExtractor={(item) => item.title}
         renderItem={({ item, index }) => (
           <TouchableOpacity
-            style={[styles.card, dynamicStyles.card, { backgroundColor: subscriptionOptions[index].color }]}
+            style={[
+              styles.card,
+              dynamicStyles.card,
+              isDarkMode
+                ? { backgroundColor: '#232323' }
+                : { backgroundColor: subscriptionOptions[index].color }
+            ]}
             onPress={() => subscriptionOptions[index].onPress && subscriptionOptions[index].onPress(navigation)}
             activeOpacity={0.7}
           >
