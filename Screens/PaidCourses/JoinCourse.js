@@ -12,30 +12,6 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { useSelector } from 'react-redux';
 import headerStyles from '../../Styles/HeaderStyles';
 
-const lessonData = [
-  {
-    id: '1',
-    title: { vn: 'Bài 1: Giới thiệu', en: 'Lesson 1: Introduction' },
-    duration: { vn: '15 phút', en: '15 minutes' },
-    isLocked: false,
-    type: 'video',
-  },
-  {
-    id: '2',
-    title: { vn: 'Bài 2: Ngữ pháp cơ bản', en: 'Lesson 2: Basic Grammar' },
-    duration: { vn: '25 phút', en: '25 minutes' },
-    isLocked: false,
-    type: 'lesson',
-  },
-  {
-    id: '3',
-    title: { vn: 'Bài 3: Luyện tập', en: 'Lesson 3: Practice' },
-    duration: { vn: '20 phút', en: '20 minutes' },
-    isLocked: true,
-    type: 'exercise',
-  },
-];
-
 const JoinCourse = ({ route, navigation }) => {
   const { course } = route.params;
   const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
@@ -49,6 +25,7 @@ const JoinCourse = ({ route, navigation }) => {
       lessonList: 'Danh sách bài học',
       alertTitle: 'Thông báo',
       alertMessage: 'Hoàn thành các bài học trước để mở khóa!',
+      updating: 'Tính năng đang được cập nhật',
     },
     en: {
       myCourses: 'My Courses',
@@ -57,6 +34,7 @@ const JoinCourse = ({ route, navigation }) => {
       lessonList: 'Lesson List',
       alertTitle: 'Notice',
       alertMessage: 'Complete previous lessons to unlock!',
+      updating: 'Feature is being updated',
     },
   };
 
@@ -64,10 +42,10 @@ const JoinCourse = ({ route, navigation }) => {
 
   const dynamicStyles = {
     container: {
-      backgroundColor: isDarkMode ? '#0099FF' : '#f8f9fa',
+      backgroundColor: isDarkMode ? '#121212' : '#f8f9fa',
     },
     courseInfo: {
-      backgroundColor: isDarkMode ? '#6666FF' : '#fff',
+      backgroundColor: isDarkMode ? '#232323' : '#fff',
       borderBottomColor: isDarkMode ? '#444' : '#eee',
     },
     courseName: {
@@ -77,7 +55,7 @@ const JoinCourse = ({ route, navigation }) => {
       color: isDarkMode ? '#ccc' : '#666',
     },
     progressSection: {
-      backgroundColor: isDarkMode ? '#6666FF' : '#f8f4ff',
+      backgroundColor: isDarkMode ? '#232323' : '#f8f4ff',
     },
     progressTitle: {
       color: isDarkMode ? '#fff' : '#333',
@@ -95,8 +73,8 @@ const JoinCourse = ({ route, navigation }) => {
       color: isDarkMode ? '#fff' : '#333',
     },
     lessonItem: {
-      backgroundColor: isDarkMode ? '#444' : '#fff',
-      shadowColor: isDarkMode ? '#000' : '#000',
+      backgroundColor: isDarkMode ? '#232323' : '#fff',
+      shadowColor: '#000',
     },
     lessonIcon: {
       backgroundColor: isDarkMode ? '#333' : '#f0e6ff',
@@ -113,7 +91,17 @@ const JoinCourse = ({ route, navigation }) => {
     lockedProgress: {
       backgroundColor: isDarkMode ? '#555' : '#f5f5f5',
     },
+    updatingText: {
+      color: isDarkMode ? '#FFD700' : '#6a0dad',
+      textAlign: 'center',
+      marginTop: 32,
+      fontSize: 16,
+      fontWeight: 'bold',
+    },
   };
+
+  // Lấy danh sách bài học từ course.lessons
+  const lessonData = Array.isArray(course.lessons) ? course.lessons : [];
 
   const handleStartLesson = (lesson) => {
     if (lesson.isLocked) {
@@ -148,16 +136,26 @@ const JoinCourse = ({ route, navigation }) => {
           />
         </View>
         <View style={styles.lessonInfo}>
-          <Text style={[styles.lessonTitle, dynamicStyles.lessonTitle, item.isLocked && dynamicStyles.lockedText]}>
-            {item.title[language]}
+          <Text style={[
+            styles.lessonTitle, 
+            dynamicStyles.lessonTitle, 
+            item.isLocked && dynamicStyles.lockedText
+          ]}>
+            {item.title[language] || item.title.vn || item.title.en || 'Bài học'}
           </Text>
-          <Text style={[styles.lessonDuration, dynamicStyles.lessonDuration]}>{item.duration[language]}</Text>
+          <Text style={[styles.lessonDuration, dynamicStyles.lessonDuration]}>
+            {item.duration[language] || item.duration.vn || item.duration.en || ''}
+          </Text>
         </View>
         {item.isLocked && (
           <FontAwesome5 name="lock" size={16} color="#999" />
         )}
       </View>
-      <View style={[styles.progressBar, dynamicStyles.progressBar, item.isLocked && dynamicStyles.lockedProgress]} />
+      <View style={[
+        styles.progressBar, 
+        dynamicStyles.progressBar, 
+        item.isLocked && dynamicStyles.lockedProgress
+      ]} />
     </TouchableOpacity>
   );
 
@@ -205,6 +203,9 @@ const JoinCourse = ({ route, navigation }) => {
         keyExtractor={item => item.id}
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
+          <Text style={dynamicStyles.updatingText}>{t.updating}</Text>
+        }
       />
     </View>
   );
