@@ -11,11 +11,15 @@ import {
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
+import axios from 'axios';
+import BASE_API_URL from '../../Util/Baseapi';
+import { getUsername } from '../../Util/UserStorage';
 
 const UserFeedback = () => {
   const navigation = useNavigation();
   const [feedback, setFeedback] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [rating, setRating] = useState(0);
 
   const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
   const language = useSelector((state) => state.language.language);
@@ -32,6 +36,8 @@ const UserFeedback = () => {
       successMessage: 'Cảm ơn bạn đã gửi phản hồi!',
       errorCategory: 'Vui lòng chọn danh mục phản hồi',
       errorContent: 'Vui lòng nhập nội dung phản hồi',
+      errorRating: 'Vui lòng chọn số sao đánh giá',
+      rating: 'Đánh giá',
     },
     en: {
       feedback: 'Feedback',
@@ -44,13 +50,15 @@ const UserFeedback = () => {
       successMessage: 'Thank you for your feedback!',
       errorCategory: 'Please select a feedback category',
       errorContent: 'Please enter feedback content',
+      errorRating: 'Please select a rating',
+      rating: 'Rating',
     },
   };
 
   const t = translations[language];
   const categories = t.categories;
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!selectedCategory) {
       Alert.alert(t.errorCategory);
       return;
@@ -59,23 +67,43 @@ const UserFeedback = () => {
       Alert.alert(t.errorContent);
       return;
     }
-
-    // Xử lý gửi feedback ở đây
-    Alert.alert(
-      t.success,
-      t.successMessage,
-      [{ text: 'OK', onPress: () => navigation.goBack() }]
-    );
+    if (!rating) {
+      Alert.alert(t.errorRating);
+      return;
+    }
+    try {
+      const name = await getUsername();
+      const options = {
+        method: 'POST',
+        url: BASE_API_URL + 'feedback',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        data: {
+          name,
+          rating,
+          comment: `[${selectedCategory}] ${feedback}`,
+          role: 'vote',
+        },
+      };
+      await axios.request(options);
+      Alert.alert(
+        t.success,
+        t.successMessage,
+        [{ text: 'OK', onPress: () => navigation.goBack() }]
+      );
+    } catch (error) {
+      Alert.alert('Error', 'Gửi phản hồi thất bại!');
+      console.error(error);
+    }
   };
 
   const dynamicStyles = {
     container: {
       flex: 1,
-      backgroundColor: isDarkMode ? '#0099FF' : '#fff', // Nền xanh cho Dark Mode
+      backgroundColor: isDarkMode ? '#121212' : '#fff',
     },
     header: {
-      backgroundColor: isDarkMode ? '#6666FF' : '#fff', // Màu tím cho Dark Mode
-      borderBottomColor: isDarkMode ? '#444' : '#eee',
+      backgroundColor: isDarkMode ? '#232323' : '#fff',
+      borderBottomColor: isDarkMode ? '#333' : '#eee',
     },
     title: {
       color: isDarkMode ? '#fff' : '#333',
@@ -84,7 +112,7 @@ const UserFeedback = () => {
       color: isDarkMode ? '#fff' : '#333',
     },
     categoryButton: {
-      backgroundColor: isDarkMode ? '#444' : '#f5f5f5',
+      backgroundColor: isDarkMode ? '#1E1E1E' : '#f5f5f5',
     },
     selectedCategory: {
       backgroundColor: isDarkMode ? '#4b46f1' : '#4b46f1',
@@ -96,9 +124,9 @@ const UserFeedback = () => {
       color: '#fff',
     },
     input: {
-      backgroundColor: isDarkMode ? '#333' : '#fff',
+      backgroundColor: isDarkMode ? '#232323' : '#fff',
       color: isDarkMode ? '#fff' : '#000',
-      borderColor: isDarkMode ? '#444' : '#ddd',
+      borderColor: isDarkMode ? '#333' : '#ddd',
     },
     submitButton: {
       backgroundColor: isDarkMode ? '#4b46f1' : '#4b46f1',
@@ -106,19 +134,14 @@ const UserFeedback = () => {
     submitButtonText: {
       color: '#fff',
     },
+    star: {
+      marginHorizontal: 2,
+    },
   };
 
   return (
     <View style={[styles.container, dynamicStyles.container]}>
-      <View style={[styles.header, dynamicStyles.header]}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <FontAwesome5 name="arrow-left" size={16} color={isDarkMode ? '#fff' : '#4b46f1'} />
-        </TouchableOpacity>
-        <Text style={[styles.title, dynamicStyles.title]}>{t.feedback}</Text>
-      </View>
+      
 
       <ScrollView style={styles.content}>
         <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>{t.selectCategory}</Text>
@@ -142,6 +165,21 @@ const UserFeedback = () => {
               >
                 {category}
               </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>{t.rating}</Text>
+        <View style={{ flexDirection: 'row', marginBottom: 20 }}>
+          {[1,2,3,4,5].map(star => (
+            <TouchableOpacity key={star} onPress={() => setRating(star)}>
+              <FontAwesome5
+                name="star"
+                solid={rating >= star}
+                size={28}
+                color={rating >= star ? "#FFD700" : isDarkMode ? "#555" : "#ccc"}
+                style={dynamicStyles.star}
+              />
             </TouchableOpacity>
           ))}
         </View>

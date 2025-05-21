@@ -1,29 +1,129 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
   StyleSheet,
   FlatList,
-  TouchableOpacity, 
+  TouchableOpacity,
   Image,
   ScrollView,
+  ToastAndroid,
   Animated,
   TextInput,
   Share,
-  SafeAreaView
 } from "react-native";
 import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
 import DailyMission from './DailyMission';
 import Achievement from './Achievement';
-import headerStyles from '../../Styles/HeaderStyles';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Notifications from 'expo-notifications';
+import axios from 'axios';
+import { getUsername } from '../../Util/UserStorage';
+import BASE_API_URL from '../../Util/Baseapi';
+
 import DailyLoginReward from '../../Components/Rewards/DailyLoginReward';
 import AchievementUnlock from '../../Components/Achievements/AchievementUnlock';
 import LevelUpModal from '../../Components/LevelUp/LevelUpModal';
 
+const fetchUserProfile = async () => {
+  try {
+    const username = await getUsername();
+    if (!username) return null;
+    const options = {
+      method: 'GET',
+      url: BASE_API_URL + 'users/profile',
+      params: { username },
+      headers: { Accept: 'application/json' }
+    };
+    const { data } = await axios.request(options);
+    return data.user;
+  } catch (error) {
+    console.error('Lỗi lấy profile:', error);
+    return null;
+  }
+};
+
 const HomeScreen = ({ navigation }) => {
+  const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+  const language = useSelector((state) => state.language.language);
+
+  // Dynamic styles for dark mode
+  const dynamicStyles = {
+    container: {
+      backgroundColor: isDarkMode ? '#121212' : '#f8f9fa',
+    },
+    card: {
+      backgroundColor: isDarkMode ? '#1E1E1E' : '#fff',
+      borderRadius: 12,
+      padding: 16,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.3,
+      shadowRadius: 12,
+      elevation: 4,
+      borderWidth: 1,
+      borderColor: isDarkMode ? '#2C2C2C' : '#eee',
+    },
+    label: {
+      color: isDarkMode ? '#FFFFFF' : '#333',
+    },
+    subText: {
+      color: isDarkMode ? '#B3B3B3' : '#666',
+    },
+    input: {
+      backgroundColor: isDarkMode ? '#2C2C2C' : '#fff',
+      borderColor: isDarkMode ? '#3A3A3A' : '#ddd',
+      color: isDarkMode ? '#FFFFFF' : '#000',
+      borderRadius: 8,
+      padding: 12,
+    },
+    primaryButton: {
+      backgroundColor: '#00ADB5',
+      borderRadius: 8,
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      alignItems: 'center',
+    },
+    primaryButtonText: {
+      color: '#fff',
+      fontWeight: 'bold',
+    },
+    secondaryButton: {
+      backgroundColor: 'transparent',
+      borderColor: '#00ADB5',
+      borderWidth: 1,
+      borderRadius: 8,
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      alignItems: 'center',
+    },
+    secondaryButtonText: {
+      color: '#00ADB5',
+      fontWeight: 'bold',
+    },
+    errorBox: {
+      backgroundColor: '#2C2C2C',
+      borderRadius: 8,
+      padding: 12,
+      marginVertical: 8,
+    },
+    errorText: {
+      color: '#CF6679',
+      fontWeight: 'bold',
+    },
+    tabBar: {
+      backgroundColor: isDarkMode ? '#1E1E1E' : '#fff',
+      borderTopColor: isDarkMode ? '#2C2C2C' : '#eee',
+    },
+    tabBarActive: {
+      color: '#00ADB5',
+    },
+    tabBarInactive: {
+      color: '#888888',
+    },
+  };
+
   const [userLevel, setUserLevel] = useState(5);
   const [userExp, setUserExp] = useState(750);
   const [maxExp, setMaxExp] = useState(1000);
@@ -43,6 +143,7 @@ const HomeScreen = ({ navigation }) => {
   const [rankingCategory, setRankingCategory] = useState('all'); // all/friends/category
   const [showLevelUp, setShowLevelUp] = useState(false);
   const [unlockedAchievement, setUnlockedAchievement] = useState(null);
+  const [userProfile, setUserProfile] = useState(null);
   const [milestones] = useState([
     {id: 1, title: 'Học 7 ngày liên tiếp', target: 7, progress: streakDays, reward: '100 xu'},
     {id: 2, title: 'Hoàn thành 50 bài học', target: 50, progress: 23, reward: '200 xu'},
@@ -93,6 +194,26 @@ const HomeScreen = ({ navigation }) => {
       tag: 'speaking',
       isActive: false,
       description: "Học cách giao tiếp cơ bản hàng ngày"
+    },
+    {
+      id: "4",
+      title: "Nhập môn tiếng Hàn",
+      progress: "3/10",
+      estimatedTime: "1 tháng",
+      color: "#2196F3",
+      tag: 'beginner',
+      isActive: false,
+      description: "Làm quen với bảng chữ cái và phát âm cơ bản"
+    },
+    {
+      id: "5",
+      title: "Tiếng Hàn Nâng cao",
+      progress: "2/25",
+      estimatedTime: "4 tháng",
+      color: "#9C27B0",
+      tag: 'advanced',
+      isActive: false,
+      description: "Luyện kỹ năng ngôn ngữ nâng cao và văn học"
     }
   ];
 
@@ -190,112 +311,6 @@ const HomeScreen = ({ navigation }) => {
     { id: 'speaking', label: 'Giao tiếp' }
   ];
 
-  const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
-  const language = useSelector((state) => state.language.language);
-
-  const translations = {
-    vn: {
-      home: "Trang chủ",
-      greeting: "Xin chào, Minh Hoàng!",
-      subtitle: "Hôm nay bạn muốn học gì?",
-      courses: "📚 Khóa học của bạn",
-      searchPlaceholder: "Tìm khóa học...",
-      all: "Tất cả",
-      beginner: "Sơ cấp",
-      intermediate: "Trung cấp",
-      advanced: "Cao cấp",
-      speaking: "Giao tiếp",
-      featured: "🔥 Bài học nổi bật",
-      viewAll: "Xem tất cả",
-      rankings: "🏆 Bảng xếp hạng",
-      week: "Tuần này",
-      month: "Tháng này",
-      friends: "Bạn bè",
-      progress: "Tổng tiến độ",
-      exp: "EXP",
-      recommended: "Đề xuất cho trình độ của bạn",
-    },
-    en: {
-      home: "Home",
-      greeting: "Hello, Minh Hoàng!",
-      subtitle: "What do you want to learn today?",
-      courses: "📚 Your Courses",
-      searchPlaceholder: "Search courses...",
-      all: "All",
-      beginner: "Beginner",
-      intermediate: "Intermediate",
-      advanced: "Advanced",
-      speaking: "Speaking",
-      featured: "🔥 Featured Lessons",
-      viewAll: "View All",
-      rankings: "🏆 Rankings",
-      week: "This Week",
-      month: "This Month",
-      friends: "Friends",
-      progress: "Total Progress",
-      exp: "EXP",
-      recommended: "Recommended for Your Level",
-    },
-  };
-
-  const t = translations[language];
-
-  const dynamicStyles = {
-    container: {
-      flex: 1,
-      backgroundColor: isDarkMode ? '#0099FF' : '#fff', // Nền xanh cho Dark Mode
-    },
-    groupTitle: {
-      color: isDarkMode ? '#fff' : '#333',
-    },
-    settingText: {
-      color: isDarkMode ? '#ccc' : '#333',
-    },
-    settingsGroup: {
-      backgroundColor: isDarkMode ? '#6666FF' : '#99FFFF', // Màu tím cho nhóm cài đặt
-      borderColor: isDarkMode ? '#444' : '#eee',
-    },
-    card: {
-      backgroundColor: isDarkMode ? '#6666FF' : '#fff', // Màu tím cho thẻ
-      borderColor: isDarkMode ? '#444' : '#eee',
-    },
-    text: {
-      color: isDarkMode ? '#fff' : '#333',
-    },
-    subtitle: {
-      color: isDarkMode ? '#ccc' : '#666',
-    },
-    input: {
-      backgroundColor: isDarkMode ? '#444' : '#f5f5f5',
-      color: isDarkMode ? '#fff' : '#000',
-      borderColor: isDarkMode ? '#444' : '#ddd',
-    },
-    button: {
-      backgroundColor: isDarkMode ? '#FFD700' : '#4b46f1',
-    },
-    buttonText: {
-      color: isDarkMode ? '#000' : '#fff',
-    },
-    tagButton: {
-      backgroundColor: isDarkMode ? '#444' : '#f5f5f5',
-    },
-    tagButtonActive: {
-      backgroundColor: isDarkMode ? '#FFD700' : '#4b46f1',
-    },
-    tagText: {
-      color: isDarkMode ? '#ccc' : '#666',
-    },
-    tagTextActive: {
-      color: isDarkMode ? '#000' : '#fff',
-    },
-    progressBar: {
-      backgroundColor: isDarkMode ? '#444' : '#eee',
-    },
-    progressFill: {
-      backgroundColor: isDarkMode ? '#FFD700' : '#4b46f1',
-    },
-  };
-
   useEffect(() => {
     const timer = setInterval(() => {
       const now = new Date();
@@ -350,6 +365,14 @@ const HomeScreen = ({ navigation }) => {
       setShowLevelUp(true);
     }
   }, [userExp, streakDays]);
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      const user = await fetchUserProfile();
+      if (user) setUserProfile(user);
+    };
+    loadProfile();
+  }, []);
 
   const loadMissionHistory = async () => {
     try {
@@ -491,9 +514,9 @@ const HomeScreen = ({ navigation }) => {
   };
 
   const getLevelBorderColor = (level) => {
-    if (level < 5) return isDarkMode ? "#6a0dad" : "#4b46f1";
-    if (level < 10) return "#ffd700";
-    return "#ff4081";
+    if (level < 5) return '#4b46f1';
+    if (level < 10) return '#ffd700';
+    return '#ff4081';
   };
 
   const renderProgressBar = () => {
@@ -501,16 +524,16 @@ const HomeScreen = ({ navigation }) => {
     return (
       <View style={styles.progressContainer}>
         <View style={styles.progressRow}>
-          <Text style={styles.progressLabel}>{t.exp}:</Text>
-          <View style={[styles.progressBar, dynamicStyles.progressBar]}>
-            <View style={[styles.progressFill, dynamicStyles.progressFill, { width: `${levelProgress}%` }]} />
+          <Text style={styles.progressLabel}>EXP:</Text>
+          <View style={styles.progressBar}>
+            <View style={[styles.progressFill, { width: `${levelProgress}%` }]} />
           </View>
           <Text style={styles.progressText}>{userExp}/{maxExp}</Text>
         </View>
         <View style={styles.progressRow}>
-          <Text style={styles.progressLabel}>{t.progress}:</Text>
-          <View style={[styles.progressBar, dynamicStyles.progressBar]}>
-            <View style={[styles.progressFill, dynamicStyles.progressFill, { width: `${totalProgress}%` }]} />
+          <Text style={styles.progressLabel}>Tổng tiến độ:</Text>
+          <View style={styles.progressBar}>
+            <View style={[styles.progressFill, { width: `${totalProgress}%` }]} />
           </View>
           <Text style={styles.progressText}>{Math.round(totalProgress)}%</Text>
         </View>
@@ -583,16 +606,16 @@ const HomeScreen = ({ navigation }) => {
     return filtered.sort((a, b) => b.points.total - a.points.total);
   };
 
-  const courseListRef = React.useRef(null);
+  const courseListRef = useRef(null);
 
   const renderCourseSection = () => (
-    <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{t.courses}</Text>
+    <View style={[styles.section, dynamicStyles.card]}>
+      <Text style={[styles.sectionTitle, dynamicStyles.label]}>📚 Khóa học của bạn</Text>
       
       <TextInput
         style={[styles.searchInput, dynamicStyles.input]}
-        placeholder={t.searchPlaceholder}
-        placeholderTextColor={isDarkMode ? "#888" : "#aaa"}
+        placeholder="Tìm khóa học..."
+        placeholderTextColor={isDarkMode ? '#888888' : '#666'}
         value={searchQuery}
         onChangeText={setSearchQuery}
       />
@@ -607,15 +630,13 @@ const HomeScreen = ({ navigation }) => {
             key={tag.id}
             style={[
               styles.tagButton,
-              dynamicStyles.tagButton,
-              selectedTag === tag.id && dynamicStyles.tagButtonActive
+              selectedTag === tag.id && styles.tagButtonActive
             ]}
             onPress={() => setSelectedTag(tag.id)}
           >
             <Text style={[
               styles.tagText,
-              dynamicStyles.tagText,
-              selectedTag === tag.id && dynamicStyles.tagTextActive
+              selectedTag === tag.id && styles.tagTextActive
             ]}>
               {tag.name}
             </Text>
@@ -632,6 +653,19 @@ const HomeScreen = ({ navigation }) => {
         renderItem={({ item }) => (
           <TouchableOpacity
             style={[styles.courseCard, { backgroundColor: item.color }]}
+            onPress={() => {
+              if (item.title === "Tiếng Hàn Cơ Bản") {
+                navigation.navigate('LessonStack', {
+                  screen: 'BasicKoreanLessonsScreen',
+                });
+              } else if (item.title === "Nhập môn tiếng Hàn") {
+                navigation.navigate("LessonStack", {
+                  screen: "AlphabetHomeScreen",
+                });
+              } else {
+                alert(`Bạn đã chọn khóa học: ${item.title}`);
+              }
+            }}
           >
             <Text style={styles.courseProgress}>{item.progress} bài</Text>
             <Text style={styles.courseTitle}>{item.title}</Text>
@@ -651,8 +685,8 @@ const HomeScreen = ({ navigation }) => {
 
       {getRecommendedCourses().length > 0 && (
         <>
-          <Text style={styles.recommendedTitle}>
-            {t.recommended}
+          <Text style={[styles.recommendedTitle, dynamicStyles.label]}>
+            Đề xuất cho trình độ của bạn
           </Text>
           <FlatList
             horizontal
@@ -674,11 +708,11 @@ const HomeScreen = ({ navigation }) => {
   );
 
   const renderFeaturedSection = () => (
-    <View style={styles.section}>
+    <View style={[styles.section, dynamicStyles.card]}>
       <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>{t.featured}</Text>
+        <Text style={[styles.sectionTitle, dynamicStyles.label]}>🔥 Bài học nổi bật</Text>
         <TouchableOpacity onPress={() => navigation.navigate('AllLessons')}>
-          <Text style={styles.viewAll}>{t.viewAll}</Text>
+          <Text style={[styles.viewAll, dynamicStyles.label]}>Xem tất cả</Text>
         </TouchableOpacity>
       </View>
 
@@ -696,9 +730,9 @@ const HomeScreen = ({ navigation }) => {
           >
             <Image source={item.image} style={styles.featuredImage} />
             <View style={styles.featuredContent}>
-              <Text style={styles.featuredTitle}>{item.title}</Text>
+              <Text style={[styles.featuredTitle, dynamicStyles.label]}>{item.title}</Text>
               
-              <Text style={styles.featuredPreview} numberOfLines={2}>
+              <Text style={[styles.featuredPreview, dynamicStyles.label]} numberOfLines={2}>
                 {item.preview}
               </Text>
 
@@ -713,15 +747,15 @@ const HomeScreen = ({ navigation }) => {
                     {item.difficulty}
                   </Text>
                 </View>
-
+                
                 <View style={styles.metaItem}>
                   <FontAwesome5 name="clock" size={12} color="#666" />
-                  <Text style={styles.metaText}>{item.duration}</Text>
+                  <Text style={[styles.metaText, dynamicStyles.label]}>{item.duration}</Text>
                 </View>
 
                 <View style={styles.metaItem}>
                   <FontAwesome5 name="user-friends" size={12} color="#666" />
-                  <Text style={styles.metaText}>
+                  <Text style={[styles.metaText, dynamicStyles.label]}>
                     {item.studentsCount.toLocaleString()}
                   </Text>
                 </View>
@@ -738,7 +772,7 @@ const HomeScreen = ({ navigation }) => {
                     />
                   ))}
                 </View>
-                <Text style={styles.ratingText}>
+                <Text style={[styles.ratingText, dynamicStyles.label]}>
                   {item.rating} ({item.reviews})
                 </Text>
               </View>
@@ -750,9 +784,9 @@ const HomeScreen = ({ navigation }) => {
   );
 
   const renderRankingSection = () => (
-    <View style={styles.section}>
+    <View style={[styles.section, dynamicStyles.card]}>
       <View style={styles.rankingHeader}>
-        <Text style={styles.sectionTitle}>{t.rankings}</Text>
+        <Text style={[styles.sectionTitle, dynamicStyles.label]}>🏆 Bảng xếp hạng</Text>
         
         <ScrollView 
           horizontal 
@@ -826,22 +860,22 @@ const HomeScreen = ({ navigation }) => {
               style={styles.studentAvatar}
             />
             <View style={styles.studentDetails}>
-              <Text style={styles.studentName}>{student.name}</Text>
+              <Text style={[styles.studentName, dynamicStyles.label]}>{student.name}</Text>
               <View style={styles.pointsBreakdown}>
-                <Text style={styles.pointsText}>🎯 Học tập: {student.points.learning}</Text>
-                <Text style={styles.pointsText}>🔥 Chuỗi: {student.points.streak}</Text>
-                <Text style={styles.pointsText}>✨ Nhiệm vụ: {student.points.missions}</Text>
+                <Text style={[styles.pointsText, dynamicStyles.label]}>🎯 Học tập: {student.points.learning}</Text>
+                <Text style={[styles.pointsText, dynamicStyles.label]}>🔥 Chuỗi: {student.points.streak}</Text>
+                <Text style={[styles.pointsText, dynamicStyles.label]}>✨ Nhiệm vụ: {student.points.missions}</Text>
               </View>
             </View>
           </View>
 
           <View style={styles.studentActions}>
-            <Text style={styles.totalPoints}>{student.points.total}</Text>
+            <Text style={[styles.totalPoints, dynamicStyles.label]}>{student.points.total}</Text>
             <TouchableOpacity
               style={styles.shareButton}
               onPress={() => handleShareRanking(student)}
             >
-              <FontAwesome5 name="share-alt" size={16} color="#4b46f1" />
+              <FontAwesome5 name="share-alt" size={16} color={isDarkMode ? "#00ADB5" : "#4b46f1"} />
             </TouchableOpacity>
           </View>
         </Animated.View>
@@ -850,36 +884,121 @@ const HomeScreen = ({ navigation }) => {
   );
 
   return (
-    <ScrollView style={dynamicStyles.container}>
-      <View style={headerStyles.container}>
-        <Text style={[headerStyles.title, dynamicStyles.text]}>{t.home}</Text>
-        <TouchableOpacity 
-          style={headerStyles.backButton}
-          onPress={() => navigation.navigate('NotificationsScreen')}
-        >
-          <FontAwesome5 name="bell" size={16} color={isDarkMode ? '#FFD700' : '#4b46f1'} />
-          <View style={styles.notificationBadge} />
-        </TouchableOpacity>
-      </View>
-
-      <RewardPopup />
-
-      <View style={[styles.userInfo, dynamicStyles.card]}>
-        <View style={[styles.avatarContainer, { borderColor: getLevelBorderColor(userLevel) }]}>
+    <ScrollView style={[styles.container, dynamicStyles.container]}>
+      <View style={styles.userInfo}>
+        <View style={[styles.avatarContainer, { borderColor: getLevelBorderColor(userProfile?.level ?? 1) }]}>
           <Image
-            source={require("../../assets/illustration1.jpg")}
+            source={
+              userProfile?.avatar
+                ? { uri: userProfile.avatar }
+              : { uri: 'https://via.placeholder.com/150' }
+            }
             style={styles.avatar}
           />
-          <View style={[styles.levelBadge, { backgroundColor: isDarkMode ? '#FFD700' : '#4b46f1' }]}>
-            <Text style={styles.levelText}>Lv.{userLevel}</Text>
+          <View style={styles.levelBadge}>
+            <Text style={styles.levelText}>Lv.{userProfile?.level ?? 1}</Text>
           </View>
         </View>
         <View style={styles.textContainer}>
-          <Text style={[styles.greeting, dynamicStyles.text]}>{t.greeting}</Text>
-          <Text style={[styles.subtitle, dynamicStyles.subtitle]}>{t.subtitle}</Text>
-          {renderProgressBar()}
+          <Text style={[styles.greeting, dynamicStyles.label]}>Xin chào, {userProfile?.username || 'User'}!</Text>
+          <Text style={[styles.subtitle, dynamicStyles.subtitle]}>Hôm nay bạn muốn học gì?</Text>
+          {/* Thanh EXP */}
+          <View style={styles.progressContainer}>
+            <View style={styles.progressRow}>
+              <Text style={[styles.progressLabel, dynamicStyles.label]}>EXP:</Text>
+              <View style={styles.progressBar}>
+                <View style={[
+                  styles.progressFill,
+                  { width: `${((userProfile?.experience ?? 0) / 1000) * 100}%` }
+                ]} />
+              </View>
+              <Text style={[styles.progressText, dynamicStyles.label]}>{userProfile?.experience ?? 0}/1000</Text>
+            </View>
+          </View>
         </View>
       </View>
+
+      {userProfile?.dailyStreak > 0 && (
+        <View style={styles.streakContainer}>
+          <FontAwesome5 name="fire" size={20} color="#f44336" />
+          <Text style={[styles.streakText, dynamicStyles.label]}>
+            {userProfile.dailyStreak} ngày liên tiếp 🔥
+          </Text>
+        </View>
+      )}
+
+      {showBadges && (
+        <View style={styles.badgesContainer}>
+          {badges.map(badge => (
+            <TouchableOpacity key={badge.id} style={styles.badgeItem}>
+              <Text style={styles.badgeIcon}>{badge.icon}</Text>
+              <Text style={[styles.badgeName, dynamicStyles.label]}>{badge.name}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
+
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', margin: 16 }}>
+        {/* Nút nhận thưởng hàng ngày */}
+        <TouchableOpacity
+          style={{
+            backgroundColor: '#4CAF50',
+            padding: 10,
+            borderRadius: 50,
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 44,
+            height: 44,
+          }}
+          onPress={() => navigation.navigate('DailyReward')}
+        >
+          <FontAwesome5 name="gift" size={22} color="#fff" />
+        </TouchableOpacity>
+
+        {/* Thông tin vàng, kim cương, điểm */}
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <View style={{ alignItems: 'center', marginHorizontal: 8 }}>
+            <FontAwesome5 name="coins" size={18} color="#FFD700" />
+            <Text style={[{ fontSize: 12, fontWeight: 'bold' }, dynamicStyles.label]}>{userProfile?.gold ?? 0}</Text>
+          </View>
+          <View style={{ alignItems: 'center', marginHorizontal: 8 }}>
+            <FontAwesome5 name="gem" size={18} color="#00BFFF" />
+            <Text style={[{ fontSize: 12, fontWeight: 'bold' }, dynamicStyles.label]}>{userProfile?.diamond ?? 0}</Text>
+          </View>
+          <View style={{ alignItems: 'center', marginHorizontal: 8 }}>
+            <FontAwesome5 name="star" size={18} color="#FFC107" />
+            <Text style={[{ fontSize: 12, fontWeight: 'bold' }, dynamicStyles.label]}>{userProfile?.score ?? 0}</Text>
+          </View>
+        </View>
+      </View>
+
+      <View style={styles.missionHeader}>
+        <Text style={[styles.sectionTitle, dynamicStyles.label]}>🎯 Nhiệm vụ hàng ngày</Text>
+        <Text style={[styles.resetTimer, dynamicStyles.label]}>Làm mới sau {timeUntilReset}</Text>
+      </View>
+
+      <DailyMission onPress={handleMissionPress} />
+      <Achievement onPress={handleAchievementPress} />
+
+      <DailyLoginReward />
+      
+      {unlockedAchievement && (
+        <AchievementUnlock
+          achievement={unlockedAchievement}
+          onComplete={() => setUnlockedAchievement(null)}
+        />
+      )}
+      
+      <LevelUpModal
+        visible={showLevelUp}
+        level={userLevel}
+        rewards={[
+          {icon: '💰', description: '1000 coins'},
+          {icon: '💎', description: '5 gems'},
+          {icon: '🎁', description: 'New avatar frame'}
+        ]}
+        onClose={() => setShowLevelUp(false)}
+      />
 
       {renderCourseSection()}
       {renderFeaturedSection()}
@@ -891,7 +1010,6 @@ const HomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
   },
   userInfo: {
     flexDirection: "row",
@@ -910,27 +1028,18 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   levelBadge: {
-    position: "absolute",
+    position: 'absolute',
     bottom: -5,
     right: -5,
+    backgroundColor: '#00ADB5',
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 10,
   },
   levelText: {
-    color: "#fff",
+    color: '#fff',
     fontSize: 12,
-    fontWeight: "bold",
-  },
-  textContainer: {
-    flex: 1,
-  },
-  greeting: {
-    fontSize: 15,
-    fontWeight: "600",
-  },
-  subtitle: {
-    fontSize: 13,
+    fontWeight: 'bold',
   },
   progressContainer: {
     marginTop: 5,
@@ -943,22 +1052,22 @@ const styles = StyleSheet.create({
   },
   progressLabel: {
     fontSize: 12,
-    color: '#666',
     width: 80,
   },
   progressBar: {
     height: 4,
+    backgroundColor: '#eee',
     borderRadius: 2,
     flex: 1,
     marginHorizontal: 8,
   },
   progressFill: {
     height: '100%',
+    backgroundColor: '#4b46f1',
     borderRadius: 2,
   },
   progressText: {
     fontSize: 12,
-    color: '#666',
     marginTop: 2,
   },
   notificationBadge: {
@@ -970,22 +1079,16 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: "#ff4444",
   },
-  badgesButton: {
-    padding: 8,
-    borderRadius: 10,
-    marginLeft: 8,
-  },
-  badgesButtonText: {
-    fontSize: 14,
-  },
   badgesContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     padding: 16,
+    backgroundColor: '#fff',
     borderRadius: 12,
     margin: 16,
     marginTop: 0,
     borderWidth: 1,
+    borderColor: '#eee',
   },
   badgeItem: {
     alignItems: 'center',
@@ -1005,8 +1108,10 @@ const styles = StyleSheet.create({
     margin: 16,
     marginTop: 0,
     padding: 12,
+    backgroundColor: "#fff4f4",
     borderRadius: 8,
     borderWidth: 1,
+    borderColor: "#ffe0e0",
   },
   streakText: {
     fontSize: 14,
@@ -1037,14 +1142,12 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginRight: 12,
     width: 140,
-    backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#eee',
     elevation: 2,
   },
   courseProgress: {
     fontSize: 14,
-    color: "#4b46f1",
     fontWeight: "600",
     marginBottom: 4,
   },
@@ -1085,15 +1188,9 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginRight: 8,
   },
-  tagButtonActive: {
-    backgroundColor: '#4b46f1',
-  },
-  tagText: {
-    color: '#666',
-  },
-  tagTextActive: {
-    color: '#fff',
-  },
+  tagButtonActive: {},
+  tagText: {},
+  tagTextActive: {},
   recommendedTitle: {
     fontSize: 16,
     fontWeight: "600",
@@ -1110,31 +1207,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 8,
   },
-  featuredCard: {
-    borderRadius: 12,
-    marginRight: 12,
-    width: 280,
-    borderWidth: 1,
-    borderColor: '#eee',
-    elevation: 2,
-  },
-  featuredImage: {
-    width: '100%',
-    height: 140,
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
-  },
-  featuredContent: {
-    padding: 12,
-  },
-  featuredTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 4,
-  },
   featuredPreview: {
     fontSize: 13,
     marginBottom: 8,
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
     lineHeight: 18,
   },
   featuredMeta: {
@@ -1145,6 +1222,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginRight: 12,
+    marginBottom: 4,
   },
   metaText: {
     fontSize: 12,
@@ -1155,14 +1233,10 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: 12,
     fontSize: 11,
-    fontWeight: '500',
-  },
-  ratingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
   },
   stars: {
     flexDirection: 'row',
+    marginLeft: 4,
     marginRight: 4,
   },
   ratingText: {
@@ -1172,11 +1246,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12,
   },
   viewAll: {
     fontSize: 14,
-    color: '#4b46f1',
   },
   studentCard: {
     flexDirection: "row",
@@ -1185,6 +1257,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 8,
     borderWidth: 1,
+    borderColor: '#eee',
   },
   rank: {
     fontSize: 16,
@@ -1227,22 +1300,15 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     marginRight: 8,
   },
-  filterButtonActive: {
-    backgroundColor: '#4b46f1',
-  },
+  filterButtonActive: {},
   filterText: {
     fontSize: 12,
   },
-  filterTextActive: {
-    color: '#fff',
-  },
+  filterTextActive: {},
   leaderCard: {
-    borderColor: '#ffd700',
     borderWidth: 2,
   },
-  leaderRank: {
-    color: '#ffd700',
-  },
+  leaderRank: {},
   studentInfo: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1276,6 +1342,16 @@ const styles = StyleSheet.create({
   },
   shareButton: {
     padding: 4,
+  },
+  featuredImage: {
+    width: '100%',
+    height: 120,
+    borderRadius: 10,
+    resizeMode: 'cover',
+    marginBottom: 10,
+    // khoang cach giua cac hinh 
+    margin: 4,
+
   },
 });
 

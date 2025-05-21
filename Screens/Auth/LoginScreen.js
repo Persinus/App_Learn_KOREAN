@@ -15,6 +15,9 @@ import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 import { useSelector } from "react-redux";
 import authStyles from "../../Styles/AuthStyles";
+import axios from 'axios';
+import BASE_API_URL from '../../Util/Baseapi';
+import { saveUsername } from '../../Util/UserStorage';
 
 // Định nghĩa các chuỗi đa ngôn ngữ
 const translations = {
@@ -114,9 +117,10 @@ const LoginScreen = ({ navigation }) => {
       return;
     }
 
-    // Kiểm tra tài khoản test cứng
+    // Đăng nhập tài khoản test cứng
     if (email === "testuser" && password === "123456") {
       await AsyncStorage.setItem("userToken", "test-token");
+      await saveUsername(email); // Lưu username vào AsyncStorage
       Alert.alert(t.loginSuccess, `${t.emailLabel}: ${email}`);
       navigation.reset({
         index: 0,
@@ -125,8 +129,40 @@ const LoginScreen = ({ navigation }) => {
       return;
     }
 
-    // Nếu không đúng tài khoản test, báo lỗi
-    Alert.alert("Error", "Sai tài khoản test!");
+    // Đăng nhập qua API
+    const options = {
+      method: 'POST',
+      url: BASE_API_URL + 'login',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      },
+      data: {
+        username: email,
+        password: password
+      }
+    };
+
+    try {
+      const { data } = await axios.request(options);
+
+      // Đăng nhập thành công
+      await AsyncStorage.setItem("userToken", data.token || "true");
+      await saveUsername(email); // Lưu username vào AsyncStorage
+
+      Alert.alert(t.loginSuccess, `${t.emailLabel}: ${email}`);
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "MainNavigator" }],
+      });
+    } catch (error) {
+      if (error.response) {
+        Alert.alert("Error", error.response.data.msg || t.loginError);
+      } else {
+        Alert.alert("Error", t.loginError);
+      }
+      console.error(error);
+    }
   };
 
   return (

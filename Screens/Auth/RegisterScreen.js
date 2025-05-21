@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios"; // Thêm import axios
+import axios from "axios";
 import authStyles from "../../Styles/AuthStyles";
+import BASE_API_URL from "../../Util/Baseapi";
+import { saveUsername } from "../../Util/UserStorage";
 
-const SignInScreen = ({ navigation }) => {
+const RegisterScreen = ({ navigation }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,21 +28,17 @@ const SignInScreen = ({ navigation }) => {
 
     try {
       // Gửi yêu cầu đăng ký đến API
-      const response = await axios.post("http://localhost:3000/register", {
-        username: name, // Tên người dùng
+      const response = await axios.post(BASE_API_URL + "register", {
+        username: name,
         email: email,
         password: password,
-        avatarUrl: "https://i.pinimg.com/474x/e7/37/61/e73761b05e3921a209960b591787aa9c.jpg" // URL avatar mặc định
       });
 
       Alert.alert("Thành công", response.data.msg);
 
-      // Lưu thông tin người dùng (nếu cần)
-      const userData = { name, email };
-      await AsyncStorage.setItem("userData", JSON.stringify(userData));
-      await AsyncStorage.setItem("userToken", "true"); // Thiết lập token
+      // KHÔNG lưu username vào AsyncStorage ở đây nữa
 
-      navigation.navigate("LoginScreen"); // Điều hướng đến màn hình đăng nhập
+      navigation.navigate("LoginScreen");
     } catch (error) {
       if (error.response) {
         Alert.alert("Lỗi", error.response.data.msg || "Có lỗi xảy ra khi đăng ký.");
@@ -114,4 +112,4 @@ const SignInScreen = ({ navigation }) => {
   );
 };
 
-export default SignInScreen;
+export default RegisterScreen;

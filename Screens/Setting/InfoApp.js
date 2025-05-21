@@ -47,24 +47,24 @@ const InfoApp = ({ navigation }) => {
   const dynamicStyles = {
     container: {
       flex: 1,
-      backgroundColor: isDarkMode ? '#0099FF' : '#fff',
+      backgroundColor: isDarkMode ? '#121212' : '#fff',
     },
     header: {
-      backgroundColor: isDarkMode ? '#6666FF' : '#fff',
+      backgroundColor: isDarkMode ? '#232323' : '#fff',
       borderBottomColor: isDarkMode ? '#444' : '#eee',
     },
     headerTitle: {
       color: isDarkMode ? '#fff' : '#333',
     },
     appInfoCard: {
-      backgroundColor: isDarkMode ? '#6666FF' : '#fff',
+      backgroundColor: isDarkMode ? '#1E1E1E' : '#f8f9fa',
       shadowColor: isDarkMode ? '#000' : '#000',
     },
     appName: {
       color: isDarkMode ? '#fff' : '#333',
     },
     version: {
-      color: isDarkMode ? '#ccc' : '#666',
+      color: isDarkMode ? '#B3B3B3' : '#666',
     },
     sectionTitle: {
       color: isDarkMode ? '#fff' : '#4b46f1',
@@ -81,6 +81,7 @@ const InfoApp = ({ navigation }) => {
     copyright: {
       color: isDarkMode ? '#ccc' : '#999',
       borderTopColor: isDarkMode ? '#444' : '#eee',
+      backgroundColor: isDarkMode ? '#121212' : '#fff',
     },
   };
 

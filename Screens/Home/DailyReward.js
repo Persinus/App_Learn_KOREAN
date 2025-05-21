@@ -100,18 +100,66 @@ const DailyReward = ({ navigation }) => {
     }
   };
 
+  const dynamicStyles = {
+    container: {
+      backgroundColor: isDarkMode ? '#121212' : '#fff',
+    },
+    title: {
+      color: isDarkMode ? '#fff' : '#333',
+    },
+    subtitle: {
+      color: isDarkMode ? '#ccc' : '#666',
+    },
+    today: {
+      backgroundColor: isDarkMode ? '#388e3c' : '#4caf50',
+    },
+    claimed: {
+      backgroundColor: isDarkMode ? '#FFD70055' : '#ffa726',
+    },
+    missed: {
+      backgroundColor: isDarkMode ? '#333' : '#e0e0e0',
+    },
+    unclaimed: {
+      backgroundColor: isDarkMode ? '#232323' : '#90caf9',
+    },
+    modalView: {
+      backgroundColor: isDarkMode ? 'rgba(0,0,0,0.85)' : 'rgba(255,255,255,0.95)',
+    },
+    modalText: {
+      color: isDarkMode ? '#FFD700' : '#000',
+    },
+    closeButton: {
+      backgroundColor: isDarkMode ? '#FFD700' : '#4b46f1',
+    },
+    closeButtonText: {
+      color: isDarkMode ? '#000' : '#fff',
+    },
+    backButton: {
+      backgroundColor: isDarkMode ? '#6666FF' : '#4b46f1',
+    },
+    dayText: {
+      color: isDarkMode ? '#fff' : '#000',
+    },
+    goldText: {
+      color: isDarkMode ? '#FFD700' : '#FFA500',
+    },
+  };
+
   const renderDay = ({ item: day }) => {
     const isToday = day === currentDay;
     const isClaimed = rewardClaimedDays.includes(day);
     const isMissed = day < currentDay && !rewardClaimedDays.includes(day);
 
-    const dayStyle = isClaimed
-      ? styles.claimed
-      : isToday
-      ? styles.today
-      : isMissed
-      ? styles.missed
-      : styles.unclaimed;
+    let dayStyle;
+    if (isClaimed) {
+      dayStyle = dynamicStyles.claimed;
+    } else if (isToday) {
+      dayStyle = dynamicStyles.today;
+    } else if (isMissed) {
+      dayStyle = dynamicStyles.missed;
+    } else {
+      dayStyle = dynamicStyles.unclaimed;
+    }
 
     const handleDayPress = () => {
       if (isClaimed) {
@@ -127,8 +175,8 @@ const DailyReward = ({ navigation }) => {
         onPress={handleDayPress}
         disabled={!isToday && !isClaimed}
       >
-        <Text style={[styles.dayText, { color: isDarkMode ? '#fff' : '#000' }]}>{day}</Text>
-        <Text style={[styles.goldText, { color: isDarkMode ? '#FFD700' : '#FFA500' }]}>
+        <Text style={[styles.dayText, dynamicStyles.dayText]}>{day}</Text>
+        <Text style={[styles.goldText, dynamicStyles.goldText]}>
           💎 +{goldRewards[day]}
         </Text>
       </TouchableOpacity>
@@ -136,16 +184,11 @@ const DailyReward = ({ navigation }) => {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: isDarkMode ? '#0099FF' : '#fff' }]}>
-      <TouchableOpacity
-        style={[styles.backButton, { backgroundColor: isDarkMode ? '#6666FF' : '#4b46f1' }]}
-        onPress={() => navigation.goBack()}
-      >
-        <Text style={[styles.backButtonText, { color: '#fff' }]}>← Quay lại</Text>
-      </TouchableOpacity>
+    <View style={[styles.container, dynamicStyles.container]}>
+     
 
-      <Text style={[styles.title, { color: isDarkMode ? '#fff' : '#333' }]}>🎁 Thưởng hàng ngày</Text>
-      <Text style={[styles.subtitle, { color: isDarkMode ? '#ccc' : '#666' }]}>
+      <Text style={[styles.title, dynamicStyles.title]}>🎁 Thưởng hàng ngày</Text>
+      <Text style={[styles.subtitle, dynamicStyles.subtitle]}>
         Chọn ngày để nhận thưởng
       </Text>
 
@@ -163,15 +206,15 @@ const DailyReward = ({ navigation }) => {
         visible={showReward}
         onRequestClose={() => setShowReward(false)}
       >
-        <View style={[styles.modalView, { backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.9)' }]}>
-          <Text style={[styles.modalText, { color: isDarkMode ? '#fff' : '#000' }]}>
+        <View style={[styles.modalView, dynamicStyles.modalView]}>
+          <Text style={[styles.modalText, dynamicStyles.modalText]}>
             🎉 Bạn đã nhận được {goldAmount} xu! 🎉
           </Text>
           <TouchableOpacity
-            style={[styles.closeButton, { backgroundColor: isDarkMode ? '#FFD700' : '#4b46f1' }]}
+            style={[styles.closeButton, dynamicStyles.closeButton]}
             onPress={() => setShowReward(false)}
           >
-            <Text style={[styles.closeButtonText, { color: isDarkMode ? '#000' : '#fff' }]}>
+            <Text style={[styles.closeButtonText, dynamicStyles.closeButtonText]}>
               Đóng
             </Text>
           </TouchableOpacity>

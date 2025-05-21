@@ -11,6 +11,7 @@ import PracticeAchievements from "../Screens/Practice/Rewards/PracticeAchievemen
 import PracticeLevelUp from "../Screens/Practice/Rewards/PracticeLevelUp";
 import PracticeCompetition from "../Screens/Practice/Competition/PracticeCompetition";
 import PracticeTournament from "../Screens/Practice/Competition/PracticeTournament";
+import Dictionary from "../Screens/Practice/Dictionary";
 
 const Stack = createStackNavigator();
 
@@ -30,7 +31,7 @@ const PracticeStackNavigator = () => {
       <Stack.Screen
         name="VideoDetailScreen" 
         component={VideoDetailScreen}
-        options={{ headerShown: false }}
+       
       />
       <Stack.Screen
         name="LessionScreen"
@@ -70,6 +71,11 @@ const PracticeStackNavigator = () => {
       <Stack.Screen
         name="PracticeTournament"
         component={PracticeTournament}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Dictionary"
+        component={Dictionary}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

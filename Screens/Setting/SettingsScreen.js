@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,13 +7,17 @@ import {
   Switch,
   ScrollView,
   Alert,
+  Image,
 } from 'react-native';
 import * as Location from 'expo-location';
 import * as Notifications from 'expo-notifications';
-import { FontAwesome5, Ionicons } from '@expo/vector-icons';
+import { FontAwesome5, Ionicons, Feather } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleDarkMode } from '../../Store/DarkMode';
 import { toggleLanguage } from '../../Store/Language';
+import { clearUsername, getUsername } from '../../Util/UserStorage';
+import axios from 'axios';
+import BASE_API_URL from '../../Util/Baseapi';
 
 const SettingsScreen = ({ navigation }) => {
   const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
@@ -22,11 +26,12 @@ const SettingsScreen = ({ navigation }) => {
 
   const [isLocationEnabled, setIsLocationEnabled] = useState(false);
   const [isNotificationEnabled, setIsNotificationEnabled] = useState(false);
+  const [profile, setProfile] = useState(null);
 
   const dynamicStyles = {
     container: {
       flex: 1,
-      backgroundColor: isDarkMode ? '#0099FF' : '#fff',
+      backgroundColor: isDarkMode ? '#121212' : '#fff',
     },
     groupTitle: {
       color: isDarkMode ? '#fff' : '#333',
@@ -35,8 +40,64 @@ const SettingsScreen = ({ navigation }) => {
       color: isDarkMode ? '#ccc' : '#333',
     },
     settingsGroup: {
-      backgroundColor: isDarkMode ? '#6666FF' : '#99FFFF',
+      backgroundColor: isDarkMode ? '#1E1E1E' : '#f8f9fa',
       borderColor: isDarkMode ? '#444' : '#eee',
+    },
+    userInfoBox: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: 16,
+      borderRadius: 16,
+      backgroundColor: isDarkMode ? '#232323' : '#f3f3f3',
+      margin: 16,
+      marginBottom: 8,
+    },
+    avatar: {
+      width: 64,
+      height: 64,
+      borderRadius: 32,
+      marginRight: 16,
+      borderWidth: 2,
+      borderColor: '#00ADB5',
+      backgroundColor: '#eee',
+    },
+    userDetails: {
+      flex: 1,
+    },
+    userName: {
+      color: isDarkMode ? '#fff' : '#222',
+      fontWeight: 'bold',
+      fontSize: 18,
+      marginBottom: 2,
+    },
+    userEmail: {
+      color: isDarkMode ? '#B3B3B3' : '#666',
+      fontSize: 14,
+    },
+    editIcon: {
+      padding: 8,
+      borderRadius: 20,
+      backgroundColor: isDarkMode ? '#1E1E1E' : '#fff',
+      marginLeft: 8,
+      borderWidth: 1,
+      borderColor: isDarkMode ? '#333' : '#eee',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    logoutBtn: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      margin: 16,
+      padding: 12,
+      borderRadius: 8,
+      backgroundColor: '#CF6679',
+    },
+    logoutText: {
+      color: '#fff',
+      fontWeight: 'bold',
+      fontSize: 16,
+      marginLeft: 8,
     },
   };
 
@@ -55,6 +116,8 @@ const SettingsScreen = ({ navigation }) => {
       enableNotifications: 'Bật thông báo',
       notificationError: 'Không thể bật thông báo. Vui lòng kiểm tra cài đặt quyền.',
       notificationSuccess: 'Thông báo đã được bật thành công!',
+      logout: 'Đăng xuất',
+      editInfo: 'Sửa thông tin',
     },
     en: {
       appSettings: 'App Settings',
@@ -70,10 +133,33 @@ const SettingsScreen = ({ navigation }) => {
       enableNotifications: 'Enable Notifications',
       notificationError: 'Unable to enable notifications. Please check permission settings.',
       notificationSuccess: 'Notifications have been successfully enabled!',
+      logout: 'Logout',
+      editInfo: 'Edit Info',
     },
   };
 
   const t = translations[language];
+
+  // Lấy profile từ backend
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const username = await getUsername();
+        if (!username) return;
+        const options = {
+          method: 'GET',
+          url: BASE_API_URL + 'users/profile',
+          params: { username },
+          headers: { Accept: 'application/json' }
+        };
+        const { data } = await axios.request(options);
+        setProfile(data.user);
+      } catch (error) {
+        setProfile(null);
+      }
+    };
+    fetchProfile();
+  }, []);
 
   const handleLocationToggle = async () => {
     if (!isLocationEnabled) {
@@ -82,7 +168,6 @@ const SettingsScreen = ({ navigation }) => {
         Alert.alert('Error', t.locationError);
         return;
       }
-
       const location = await Location.getCurrentPositionAsync({});
       Alert.alert('Success', `${t.locationSuccess}\nLatitude: ${location.coords.latitude}, Longitude: ${location.coords.longitude}`);
     }
@@ -96,14 +181,36 @@ const SettingsScreen = ({ navigation }) => {
         Alert.alert('Error', t.notificationError);
         return;
       }
-
       Alert.alert('Success', t.notificationSuccess);
     }
     setIsNotificationEnabled(!isNotificationEnabled);
   };
 
+  const handleLogout = async () => {
+    await clearUsername();
+    navigation.navigate('AuthStack', { screen: 'LoginScreen' });
+  };
+
   return (
     <ScrollView style={dynamicStyles.container}>
+      {/* User Info */}
+      <View style={dynamicStyles.userInfoBox}>
+        <Image
+          source={{ uri: profile?.avatar || 'https://i.pinimg.com/736x/a4/11/f9/a411f94f4622cfa7c1a87f4f79328064.jpg' }}
+          style={dynamicStyles.avatar}
+        />
+        <View style={dynamicStyles.userDetails}>
+          <Text style={dynamicStyles.userName}>{profile?.username || ''}</Text>
+          <Text style={dynamicStyles.userEmail}>{profile?.email || ''}</Text>
+        </View>
+        <TouchableOpacity
+          style={dynamicStyles.editIcon}
+          onPress={() => navigation.navigate('EditInfoUser', { user: profile })}
+        >
+          <Feather name="edit-2" size={18} color={isDarkMode ? "#fff" : "#333"} />
+        </TouchableOpacity>
+      </View>
+
       <View style={[styles.settingsGroup, dynamicStyles.settingsGroup]}>
         <Text style={[styles.groupTitle, dynamicStyles.groupTitle]}>
           {t.appSettings}
@@ -200,21 +307,13 @@ const SettingsScreen = ({ navigation }) => {
           </View>
           <FontAwesome5 name="chevron-right" size={16} color="#666" />
         </TouchableOpacity>
-
-        {/* Edit Info User */}
-        <TouchableOpacity
-          style={styles.settingItem}
-          onPress={() => navigation.navigate('EditInfoUser')}
-        >
-          <View style={styles.settingLabel}>
-            <Ionicons name="person-outline" size={20} color="#4b46f1" />
-            <Text style={[styles.settingText, dynamicStyles.settingText]}>
-              Edit Information
-            </Text>
-          </View>
-          <FontAwesome5 name="chevron-right" size={16} color="#666" />
-        </TouchableOpacity>
       </View>
+
+      {/* Logout Button */}
+      <TouchableOpacity style={dynamicStyles.logoutBtn} onPress={handleLogout}>
+        <FontAwesome5 name="sign-out-alt" size={18} color="#fff" />
+        <Text style={dynamicStyles.logoutText}>{t.logout}</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 };

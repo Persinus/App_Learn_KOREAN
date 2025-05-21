@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 // Import các màn hình liên quan đến Auth
 import Login from '../Screens/Auth/LoginPage';
 import LoginScreen from '../Screens/Auth/LoginScreen';
-import SignInScreen from '../Screens/Auth/SignInScreen';
+import SignInScreen from '../Screens/Auth/RegisterScreen';
 
 const Stack = createStackNavigator();
 

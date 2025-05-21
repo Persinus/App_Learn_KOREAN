@@ -17,20 +17,20 @@ const NotificationsScreen = ({ navigation }) => {
 
   const dynamicStyles = {
     container: {
-      backgroundColor: isDarkMode ? "#0099FF" : "#fff", // Nền xanh cho Dark Mode
+      backgroundColor: isDarkMode ? "#121212" : "#fff",
     },
     header: {
-      backgroundColor: isDarkMode ? "#6666FF" : "#fff", // Màu tím cho header
+      backgroundColor: isDarkMode ? "#232323" : "#fff",
       borderBottomColor: isDarkMode ? "#444" : "#eee",
     },
     title: {
       color: isDarkMode ? "#fff" : "#333",
     },
     backButton: {
-      backgroundColor: isDarkMode ? "#444" : "#f5f5f5",
+      backgroundColor: isDarkMode ? "#232323" : "#f5f5f5",
     },
     notificationItem: {
-      backgroundColor: isDarkMode ? "#333" : "#fff",
+      backgroundColor: isDarkMode ? "#232323" : "#fff",
       borderColor: isDarkMode ? "#444" : "#eee",
     },
     unseenNotification: {

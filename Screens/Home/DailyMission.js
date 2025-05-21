@@ -1,77 +1,86 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import axios from 'axios';
 import { useSelector } from 'react-redux';
+import BASE_API_URL from '../../Util/Baseapi';
+import { useNavigation } from '@react-navigation/native';
 
-const DailyMission = ({ onPress }) => {
-  const missions = [
-    { id: 1, title: 'Học 5 từ mới', progress: 3, total: 5, reward: 10 },
-    { id: 2, title: 'Hoàn thành 1 bài nghe', progress: 0, total: 1, reward: 15 },
-    { id: 3, title: 'Luyện phát âm 10 phút', progress: 5, total: 10, reward: 20 },
-  ];
-
-  const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+const DailyMission = () => {
+  const [missions, setMissions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigation = useNavigation();
+  const isDarkMode = useSelector((state) => state.darkMode.isDarkMode); // Lấy từ Redux
 
   const dynamicStyles = {
     container: {
-      backgroundColor: isDarkMode ? '#0099FF' : '#fff', // Nền xanh cho Dark Mode
-      borderColor: isDarkMode ? '#444' : '#eee',
+      backgroundColor: isDarkMode ? '#232323' : '#fff',
     },
     title: {
-      color: isDarkMode ? '#fff' : '#333',
-    },
-    rewards: {
       color: isDarkMode ? '#FFD700' : '#4b46f1',
     },
     missionTitle: {
-      color: isDarkMode ? '#ccc' : '#666',
+      color: isDarkMode ? '#fff' : '#333',
     },
     missionReward: {
       color: isDarkMode ? '#FFD700' : '#4b46f1',
     },
-    progressBar: {
-      backgroundColor: isDarkMode ? '#444' : '#f0f0f0',
-    },
-    progress: {
-      backgroundColor: isDarkMode ? '#FFD700' : '#4b46f1',
-    },
     progressText: {
       color: isDarkMode ? '#ccc' : '#666',
     },
+    rewards: {
+      color: isDarkMode ? '#FFD700' : '#4b46f1',
+    },
   };
+
+  useEffect(() => {
+    const fetchMissions = async () => {
+      try {
+        const { data } = await axios.get(`${BASE_API_URL}daily-missions`);
+        setMissions(data);
+      } catch (error) {
+        setMissions([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchMissions();
+  }, []);
+
+  const totalReward = missions.slice(0, 3).reduce((sum, m) => sum + (m.reward?.gold || 0), 0);
 
   return (
     <View style={[styles.container, dynamicStyles.container]}>
       <View style={styles.header}>
         <Text style={[styles.title, dynamicStyles.title]}>🎯 Nhiệm vụ hôm nay</Text>
-        <Text style={[styles.rewards, dynamicStyles.rewards]}>+45 điểm</Text>
-      </View>
-
-      {missions.map((mission) => (
-        <TouchableOpacity
-          key={mission.id}
-          style={styles.missionItem}
-          onPress={() => onPress(mission)}
-        >
-          <View style={styles.missionContent}>
-            <Text style={[styles.missionTitle, dynamicStyles.missionTitle]}>{mission.title}</Text>
-            <Text style={[styles.missionReward, dynamicStyles.missionReward]}>+{mission.reward}</Text>
-          </View>
-          <View style={styles.progressContainer}>
-            <View style={[styles.progressBar, dynamicStyles.progressBar]}>
-              <View
-                style={[
-                  styles.progress,
-                  dynamicStyles.progress,
-                  { width: `${(mission.progress / mission.total) * 100}%` },
-                ]}
-              />
-            </View>
-            <Text style={[styles.progressText, dynamicStyles.progressText]}>
-              {mission.progress}/{mission.total}
-            </Text>
-          </View>
+        <TouchableOpacity onPress={() => navigation.navigate('AllDailyMission')}>
+          <Text style={[styles.viewAll, dynamicStyles.rewards]}>Tất cả</Text>
         </TouchableOpacity>
-      ))}
+      </View>
+      {loading ? (
+        <ActivityIndicator size="small" color="#FFD700" />
+      ) : (
+        <>
+          {missions.slice(0, 3).map((mission) => (
+            <TouchableOpacity
+              key={mission.missionId}
+              style={styles.missionItem}
+              onPress={() => navigation.navigate('AllDailyMission')}
+            >
+              <View style={styles.missionContent}>
+                <Text style={[styles.missionTitle, dynamicStyles.missionTitle]}>{mission.title}</Text>
+                <View style={styles.rewardBtn}>
+                  <Text style={[styles.missionReward, dynamicStyles.missionReward]}>
+                    +{mission.reward?.gold || 0} vàng
+                  </Text>
+                </View>
+              </View>
+              <Text style={[styles.progressText, dynamicStyles.progressText]}>
+                {mission.description}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </>
+      )}
     </View>
   );
 };
@@ -94,12 +103,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-  rewards: {
+  viewAll: {
     fontSize: 14,
     fontWeight: '600',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 8,
+    backgroundColor: '#FFD70022',
   },
   missionItem: {
     marginBottom: 12,
+    borderRadius: 8,
+    padding: 8,
+    backgroundColor: '#fff0',
   },
   missionContent: {
     flexDirection: 'row',
@@ -109,27 +125,23 @@ const styles = StyleSheet.create({
   },
   missionTitle: {
     fontSize: 14,
+    fontWeight: 'bold',
+  },
+  rewardBtn: {
+    backgroundColor: '#FFF5CC',
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    marginLeft: 8,
   },
   missionReward: {
     fontSize: 12,
-  },
-  progressContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  progressBar: {
-    flex: 1,
-    height: 4,
-    borderRadius: 2,
-    marginRight: 8,
-  },
-  progress: {
-    height: '100%',
-    borderRadius: 2,
+    fontWeight: 'bold',
   },
   progressText: {
     fontSize: 12,
-    width: 35,
+    color: '#666',
+    marginTop: 2,
   },
 });
 

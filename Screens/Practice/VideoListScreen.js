@@ -31,7 +31,7 @@ const musicVideos = [
   },
   { 
     id: '4', 
-    title: { vn: 'Không thể ngừng tỏa sáng', en: "Can't Stop Shining" }, 
+    title: { vn: "Can't stop Shining", en: "Can't Stop Shining" }, 
     question: { vn: 'Xem bài hát và trả lời câu hỏi bên dưới', en: 'Watch the song and answer the question below' }, 
     youtubeId: 'JOiri4g1MnE', 
     thumbnail: 'https://img.youtube.com/vi/JOiri4g1MnE/0.jpg',
@@ -46,10 +46,10 @@ const VideoList = ({ videos, navigation }) => {
 
   const dynamicStyles = {
     container: {
-      backgroundColor: isDarkMode ? '#0099FF' : '#f8f9fa',
+      backgroundColor: isDarkMode ? '#121212' : '#fff',
     },
     card: {
-      backgroundColor: isDarkMode ? '#444' : '#fff',
+      backgroundColor: isDarkMode ? '#232323' : '#fff',
     },
     title: {
       color: isDarkMode ? '#fff' : '#333',
