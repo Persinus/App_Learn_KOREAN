@@ -24,13 +24,15 @@ const pathPoints = Array.from({ length: 20 }).map((_, i) => ({
   number: i + 1,
 }));
 
+const lessonNames = Array.from({ length: 20 }).map((_, i) => `Bài học ${i + 1}`);
+
 const MapScreen = () => {
   const navigation = useNavigation();
   const scrollViewRef = useRef(null);
   const [character, setCharacter] = useState(characterList[0].uri);
   const [characterPosition] = useState(new Animated.ValueXY({ 
     x: pathPoints[0].x, 
-    y: pathPoints[0].y - 110 // Để nhân vật đứng phía trên nút
+    y: pathPoints[0].y - 120 // Để nhân vật đứng phía trên nút
   }));
   const [isCharacterPanelVisible, setCharacterPanelVisible] = useState(false);
   const [gems, setGems] = useState(900);  // Kim cương ban đầu
@@ -39,16 +41,16 @@ const MapScreen = () => {
 
   const dynamicStyles = {
     container: {
-      backgroundColor: isDarkMode ? "#0099FF" : "#E6F4EA",
+      backgroundColor: isDarkMode ? "#121212" : "#E6F4EA",
     },
     header: {
-      backgroundColor: isDarkMode ? "#6666FF" : "#7AC74F",
+      backgroundColor: isDarkMode ? "#232323" : "#7AC74F",
     },
     headerText: {
-      color: isDarkMode ? "#fff" : "#fff",
+      color: "#fff",
     },
     node: {
-      backgroundColor: isDarkMode ? "#444" : "#FFF5CC",
+      backgroundColor: isDarkMode ? "#232323" : "#FFF5CC",
     },
     questionCircle: {
       backgroundColor: isDarkMode ? "#FFD700" : "#4CAF50",
@@ -60,7 +62,7 @@ const MapScreen = () => {
       backgroundColor: isDarkMode ? "#FFD700" : "#FFCC00",
     },
     modalContent: {
-      backgroundColor: isDarkMode ? "#444" : "#fff",
+      backgroundColor: isDarkMode ? "#232323" : "#fff",
     },
     modalTitle: {
       color: isDarkMode ? "#fff" : "#000",
@@ -76,7 +78,7 @@ const MapScreen = () => {
   // ✅ Di chuyển nhân vật và cuộn theo
   const moveCharacter = (index, x, y) => {
     Animated.timing(characterPosition, {
-      toValue: { x, y: y - 110 }, // ✅ Nhân vật luôn nằm phía trên nút
+      toValue: { x, y: y - 120 }, // ✅ Nhân vật luôn nằm phía trên nút
       duration: 800,
       useNativeDriver: false, 
     }).start(() => {
@@ -115,15 +117,29 @@ const MapScreen = () => {
         {/* ✅ Đường đi */}
         {pathPoints.map((point, index) => (
           <View key={index} style={[styles.rowContainer, { top: point.y }]}>
-            {/* Nút câu hỏi */}
-            <TouchableOpacity 
-              style={[styles.node, dynamicStyles.node, { left: point.x }]} 
-              onPress={() => moveCharacter(index, point.x, point.y)}
-            >
-              <View style={[styles.questionCircle, dynamicStyles.questionCircle]}>
-                <Text style={[styles.questionText, dynamicStyles.questionText]}>{point.number}</Text>
-              </View>
-            </TouchableOpacity>
+            <View style={{ left: point.x, alignItems: "center", position: "absolute" }}>
+              <TouchableOpacity
+                style={[styles.node, dynamicStyles.node]}
+                onPress={() => moveCharacter(index, point.x, point.y)}
+                activeOpacity={0.8}
+              >
+                <View style={[styles.questionCircle, dynamicStyles.questionCircle]}>
+                  <Text style={[styles.questionText, dynamicStyles.questionText]}>{point.number}</Text>
+                </View>
+              </TouchableOpacity>
+              <Text
+                style={{
+                  marginTop: 8,
+                  color: isDarkMode ? "#fff" : "#333",
+                  fontSize: 13,
+                  textAlign: "center",
+                  width: 80,
+                }}
+                numberOfLines={2}
+              >
+                {lessonNames[index]}
+              </Text>
+            </View>
           </View>
         ))}
       </ScrollView>
@@ -208,7 +224,6 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     justifyContent: "center",
     alignItems: "center",
-    position: "absolute",
   },
   questionCircle: {
     width: 50,
