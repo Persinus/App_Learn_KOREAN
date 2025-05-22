@@ -1,13 +1,13 @@
 {
   "expo": {
     "name": "Hana-Korean",
-    "slug": "hana-korean",
+    "slug": "learn-korean",
     "version": "1.1.0",
-    "owner": "nguyenmanh2004",
+    "owner": "manh22ct115",
     "assetBundlePatterns": [
       "**/*"
     ],
-    
+   
     "versionCode": 4,
     "orientation": "portrait",
     "entryPoint": "./node_modules/expo-router/index.js",
