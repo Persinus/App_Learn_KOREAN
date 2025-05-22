@@ -5,11 +5,11 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "entryPoint": "./node_modules/expo-router/index.js",
-    "icon": "./assets/logo.jpg",
+    "icon": "./assets/logo.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/logo.jpg",
+      "image": "./assets/logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
