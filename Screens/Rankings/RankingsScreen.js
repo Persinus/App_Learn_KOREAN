@@ -70,10 +70,10 @@ const RankingsScreen = ({ navigation }) => {
   const dynamicStyles = {
     container: {
       flex: 1,
-      backgroundColor: isDarkMode ? '#121212' : '#fff',
+      backgroundColor: isDarkMode ? '#121212' : '#f4f7ff',
     },
     sectionTitle: {
-      color: isDarkMode ? '#fff' : '#333',
+      color: isDarkMode ? '#fff' : '#4b46f1',
       fontSize: 22,
       fontWeight: 'bold',
       marginBottom: 12,
@@ -88,13 +88,18 @@ const RankingsScreen = ({ navigation }) => {
     },
     podiumCard: {
       alignItems: "center",
-      backgroundColor: isDarkMode ? "#1E1E1E" : "#f8f9fa",
+      backgroundColor: isDarkMode ? "#1E1E1E" : "#fff",
       borderRadius: 16,
       padding: 14,
       width: 110,
-      elevation: 2,
+      elevation: 4,
       borderWidth: 2,
+      borderColor: isDarkMode ? "#FFD70033" : "#e3e7fd",
       marginHorizontal: 2,
+      shadowColor: isDarkMode ? "#000" : "#4b46f1",
+      shadowOpacity: isDarkMode ? 0.12 : 0.08,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 2 },
     },
     podiumAvatar: {
       width: 64,
@@ -102,9 +107,11 @@ const RankingsScreen = ({ navigation }) => {
       borderRadius: 32,
       borderWidth: 3,
       marginBottom: 8,
+      borderColor: isDarkMode ? "#FFD70033" : "#4b46f1",
+      backgroundColor: isDarkMode ? "#232323" : "#e3e7fd",
     },
     podiumName: {
-      color: isDarkMode ? "#fff" : "#333",
+      color: isDarkMode ? "#fff" : "#4b46f1",
       fontWeight: "bold",
       fontSize: 16,
       marginBottom: 2,
@@ -128,8 +135,12 @@ const RankingsScreen = ({ navigation }) => {
       marginBottom: 10,
       marginHorizontal: 16,
       borderWidth: 2,
-      borderColor: "#eee",
+      borderColor: isDarkMode ? "#FFD70033" : "#e3e7fd",
       elevation: 2,
+      shadowColor: isDarkMode ? "#000" : "#4b46f1",
+      shadowOpacity: isDarkMode ? 0.10 : 0.07,
+      shadowRadius: 6,
+      shadowOffset: { width: 0, height: 2 },
     },
     cardActive: {
       borderColor: "#00ADB5",
@@ -149,11 +160,12 @@ const RankingsScreen = ({ navigation }) => {
       marginRight: 12,
       borderWidth: 2,
       borderColor: "#00ADB5",
+      backgroundColor: isDarkMode ? "#232323" : "#e3e7fd",
     },
     name: {
       fontSize: 16,
       fontWeight: '600',
-      color: isDarkMode ? "#fff" : "#333",
+      color: isDarkMode ? "#fff" : "#4b46f1",
       flex: 1,
     },
     score: {
@@ -190,14 +202,15 @@ const RankingsScreen = ({ navigation }) => {
       marginRight: 10,
       borderWidth: 1,
       borderColor: "#aaa",
+      backgroundColor: isDarkMode ? "#232323" : "#e3e7fd",
     },
     zeroName: {
-      color: isDarkMode ? "#B3B3B3" : "#888",
+      color: isDarkMode ? "#B3B3B3" : "#4b46f1",
       fontSize: 14,
       flex: 1,
     },
     zeroScore: {
-      color: isDarkMode ? "#B3B3B3" : "#888",
+      color: isDarkMode ? "#B3B3B3" : "#4b46f1",
       fontSize: 13,
       fontWeight: "bold",
     },
@@ -205,7 +218,7 @@ const RankingsScreen = ({ navigation }) => {
 
   return (
     <ScrollView style={dynamicStyles.container} contentContainerStyle={{paddingBottom: 32}}>
-      <Text style={dynamicStyles.sectionTitle}>{t.rankings}</Text>
+     
       {loading ? (
         <ActivityIndicator size="large" color="#00ADB5" style={{ marginTop: 40 }} />
       ) : (topUsers.length === 0) ? (
