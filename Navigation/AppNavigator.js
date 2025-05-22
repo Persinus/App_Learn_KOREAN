@@ -105,7 +105,11 @@ const MainNavigator = () => {
           component={HomeStack}
           options={{ headerTitle: t.Home }}
         />
-        
+        <Tab.Screen
+          name="Friend"
+          component={FriendStack}
+          options={{ headerTitle: t.Friend }}
+        />
         <Tab.Screen
           name="Practice"
           component={PracticeStackNavigator}

@@ -1,8 +1,14 @@
 {
   "expo": {
-    "name": "LearnKorean",
-    "slug": "learn-korean",
-    "version": "1.0.0",
+    "name": "Hana-Korean",
+    "slug": "hana-korean",
+    "version": "1.1.0",
+    "owner": "nguyenmanh2004",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    
+    "versionCode": 4,
     "orientation": "portrait",
     "entryPoint": "./node_modules/expo-router/index.js",
     "icon": "./assets/logo.png",
@@ -20,15 +26,8 @@
       "adaptiveIcon": {
         "backgroundColor": "#ffffff"
       },
-      "package": "com.nguyenmanh2004.LearnKorean",
+      "package": "com.nguyenmanh2004.HanaKorean",
       "permissions": [
-        "CAMERA",
-        "ACCESS_FINE_LOCATION",
-        "ACCESS_COARSE_LOCATION",
-        "ACCESS_WIFI_STATE",
-        "CHANGE_WIFI_STATE",
-        "INTERNET",
-        "RECEIVE_BOOT_COMPLETED",
         "POST_NOTIFICATIONS"
       ]
     },
@@ -42,7 +41,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "3db09a93-2e56-4bc5-9c8f-dfe374ed0a9e"
+        "projectId": "93029465-e893-42f9-b89c-5695c4e19bbb"
       }
     }
   }
