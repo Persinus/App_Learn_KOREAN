@@ -4,60 +4,87 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { useSelector } from 'react-redux';
 import headerStyles from '../../Styles/HeaderStyles';
 
+const translations = {
+  vn: {
+    welcome: "Chào mừng đến với khóa học",
+    intro: "Hãy bắt đầu hành trình học tiếng Hàn của bạn với bảng chữ cái và từ vựng cơ bản!",
+    alphabet: "Bảng chữ cái Hangeul",
+    vocab: "Từ vựng cơ bản",
+    consonantsSingle: "Phụ âm đơn",
+    consonantsDouble: "Phụ âm đôi",
+    vowelsSingle: "Nguyên âm đơn",
+    vowelsDouble: "Nguyên âm đôi",
+    vocabTopic: "Chủ đề từ vựng",
+  },
+  en: {
+    welcome: "Welcome to the course",
+    intro: "Start your Korean learning journey with the alphabet and basic vocabulary!",
+    alphabet: "Hangeul Alphabet",
+    vocab: "Basic Vocabulary",
+    consonantsSingle: "Single Consonants",
+    consonantsDouble: "Double Consonants",
+    vowelsSingle: "Single Vowels",
+    vowelsDouble: "Double Vowels",
+    vocabTopic: "Vocabulary Topics",
+  }
+};
+
 const AlphabetHomeScreen = ({ navigation }) => {
   const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+  const language = useSelector((state) => state.language.language);
+  const t = translations[language];
 
   const dynamicStyles = {
     container: {
-      backgroundColor: isDarkMode ? '#121212' : '#f8f9fa',
+      backgroundColor: isDarkMode ? '#121212' : '#f4f7ff',
     },
     introTitle: {
-      color: isDarkMode ? '#fff' : '#333',
+      color: isDarkMode ? '#FFD700' : '#4b46f1',
+      fontWeight: 'bold',
     },
     introText: {
       color: isDarkMode ? '#ccc' : '#666',
     },
     sectionTitle: {
-      color: isDarkMode ? '#fff' : '#333',
+      color: isDarkMode ? '#FFD700' : '#4b46f1',
+      fontWeight: 'bold',
     },
     button: {
       backgroundColor: isDarkMode ? '#232323' : '#fff',
+      borderColor: isDarkMode ? '#FFD70033' : '#e3e7fd',
+      borderWidth: 1.5,
+      elevation: 3,
+      shadowColor: isDarkMode ? '#000' : '#4b46f1',
+      shadowOpacity: isDarkMode ? 0.08 : 0.12,
+      shadowRadius: 6,
+      shadowOffset: { width: 0, height: 2 },
     },
     buttonText: {
-      color: isDarkMode ? '#fff' : '#333',
+      color: isDarkMode ? '#FFD700' : '#4b46f1',
+      fontWeight: 'bold',
     },
   };
 
   const sections = [
     {
-      title: 'Bảng chữ cái Hangeul',
+      title: t.alphabet,
       items: [
-        { type: 'ConsonantsSingle', label: 'Phụ âm đơn', icon: 'ㄱ' },
-        { type: 'ConsonantsDouble', label: 'Phụ âm đôi', icon: 'ㄲ' },
-        { type: 'VowelsSingle', label: 'Nguyên âm đơn', icon: 'ㅏ' },
-        { type: 'VowelsDouble', label: 'Nguyên âm đôi', icon: 'ㅐ' },
+        { type: 'ConsonantsSingle', label: t.consonantsSingle, icon: 'ㄱ' },
+        { type: 'ConsonantsDouble', label: t.consonantsDouble, icon: 'ㄲ' },
+        { type: 'VowelsSingle', label: t.vowelsSingle, icon: 'ㅏ' },
+        { type: 'VowelsDouble', label: t.vowelsDouble, icon: 'ㅐ' },
       ]
     },
     {
-      title: 'Từ vựng cơ bản',
+      title: t.vocab,
       items: [
-        { type: 'VocabularyTopicsScreen', label: 'Chủ đề từ vựng', icon: '📚' },
+        { type: 'VocabularyTopicsScreen', label: t.vocabTopic, icon: '📚' },
       ]
     }
   ];
 
   return (
     <View style={[styles.container, dynamicStyles.container]}>
-      <View style={headerStyles.container}>
-        <TouchableOpacity 
-          style={headerStyles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <FontAwesome5 name="arrow-left" size={16} color={isDarkMode ? "#fff" : "#4b46f1"} />
-        </TouchableOpacity>
-        <Text style={headerStyles.title}>Nhập môn tiếng Hàn</Text>
-      </View>
-
       <ScrollView style={styles.content}>
         <View style={styles.introContainer}>
           <Image 
@@ -65,9 +92,9 @@ const AlphabetHomeScreen = ({ navigation }) => {
             style={styles.introImage}
             resizeMode="contain"
           />
-          <Text style={[styles.introTitle, dynamicStyles.introTitle]}>Chào mừng đến với khóa học</Text>
+          <Text style={[styles.introTitle, dynamicStyles.introTitle]}>{t.welcome}</Text>
           <Text style={[styles.introText, dynamicStyles.introText]}>
-            Hãy bắt đầu hành trình học tiếng Hàn của bạn với bảng chữ cái và từ vựng cơ bản!
+            {t.intro}
           </Text>
         </View>
 

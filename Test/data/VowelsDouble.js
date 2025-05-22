@@ -1,30 +1,51 @@
 // app/alphabet/VowelsDouble.js
 import React, { useState } from 'react';
-import { ScrollView, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { ScrollView, Text, TouchableOpacity } from 'react-native';
+import { useSelector } from 'react-redux';
 import * as Speech from 'expo-speech';
 import { vowelsDouble } from '../data/alphabet';
 import AlphabetDetail from '../Lythuyet/AlphabetDetail';
 
+const translations = {
+  vn: { title: "Nguyên âm đôi" },
+  en: { title: "Double Vowels" }
+};
+
 export default function VowelsDouble() {
-    const [isSpeaking, setIsSpeaking] = useState(false);
-  
-    const speakLetter = (transliteration) => {
-      if (isSpeaking) return;
-      setIsSpeaking(true);
-      
-      // Sử dụng Speech.speak với tùy chỉnh tiếng Hàn và các thông số cao độ, tốc độ
-      Speech.speak(`${transliteration}ㅏ`, {
-        language: 'ko', // Tiếng Hàn
-        pitch: 1.3,     // Cao độ giọng nói
-        rate: 1.0,     // Tốc độ đọc
-        onDone: () => setIsSpeaking(false),
-      });
-    };
-  
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+  const language = useSelector((state) => state.language.language);
+  const t = translations[language];
+
+  const dynamicStyles = {
+    container: {
+      flex: 1,
+      padding: 20,
+      backgroundColor: isDarkMode ? '#121212' : '#f4f7ff',
+    },
+    title: {
+      fontSize: 22,
+      fontWeight: 'bold',
+      textAlign: 'center',
+      marginBottom: 20,
+      color: isDarkMode ? '#FFD700' : '#4b46f1',
+    },
+  };
+
+  const speakLetter = (transliteration) => {
+    if (isSpeaking) return;
+    setIsSpeaking(true);
+    Speech.speak(`${transliteration}ㅏ`, {
+      language: 'ko',
+      pitch: 1.3,
+      rate: 1.0,
+      onDone: () => setIsSpeaking(false),
+    });
+  };
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>Nguyên âm đôi</Text>
+    <ScrollView style={dynamicStyles.container}>
+      <Text style={dynamicStyles.title}>{t.title}</Text>
       {vowelsDouble.map((item, index) => (
         <TouchableOpacity key={index} onPress={() => speakLetter(item.letter)}>
           <AlphabetDetail
@@ -39,8 +60,3 @@ export default function VowelsDouble() {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20 },
-  title: { fontSize: 22, fontWeight: 'bold', textAlign: 'center', marginBottom: 20 },
-});

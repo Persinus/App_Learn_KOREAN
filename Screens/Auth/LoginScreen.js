@@ -131,7 +131,7 @@ const LoginScreen = ({ navigation }) => {
 
   useEffect(() => {
     if (response?.type === "success") {
-      const { authentication } = response;
+      
       Alert.alert(t.googleLoginSuccess);
       AsyncStorage.setItem("userToken", "true");
       navigation.reset({
@@ -144,18 +144,6 @@ const LoginScreen = ({ navigation }) => {
   const handleLogin = async () => {
     if (!username || !password) {
       Alert.alert("Error", t.enterEmailPassword);
-      return;
-    }
-
-    // Đăng nhập tài khoản test cứng
-    if (username === "testuser" && password === "123456") {
-      await AsyncStorage.setItem("userToken", "test-token");
-      await saveUsername(username); // Lưu username vào AsyncStorage
-      Alert.alert(t.loginSuccess, `${t.emailLabel}: ${username}`);
-      navigation.reset({
-        index: 0,
-        routes: [{ name: "MainNavigator" }],
-      });
       return;
     }
 
@@ -232,19 +220,6 @@ const LoginScreen = ({ navigation }) => {
 
         <TouchableOpacity style={authStyles.forgotPassword}>
           <Text style={[authStyles.link, dynamicStyles.link]}>{t.forgotPassword}</Text>
-        </TouchableOpacity>
-
-        {/* Nút tự động điền tài khoản test */}
-        <TouchableOpacity
-          style={{ alignSelf: 'flex-end', marginBottom: 10 }}
-          onPress={() => {
-            setUsername('testuser');
-            setPassword('123456');
-          }}
-        >
-          <Text style={{ color: '#4b46f1', fontWeight: 'bold' }}>
-            Dùng tài khoản test: testuser / 123456
-          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity

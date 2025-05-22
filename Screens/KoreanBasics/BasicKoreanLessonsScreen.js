@@ -101,18 +101,18 @@ const BasicKoreanLessonsScreen = ({ navigation }) => {
   // Danh sách các bài học trong đơn vị hiện tại
   const lessonsByUnit = {
     1: [
-      { id: '1', title: `${t.lesson} 1: ${t.lessonTitles[0]}`, description: t.lessonDescs[0], image: require('../../assets/logo.jpg'), progress: 100 },
-      { id: '2', title: `${t.lesson} 2: ${t.lessonTitles[1]}`, description: t.lessonDescs[1], image: require('../../assets/logo.jpg'), progress: 100 },
-      { id: '3', title: `${t.lesson} 3: ${t.lessonTitles[2]}`, description: t.lessonDescs[2], image: require('../../assets/logo.jpg'), progress: 100 },
-      { id: '4', title: `${t.lesson} 4: ${t.lessonTitles[3]}`, description: t.lessonDescs[3], image: require('../../assets/logo.jpg'), progress: 100 },
-      { id: '5', title: `${t.lesson} 5: ${t.lessonTitles[4]}`, description: t.lessonDescs[4], image: require('../../assets/logo.jpg'), progress: 0 },
+      { id: '1', title: `${t.lesson} 1: ${t.lessonTitles[0]}`, description: t.lessonDescs[0], image: require('../../assets/logo-icon.jpg'), progress: 100 },
+      { id: '2', title: `${t.lesson} 2: ${t.lessonTitles[1]}`, description: t.lessonDescs[1], image: require('../../assets/logo-icon.jpg'), progress: 100 },
+      { id: '3', title: `${t.lesson} 3: ${t.lessonTitles[2]}`, description: t.lessonDescs[2], image: require('../../assets/logo-icon.jpg'), progress: 100 },
+      { id: '4', title: `${t.lesson} 4: ${t.lessonTitles[3]}`, description: t.lessonDescs[3], image: require('../../assets/logo-icon.jpg'), progress: 100 },
+      { id: '5', title: `${t.lesson} 5: ${t.lessonTitles[4]}`, description: t.lessonDescs[4], image: require('../../assets/logo-icon.jpg'), progress: 0 },
     ],
     2: [
-      { id: '6', title: `${t.lesson} 6: ${t.lessonTitles[5]}`, description: t.lessonDescs[5], image: require('../../assets/logo.jpg'), progress: 100 },
-      { id: '7', title: `${t.lesson} 7: ${t.lessonTitles[6]}`, description: t.lessonDescs[6], image: require('../../assets/logo.jpg'), progress: 100 },
-      { id: '8', title: `${t.lesson} 8: ${t.lessonTitles[7]}`, description: t.lessonDescs[7], image: require('../../assets/logo.jpg'), progress: 0 },
-      { id: '9', title: `${t.lesson} 9: ${t.lessonTitles[8]}`, description: t.lessonDescs[8], image: require('../../assets/logo.jpg'), progress: 0 },
-      { id: '10', title: `${t.lesson} 10: ${t.lessonTitles[9]}`, description: t.lessonDescs[9], image: require('../../assets/logo.jpg'), progress: 0 },
+      { id: '6', title: `${t.lesson} 6: ${t.lessonTitles[5]}`, description: t.lessonDescs[5], image: require('../../assets/logo-icon.jpg'), progress: 100 },
+      { id: '7', title: `${t.lesson} 7: ${t.lessonTitles[6]}`, description: t.lessonDescs[6], image: require('../../assets/logo-icon.jpg'), progress: 100 },
+      { id: '8', title: `${t.lesson} 8: ${t.lessonTitles[7]}`, description: t.lessonDescs[7], image: require('../../assets/logo-icon.jpg'), progress: 0 },
+      { id: '9', title: `${t.lesson} 9: ${t.lessonTitles[8]}`, description: t.lessonDescs[8], image: require('../../assets/logo-icon.jpg'), progress: 0 },
+      { id: '10', title: `${t.lesson} 10: ${t.lessonTitles[9]}`, description: t.lessonDescs[9], image: require('../../assets/logo-icon.jpg'), progress: 0 },
     ],
     3: [],
     4: []

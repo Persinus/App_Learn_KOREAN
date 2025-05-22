@@ -235,7 +235,7 @@ const featuredLessonsData = {
       id: "featured_1",
       title: "Ngữ pháp cơ bản",
       duration: "2 giờ",
-      image: require("../../assets/logo.jpg"),
+      image: require("../../assets/logo-icon.jpg"),
       preview: "Học cách sử dụng các mẫu câu cơ bản trong tiếng Hàn",
       difficulty: "Dễ",
       studentsCount: 1200,
@@ -273,7 +273,7 @@ const featuredLessonsData = {
       id: "featured_1",
       title: "Basic Grammar",
       duration: "2 hours",
-      image: require("../../assets/logo.jpg"),
+      image: require("../../assets/logo-icon.jpg"),
       preview: "Learn how to use basic Korean sentence patterns",
       difficulty: "Easy",
       studentsCount: 1200,
@@ -828,7 +828,7 @@ const HomeScreen = ({ navigation }) => {
           <TouchableOpacity
             style={[styles.courseCard, { backgroundColor: item.color }]}
             onPress={() => {
-              if (item.title === "Tiếng Hàn Cơ Bản " || item.title === "Basic Korean") {
+              if (item.title === "Tiếng Hàn Cơ Bản" || item.title === "Basic Korean") {
                 navigation.navigate('LessonStack', {
                   screen: 'BasicKoreanLessonsScreen',
                 });
