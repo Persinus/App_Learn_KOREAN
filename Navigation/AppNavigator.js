@@ -49,7 +49,6 @@ const MainNavigator = () => {
         screenOptions={({ route }) => ({
           tabBarIcon: ({ color }) => {
             let iconName;
-
             switch (route.name) {
               case 'Home':
                 iconName = 'home';
@@ -73,32 +72,62 @@ const MainNavigator = () => {
                 return null;
             }
           },
-          tabBarLabel: t[route.name],
+          tabBarLabel: t[route.name], // Đa ngôn ngữ tự động
           tabBarShowLabel: true,
           tabBarStyle: {
             backgroundColor: isDarkMode ? '#23272A' : '#7AC74F',
             borderTopWidth: 1,
+
             borderTopColor: isDarkMode ? '#222' : '#eee',
+           
+            height: 60 + insets.bottom, // Thêm chiều cao của safe area
+            paddingTop: 5,
+          
+            
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+            borderBottomLeftRadius: 20,
+            borderBottomRightRadius: 20,
+            shadowColor: isDarkMode ? '#000' : '#000',
+            shadowOffset: {
+              width: 0,
+              height: 2,
+            },
+            shadowOpacity: 0.25,
+            
           },
           tabBarActiveTintColor: isDarkMode ? '#fff' : '#000',
           tabBarInactiveTintColor: isDarkMode ? '#ccc' : '#666',
         })}
       >
-        <Tab.Screen name="Home" component={HomeStack} />
-        <Tab.Screen name="Practice" component={PracticeStackNavigator} />
-        <Tab.Screen name="Rankings" component={RankingsStack} options={{ headerShown: false }} />
-        <Tab.Screen name="PaidCourses" component={PaidCoursesStack} options={{ headerShown: false }} />
-        <Tab.Screen name="Settings" component={SettingsStack} options={{ headerShown: false }} />
         <Tab.Screen
-          name="Friend"
-          component={FriendStack}
-          options={{
-            tabBarLabel: t['Friend'],
-            tabBarIcon: ({ color, size }) => (
-              <FontAwesome5 name="user-friends" size={size} color={color} />
-            ),
-          }}
+          name="Home"
+          component={HomeStack}
+          options={{ headerTitle: t.Home }}
         />
+        
+        <Tab.Screen
+          name="Practice"
+          component={PracticeStackNavigator}
+          options={{ headerTitle: t.Practice }}
+        />
+        <Tab.Screen
+          name="Rankings"
+          component={RankingsStack}
+          options={{ headerTitle: t.Rankings }}
+        />
+        <Tab.Screen
+          name="PaidCourses"
+          component={PaidCoursesStack}
+          options={{ headerShown: false, headerTitle: t.PaidCourses }}
+        />
+        
+        <Tab.Screen
+          name="Settings"
+          component={SettingsStack}
+          options={{ headerShown: false, headerTitle: t.Settings }}
+        />
+        
       </Tab.Navigator>
     </View>
   );
