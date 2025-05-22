@@ -1,86 +1,162 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, ScrollView, Alert, RefreshControl } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useSelector } from 'react-redux';
+import axios from 'axios';
+import BASE_API_URL from '../../Util/Baseapi';
+import { getUsername } from '../../Util/UserStorage';
 
 const EditInfoUser = ({ navigation, route }) => {
   const user = route?.params?.user || {};
   const [name, setName] = useState(user?.fullName || '');
   const [email, setEmail] = useState(user?.email || '');
-  const [phone, setPhone] = useState(user?.phone || '');
-  const [level, setLevel] = useState(user?.level ? String(user.level) : '');
+  const [avatar, setAvatar] = useState(user?.avatar || '');
+  const [birthday, setBirthday] = useState(user?.birthday ? formatBirthdayToInput(user.birthday) : '');
+  const [gender, setGender] = useState(user?.gender || '');
+  const [refreshing, setRefreshing] = useState(false);
 
   const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
 
   const dynamicStyles = {
     container: {
       flex: 1,
-      backgroundColor: isDarkMode ? '#121212' : '#fff',
-    },
-    header: {
-      backgroundColor: isDarkMode ? '#232323' : '#fff',
-      borderBottomColor: isDarkMode ? '#444' : '#eee',
-    },
-    headerTitle: {
-      color: isDarkMode ? '#fff' : '#333',
-    },
-    backButton: {
-      backgroundColor: isDarkMode ? '#444' : '#f5f5f5',
-    },
-    changeAvatarButton: {
-      backgroundColor: isDarkMode ? '#444' : '#f5f5f5',
-    },
-    changeAvatarText: {
-      color: isDarkMode ? '#FFD700' : '#4b46f1',
+      backgroundColor: isDarkMode ? '#121212' : '#f4f7ff',
     },
     label: {
-      color: isDarkMode ? '#ccc' : '#666',
+      color: isDarkMode ? '#ccc' : '#4b46f1',
+      fontWeight: 'bold',
+      fontSize: 15,
+      marginBottom: 6,
     },
     input: {
       backgroundColor: isDarkMode ? '#232323' : '#fff',
-      borderColor: isDarkMode ? '#555' : '#ddd',
-      color: isDarkMode ? '#fff' : '#333',
+      borderColor: isDarkMode ? '#555' : '#4b46f1',
+      color: isDarkMode ? '#fff' : '#222',
+      borderWidth: 1.5,
+      borderRadius: 8,
+      padding: 12,
+      fontSize: 16,
+      marginBottom: 2,
+      shadowColor: isDarkMode ? '#000' : '#4b46f1',
+      shadowOpacity: isDarkMode ? 0.1 : 0.08,
+      shadowRadius: 4,
+      shadowOffset: { width: 0, height: 2 },
+      elevation: isDarkMode ? 0 : 2,
     },
     saveButton: {
       backgroundColor: isDarkMode ? '#FFD700' : '#4b46f1',
+      margin: 16,
+      padding: 16,
+      borderRadius: 8,
+      alignItems: 'center',
+      elevation: 2,
     },
     saveButtonText: {
       color: isDarkMode ? '#000' : '#fff',
+      fontSize: 17,
+      fontWeight: 'bold',
+      letterSpacing: 0.5,
     },
   };
 
-  const handleSave = () => {
-    // Logic lưu thông tin ở đây
-    navigation.goBack();
+  // Chuyển yyyy-mm-dd => dd/mm/yyyy để hiển thị
+  function formatBirthdayToInput(dateStr) {
+    if (!dateStr) return '';
+    const [year, month, day] = dateStr.split('-');
+    return `${day}/${month}/${year}`;
+  }
+
+  // Chuyển dd/mm/yyyy => yyyy-mm-dd để gửi backend
+  function formatBirthdayToApi(dateStr) {
+    if (!dateStr) return '';
+    const [day, month, year] = dateStr.split('/');
+    return `${year}-${month}-${day}`;
+  }
+
+  const reloadUser = async () => {
+    setRefreshing(true);
+    try {
+      const username = await getUsername();
+      const options = {
+        method: 'GET',
+        url: `${BASE_API_URL}users/profile`,
+        params: { username },
+        headers: { Accept: 'application/json' }
+      };
+      const { data } = await axios.request(options);
+      const user = data.user;
+      setName(user?.fullName || '');
+      setEmail(user?.email || '');
+      setAvatar(user?.avatar || '');
+      setBirthday(user?.birthday ? formatBirthdayToInput(user.birthday) : '');
+      setGender(user?.gender || '');
+    } catch (error) {
+      Alert.alert('Lỗi', 'Không thể tải lại thông tin!');
+    }
+    setRefreshing(false);
+  };
+
+  const handleSave = async () => {
+    if (!name || !email || !avatar || !birthday || !gender) {
+      Alert.alert('Lỗi', 'Vui lòng nhập đầy đủ thông tin!');
+      return;
+    }
+    // Validate ngày sinh
+    if (!/^\d{2}\/\d{2}\/\d{4}$/.test(birthday)) {
+      Alert.alert('Lỗi', 'Ngày sinh phải theo định dạng dd/mm/yyyy!');
+      return;
+    }
+    try {
+      const username = await getUsername();
+      const options = {
+        method: 'PUT',
+        url: `${BASE_API_URL}users/${username}`,
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        data: {
+          email,
+          avatar,
+          fullName: name,
+          birthday: formatBirthdayToApi(birthday),
+          gender
+        }
+      };
+      await axios.request(options);
+      Alert.alert('Thành công', 'Cập nhật thông tin thành công!');
+      navigation.goBack();
+    } catch (error) {
+      Alert.alert('Lỗi', 'Không thể cập nhật thông tin!');
+    }
   };
 
   return (
     <View style={[styles.container, dynamicStyles.container]}>
-      <View style={[styles.header, dynamicStyles.header]}>
-        <View style={styles.headerMain}>
-          <TouchableOpacity
-            style={[styles.backButton, dynamicStyles.backButton]}
-            onPress={() => navigation.goBack()}
-          >
-            <FontAwesome5 name="arrow-left" size={16} color={isDarkMode ? '#fff' : '#4b46f1'} />
-          </TouchableOpacity>
-          <Text style={[styles.headerTitle, dynamicStyles.headerTitle]}>Chỉnh sửa thông tin</Text>
-        </View>
-      </View>
-
-      <ScrollView style={styles.content}>
+      <ScrollView
+        style={styles.content}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={reloadUser}
+            colors={["#4b46f1", "#00ADB5"]}
+            tintColor={isDarkMode ? "#fff" : "#4b46f1"}
+          />
+        }
+      >
         <View style={styles.avatarSection}>
           <Image
             source={
-              user?.avatar
-                ? { uri: user.avatar }
+              avatar && avatar.trim() !== ''
+                ? { uri: avatar }
                 : { uri: 'https://example.com/default-avatar.png' }
             }
             style={styles.avatar}
           />
-          <TouchableOpacity style={[styles.changeAvatarButton, dynamicStyles.changeAvatarButton]}>
-            <Text style={[styles.changeAvatarText, dynamicStyles.changeAvatarText]}>Thay đổi ảnh</Text>
-          </TouchableOpacity>
+          <TextInput
+            style={[styles.input, dynamicStyles.input, { marginTop: 8, width: 220 }]}
+            value={avatar}
+            onChangeText={setAvatar}
+            placeholder="Dán link ảnh avatar..."
+            placeholderTextColor={isDarkMode ? '#888' : '#aaa'}
+          />
         </View>
 
         <View style={styles.inputSection}>
@@ -108,26 +184,26 @@ const EditInfoUser = ({ navigation, route }) => {
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={[styles.label, dynamicStyles.label]}>Số điện thoại</Text>
+            <Text style={[styles.label, dynamicStyles.label]}>Ngày sinh</Text>
             <TextInput
               style={[styles.input, dynamicStyles.input]}
-              value={phone}
-              onChangeText={setPhone}
-              placeholder="Nhập số điện thoại"
+              value={birthday}
+              onChangeText={setBirthday}
+              placeholder="Nhập dd/mm/yyyy"
               placeholderTextColor={isDarkMode ? '#888' : '#aaa'}
-              keyboardType="phone-pad"
+              maxLength={10}
             />
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={[styles.label, dynamicStyles.label]}>Cấp độ</Text>
+            <Text style={[styles.label, dynamicStyles.label]}>Giới tính</Text>
             <TextInput
               style={[styles.input, dynamicStyles.input]}
-              value={level}
-              onChangeText={setLevel}
-              placeholder="Chọn cấp độ"
+              value={gender}
+              onChangeText={setGender}
+              placeholder="male hoặc female"
               placeholderTextColor={isDarkMode ? '#888' : '#aaa'}
-              editable={false}
+              autoCapitalize="none"
             />
           </View>
         </View>
@@ -144,24 +220,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  header: {
-    padding: 16,
-    paddingTop: 45,
-    borderBottomWidth: 1,
-  },
-  headerMain: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  backButton: {
-    padding: 8,
-    marginRight: 12,
-    borderRadius: 10,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
   content: {
     flex: 1,
     padding: 20,
@@ -175,41 +233,43 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 50,
     marginBottom: 10,
-  },
-  changeAvatarButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 20,
-  },
-  changeAvatarText: {
-    fontSize: 14,
-    fontWeight: '500',
+    borderWidth: 2,
+    borderColor: '#4b46f1',
+    backgroundColor: '#e3e7fd',
+    shadowColor: '#4b46f1',
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 3,
   },
   inputSection: {
     marginBottom: 20,
   },
   inputGroup: {
-    marginBottom: 16,
+    marginBottom: 18,
   },
   label: {
-    fontSize: 14,
-    marginBottom: 8,
+    fontSize: 15,
+    marginBottom: 6,
   },
   input: {
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
+    marginBottom: 2,
   },
   saveButton: {
     margin: 16,
     padding: 16,
     borderRadius: 8,
     alignItems: 'center',
+    elevation: 2,
   },
   saveButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 17,
+    fontWeight: 'bold',
+    letterSpacing: 0.5,
   },
 });
 
