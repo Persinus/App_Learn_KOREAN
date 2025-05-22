@@ -6,11 +6,8 @@ import VideoDetailScreen from "../Screens/Practice/VideoDetailScreen";
 import LessionScreen from "../Screens/Practice/Lesson/LessonsScreen"; 
 import MiniGame1 from "../Screens/Practice/Game/MiniGame1";
 import DetailGame1 from "../Screens/Practice/Game/DetailGame1";
-import PracticeDailyReward from "../Screens/Practice/Rewards/PracticeDailyReward";
-import PracticeAchievements from "../Screens/Practice/Rewards/PracticeAchievements";
-import PracticeLevelUp from "../Screens/Practice/Rewards/PracticeLevelUp";
-import PracticeCompetition from "../Screens/Practice/Competition/PracticeCompetition";
-import PracticeTournament from "../Screens/Practice/Competition/PracticeTournament";
+
+
 import Dictionary from "../Screens/Practice/Dictionary";
 
 const Stack = createStackNavigator();
@@ -48,31 +45,7 @@ const PracticeStackNavigator = () => {
         component={DetailGame1}
         options={{ headerShown: false }}
       />
-      <Stack.Screen
-        name="PracticeDailyReward"
-        component={PracticeDailyReward}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen 
-        name="PracticeAchievements"
-        component={PracticeAchievements}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="PracticeLevelUp"
-        component={PracticeLevelUp} 
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="PracticeCompetition"
-        component={PracticeCompetition}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="PracticeTournament"
-        component={PracticeTournament}
-        options={{ headerShown: false }}
-      />
+
       <Stack.Screen
         name="Dictionary"
         component={Dictionary}
