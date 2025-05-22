@@ -40,17 +40,10 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "owner": "nguyenmanh2004",
     "extra": {
       "eas": {
-        "projectId": "699972f0-9f9d-483a-b15d-e175e1ea2cb5"
+        "projectId": "3db09a93-2e56-4bc5-9c8f-dfe374ed0a9e"
       }
-    },
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
-    "updates": {
-      "url": "https://u.expo.dev/699972f0-9f9d-483a-b15d-e175e1ea2cb5"
     }
   }
 }
