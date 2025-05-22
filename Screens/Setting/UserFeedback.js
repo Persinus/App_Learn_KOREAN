@@ -99,40 +99,49 @@ const UserFeedback = () => {
   const dynamicStyles = {
     container: {
       flex: 1,
-      backgroundColor: isDarkMode ? '#121212' : '#fff',
-    },
-    header: {
-      backgroundColor: isDarkMode ? '#232323' : '#fff',
-      borderBottomColor: isDarkMode ? '#333' : '#eee',
-    },
-    title: {
-      color: isDarkMode ? '#fff' : '#333',
+      backgroundColor: isDarkMode ? '#121212' : '#f4f7ff',
     },
     sectionTitle: {
-      color: isDarkMode ? '#fff' : '#333',
+      color: isDarkMode ? '#fff' : '#4b46f1',
+      fontWeight: 'bold',
     },
     categoryButton: {
-      backgroundColor: isDarkMode ? '#1E1E1E' : '#f5f5f5',
+      backgroundColor: isDarkMode ? '#1E1E1E' : '#e3e7fd',
+      borderWidth: 1,
+      borderColor: isDarkMode ? '#444' : '#4b46f1',
     },
     selectedCategory: {
-      backgroundColor: isDarkMode ? '#4b46f1' : '#4b46f1',
+      backgroundColor: '#4b46f1',
+      borderColor: '#4b46f1',
     },
     categoryText: {
-      color: isDarkMode ? '#ccc' : '#666',
+      color: isDarkMode ? '#ccc' : '#4b46f1',
+      fontWeight: '500',
     },
     selectedCategoryText: {
       color: '#fff',
+      fontWeight: 'bold',
     },
     input: {
       backgroundColor: isDarkMode ? '#232323' : '#fff',
-      color: isDarkMode ? '#fff' : '#000',
-      borderColor: isDarkMode ? '#333' : '#ddd',
+      color: isDarkMode ? '#fff' : '#222',
+      borderColor: isDarkMode ? '#333' : '#4b46f1',
+      borderWidth: 1.5,
+      shadowColor: isDarkMode ? '#000' : '#4b46f1',
+      shadowOpacity: isDarkMode ? 0.1 : 0.08,
+      shadowRadius: 4,
+      shadowOffset: { width: 0, height: 2 },
+      elevation: isDarkMode ? 0 : 2,
     },
     submitButton: {
-      backgroundColor: isDarkMode ? '#4b46f1' : '#4b46f1',
+      backgroundColor: '#4b46f1',
+      elevation: 2,
     },
     submitButtonText: {
       color: '#fff',
+      fontWeight: 'bold',
+      fontSize: 17,
+      letterSpacing: 0.5,
     },
     star: {
       marginHorizontal: 2,
