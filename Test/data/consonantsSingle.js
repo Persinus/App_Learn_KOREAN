@@ -1,30 +1,55 @@
 // app/alphabet/ConsonantsSingle.js
 import React, { useState } from 'react';
-import { ScrollView, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { ScrollView, Text, TouchableOpacity } from 'react-native';
+import { useSelector } from 'react-redux';
 import * as Speech from 'expo-speech';
 import { consonantsSingle } from '../data/alphabet';
 import AlphabetDetail from '../Lythuyet/AlphabetDetail';
 
+const translations = {
+  vn: {
+    title: "Phụ âm đơn",
+  },
+  en: {
+    title: "Single Consonants",
+  }
+};
+
 export default function ConsonantsSingle() {
-    const [isSpeaking, setIsSpeaking] = useState(false);
-  
-    const speakLetter = (transliteration) => {
-      if (isSpeaking) return;
-      setIsSpeaking(true);
-      
-      // Sử dụng Speech.speak với tùy chỉnh tiếng Hàn và các thông số cao độ, tốc độ
-      Speech.speak(`${transliteration}ㅏ`, {
-        language: 'ko', // Tiếng Hàn
-        pitch: 1.5,     // Cao độ giọng nói
-        rate: 0.99,     // Tốc độ đọc
-        onDone: () => setIsSpeaking(false),
-      });
-    };
-  
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+  const language = useSelector((state) => state.language.language);
+  const t = translations[language];
+
+  const dynamicStyles = {
+    container: {
+      flex: 1,
+      padding: 20,
+      backgroundColor: isDarkMode ? '#121212' : '#f4f7ff',
+    },
+    title: {
+      fontSize: 22,
+      fontWeight: 'bold',
+      textAlign: 'center',
+      marginBottom: 20,
+      color: isDarkMode ? '#FFD700' : '#4b46f1',
+    },
+  };
+
+  const speakLetter = (transliteration) => {
+    if (isSpeaking) return;
+    setIsSpeaking(true);
+    Speech.speak(`${transliteration}ㅏ`, {
+      language: 'ko',
+      pitch: 1.5,
+      rate: 0.99,
+      onDone: () => setIsSpeaking(false),
+    });
+  };
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>Phụ âm đơn</Text>
+    <ScrollView style={dynamicStyles.container}>
+      <Text style={dynamicStyles.title}>{t.title}</Text>
       {consonantsSingle.map((item, index) => (
         <TouchableOpacity key={index} onPress={() => speakLetter(item.transliteration)}>
           <AlphabetDetail
@@ -39,8 +64,3 @@ export default function ConsonantsSingle() {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20 },
-  title: { fontSize: 22, fontWeight: 'bold', textAlign: 'center', marginBottom: 20 },
-});
