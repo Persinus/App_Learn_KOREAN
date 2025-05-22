@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { 
-  View, Text, FlatList, StyleSheet, TouchableOpacity, Image, Animated 
+  View, Text, FlatList, StyleSheet, TouchableOpacity, Image, Animated, ActivityIndicator 
 } from "react-native";
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useSelector } from "react-redux";
@@ -44,22 +44,24 @@ const PaidCoursesScreen = ({ navigation }) => {
   const dynamicStyles = {
     container: {
       flex: 1,
-      backgroundColor: isDarkMode ? '#121212' : '#f8f9fa',
+      backgroundColor: isDarkMode ? '#121212' : '#f4f7ff',
     },
     courseItem: {
       backgroundColor: isDarkMode ? '#232323' : '#fff',
       borderRadius: 16,
       marginBottom: 16,
       elevation: 4,
-      shadowColor: '#000',
+      borderWidth: 1.5,
+      borderColor: isDarkMode ? '#FFD70033' : '#e3e7fd',
+      shadowColor: isDarkMode ? '#000' : '#4b46f1',
       shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
+      shadowOpacity: isDarkMode ? 0.1 : 0.08,
+      shadowRadius: 8,
     },
     courseName: {
       fontSize: 16,
       fontWeight: '600',
-      color: isDarkMode ? '#fff' : '#333',
+      color: isDarkMode ? '#fff' : '#4b46f1',
       marginBottom: 4,
     },
     courseTeacher: {
@@ -96,43 +98,65 @@ const PaidCoursesScreen = ({ navigation }) => {
 
   return (
     <View style={dynamicStyles.container}>
-      <FlatList
-        data={paidCourses}
-        keyExtractor={(item) => item.id}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.listContainer}
-        renderItem={({ item }) => (
-          <Animated.View style={[dynamicStyles.courseItem, { transform: [{ scale: scaleAnim }] }]}>
-            <TouchableOpacity 
-              onPressIn={handlePressIn} 
-              onPressOut={handlePressOut} 
-              activeOpacity={0.8}
-              style={styles.touchable}
-              onPress={() => navigation.navigate('PaidCoursesDetail', { course: item })}
-            >
-              <Image source={{ uri: item.cover }} style={styles.courseCover} />
-              <View style={styles.content}>
-                <Image source={{ uri: item.image }} style={styles.courseImage} />
-                <View style={styles.textContainer}>
-                  <Text style={dynamicStyles.courseName}>{item.name}</Text>
-                  <Text style={dynamicStyles.courseTeacher}>👨‍🏫 {item.teacher}</Text>
-                  <View style={styles.ratingContainer}>
-                    <Text style={dynamicStyles.courseRating}>⭐ {item.rating}/5</Text>
-                    <Text style={dynamicStyles.coursePrice}>💰 {item.price} VND</Text>
+      {loading ? (
+        <ActivityIndicator
+          style={{ marginTop: 40 }}
+          size="large"
+          color={isDarkMode ? "#FFD700" : "#4b46f1"}
+        />
+      ) : (
+        <FlatList
+          data={paidCourses}
+          keyExtractor={(item) => item.id}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.listContainer}
+          renderItem={({ item }) => (
+            <Animated.View style={[dynamicStyles.courseItem, { transform: [{ scale: scaleAnim }] }]}>
+              <TouchableOpacity 
+                onPressIn={handlePressIn} 
+                onPressOut={handlePressOut} 
+                activeOpacity={0.8}
+                style={styles.touchable}
+                onPress={() => navigation.navigate('PaidCoursesDetail', { course: item })}
+              >
+                <Image source={{ uri: item.cover }} style={styles.courseCover} />
+                <View style={styles.content}>
+                  <Image source={{ uri: item.image }} style={styles.courseImage} />
+                  <View style={styles.textContainer}>
+                    <Text style={dynamicStyles.courseName}>{item.name}</Text>
+                    <Text style={dynamicStyles.courseTeacher}>👨‍🏫 {item.teacher}</Text>
+                    <View style={styles.ratingContainer}>
+                      <Text style={dynamicStyles.courseRating}>⭐ {item.rating}/5</Text>
+                      <Text style={dynamicStyles.coursePrice}>💰 {item.price} VND</Text>
+                    </View>
                   </View>
                 </View>
-              </View>
-            </TouchableOpacity>
-          </Animated.View>
-        )}
-        ListEmptyComponent={
-          !loading && (
-            <Text style={{ textAlign: 'center', marginTop: 32, color: isDarkMode ? '#fff' : '#333' }}>
-              Không có khóa học nào.
-            </Text>
-          )
-        }
-      />
+              </TouchableOpacity>
+            </Animated.View>
+          )}
+          ListEmptyComponent={
+            !loading && (
+              <Text style={{ textAlign: 'center', marginTop: 32, color: isDarkMode ? '#fff' : '#333' }}>
+                Không có khóa học nào.
+              </Text>
+            )
+          }
+          refreshing={loading}
+          onRefresh={() => {
+            setLoading(true);
+            (async () => {
+              try {
+                const { data } = await axios.get(`${BASE_API_URL}paid-courses`);
+                setPaidCourses(data);
+              } catch (error) {
+                setPaidCourses([]);
+              } finally {
+                setLoading(false);
+              }
+            })();
+          }}
+        />
+      )}
     </View>
   );
 };
