@@ -8,6 +8,27 @@ const AllAchievementsScreen = ({ navigation }) => {
   const [achievements, setAchievements] = useState([]);
   const [loading, setLoading] = useState(true);
   const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+  const language = useSelector((state) => state.language.language);
+
+  // Đa ngôn ngữ
+  const translations = {
+    vn: {
+      allAchievements: '🎖️ Tất cả thành tựu',
+      loading: 'Đang tải...',
+      requirement: 'Yêu cầu',
+      level: 'Cấp',
+      gold: 'Vàng',
+      close: 'Đóng',
+    },
+    en: {
+      allAchievements: '🎖️ All Achievements',
+      loading: 'Loading...',
+      requirement: 'Requirement',
+      level: 'Level',
+      gold: 'Gold',
+      close: 'Close',
+    },
+  };
 
   useEffect(() => {
     const fetchAchievements = async () => {
@@ -53,11 +74,12 @@ const AllAchievementsScreen = ({ navigation }) => {
           {item.description}
         </Text>
         <View style={styles.rewardRow}>
-          <Text style={styles.rewardText}>💰 {item.reward?.gold || 0} Gold</Text>
-          <Text style={styles.rewardText}>🪙 {item.reward?.coin || 0} Coin</Text>
+          <Text style={styles.rewardText}>🪙 {item.reward?.gold || 0} {translations[language].gold}</Text>
         </View>
         {item.requirement?.level && (
-          <Text style={styles.requirementText}>Yêu cầu: Level {item.requirement.level}</Text>
+          <Text style={styles.requirementText}>
+            {translations[language].requirement}: {translations[language].level} {item.requirement.level}
+          </Text>
         )}
       </View>
     </View>
@@ -65,7 +87,13 @@ const AllAchievementsScreen = ({ navigation }) => {
 
   return (
     <View style={[styles.container, dynamicStyles.container]}>
-     
+      <View style={styles.header}>
+        <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
+          <Text style={{ fontSize: 18 }}>←</Text>
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>{translations[language].allAchievements}</Text>
+        <View style={{ width: 32 }} />
+      </View>
       {loading ? (
         <ActivityIndicator size="large" color="#FFD700" style={{ marginTop: 32 }} />
       ) : (
