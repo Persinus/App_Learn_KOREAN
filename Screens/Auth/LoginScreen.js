@@ -19,11 +19,10 @@ import axios from 'axios';
 import BASE_API_URL from '../../Util/Baseapi';
 import { saveUsername } from '../../Util/UserStorage';
 
-// Định nghĩa các chuỗi đa ngôn ngữ
 const translations = {
   vn: {
     title: "Đăng nhập",
-    emailLabel: "Email của bạn",
+    emailLabel: "Tên đăng nhập",
     passwordLabel: "Mật khẩu",
     forgotPassword: "Quên mật khẩu?",
     loginButton: "Đăng nhập",
@@ -33,11 +32,11 @@ const translations = {
     googleLoginSuccess: "Đăng nhập Google thành công!",
     loginSuccess: "Đăng nhập thành công!",
     loginError: "Có lỗi xảy ra khi đăng nhập. Vui lòng thử lại!",
-    enterEmailPassword: "Vui lòng nhập email và mật khẩu.",
+    enterEmailPassword: "Vui lòng nhập tên đăng nhập và mật khẩu.",
   },
   en: {
     title: "Log In",
-    emailLabel: "Your Email",
+    emailLabel: "Username",
     passwordLabel: "Password",
     forgotPassword: "Forgot password?",
     loginButton: "Log In",
@@ -47,7 +46,7 @@ const translations = {
     googleLoginSuccess: "Google login successful!",
     loginSuccess: "Login successful!",
     loginError: "An error occurred during login. Please try again!",
-    enterEmailPassword: "Please enter your email and password.",
+    enterEmailPassword: "Please enter your username and password.",
   },
 };
 
@@ -55,7 +54,7 @@ const translations = {
 WebBrowser.maybeCompleteAuthSession();
 
 const LoginScreen = ({ navigation }) => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
@@ -67,30 +66,61 @@ const LoginScreen = ({ navigation }) => {
 
   const dynamicStyles = {
     container: {
-      backgroundColor: isDarkMode ? "#0099FF" : "#fff",
+      flex: 1,
+      backgroundColor: isDarkMode ? "#121212" : "#f4f7ff",
     },
     title: {
-      color: isDarkMode ? "#fff" : "#333",
+      color: isDarkMode ? "#FFD700" : "#4b46f1",
+      fontWeight: "bold",
+      fontSize: 28,
+      marginBottom: 24,
+      textAlign: "center",
     },
     label: {
-      color: isDarkMode ? "#ccc" : "#666",
+      color: isDarkMode ? "#ccc" : "#4b46f1",
+      fontWeight: "bold",
+      fontSize: 15,
+      marginBottom: 6,
     },
     input: {
-      backgroundColor: isDarkMode ? "#333" : "#fff",
-      color: isDarkMode ? "#fff" : "#000",
-      borderColor: isDarkMode ? "#444" : "#ddd",
+      backgroundColor: isDarkMode ? "#232323" : "#fff",
+      color: isDarkMode ? "#fff" : "#222",
+      borderColor: isDarkMode ? "#555" : "#4b46f1",
+      borderWidth: 1.5,
+      borderRadius: 8,
+      padding: 12,
+      fontSize: 16,
+      marginBottom: 2,
+      shadowColor: isDarkMode ? "#000" : "#4b46f1",
+      shadowOpacity: isDarkMode ? 0.1 : 0.08,
+      shadowRadius: 4,
+      shadowOffset: { width: 0, height: 2 },
+      elevation: isDarkMode ? 0 : 2,
     },
     primaryButton: {
       backgroundColor: isDarkMode ? "#FFD700" : "#4b46f1",
+      marginTop: 16,
+      padding: 16,
+      borderRadius: 8,
+      alignItems: "center",
+      elevation: 2,
     },
     primaryButtonText: {
       color: isDarkMode ? "#000" : "#fff",
+      fontSize: 17,
+      fontWeight: "bold",
+      letterSpacing: 0.5,
     },
     link: {
       color: isDarkMode ? "#FFD700" : "#4b46f1",
+      fontWeight: "bold",
     },
     socialButton: {
-      borderColor: isDarkMode ? "#444" : "#ddd",
+      borderColor: isDarkMode ? "#444" : "#e3e7fd",
+      borderWidth: 1.5,
+      borderRadius: 8,
+      marginHorizontal: 8,
+      marginTop: 8,
     },
   };
 
@@ -112,16 +142,16 @@ const LoginScreen = ({ navigation }) => {
   }, [response]);
 
   const handleLogin = async () => {
-    if (!email || !password) {
+    if (!username || !password) {
       Alert.alert("Error", t.enterEmailPassword);
       return;
     }
 
     // Đăng nhập tài khoản test cứng
-    if (email === "testuser" && password === "123456") {
+    if (username === "testuser" && password === "123456") {
       await AsyncStorage.setItem("userToken", "test-token");
-      await saveUsername(email); // Lưu username vào AsyncStorage
-      Alert.alert(t.loginSuccess, `${t.emailLabel}: ${email}`);
+      await saveUsername(username); // Lưu username vào AsyncStorage
+      Alert.alert(t.loginSuccess, `${t.emailLabel}: ${username}`);
       navigation.reset({
         index: 0,
         routes: [{ name: "MainNavigator" }],
@@ -138,8 +168,8 @@ const LoginScreen = ({ navigation }) => {
         Accept: 'application/json'
       },
       data: {
-        username: email,
-        password: password
+        username,
+        password
       }
     };
 
@@ -148,9 +178,9 @@ const LoginScreen = ({ navigation }) => {
 
       // Đăng nhập thành công
       await AsyncStorage.setItem("userToken", data.token || "true");
-      await saveUsername(email); // Lưu username vào AsyncStorage
+      await saveUsername(username); // Lưu username vào AsyncStorage
 
-      Alert.alert(t.loginSuccess, `${t.emailLabel}: ${email}`);
+      Alert.alert(t.loginSuccess, `${t.emailLabel}: ${username}`);
       navigation.reset({
         index: 0,
         routes: [{ name: "MainNavigator" }],
@@ -178,9 +208,8 @@ const LoginScreen = ({ navigation }) => {
           style={[authStyles.input, dynamicStyles.input]}
           placeholder={t.emailLabel}
           placeholderTextColor={isDarkMode ? "#888" : "#aaa"}
-          keyboardType="email-address"
-          value={email}
-          onChangeText={setEmail}
+          value={username}
+          onChangeText={setUsername}
         />
 
         <Text style={[authStyles.label, dynamicStyles.label]}>{t.passwordLabel}</Text>
@@ -209,7 +238,7 @@ const LoginScreen = ({ navigation }) => {
         <TouchableOpacity
           style={{ alignSelf: 'flex-end', marginBottom: 10 }}
           onPress={() => {
-            setEmail('testuser');
+            setUsername('testuser');
             setPassword('123456');
           }}
         >
