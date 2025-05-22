@@ -10,120 +10,255 @@ const LessonDetailScreen = ({ route, navigation }) => {
   const [activeSection, setActiveSection] = useState(0);
   const [speaking, setSpeaking] = useState(false);
   const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+  const language = useSelector((state) => state.language.language);
+
+  // Đa ngôn ngữ
+  const translations = {
+    vn: {
+      introduction: 'Giới thiệu',
+      vocabulary: 'Từ vựng',
+      grammar: 'Ngữ pháp',
+      practice: 'Luyện tập',
+      conversation: 'Hội thoại',
+      quiz: 'Kiểm tra',
+      lessonGoal: 'Mục tiêu bài học:',
+      practiceConversation: 'Luyện tập hội thoại',
+      startQuiz: 'Bắt đầu kiểm tra',
+    },
+    en: {
+      introduction: 'Introduction',
+      vocabulary: 'Vocabulary',
+      grammar: 'Grammar',
+      practice: 'Practice',
+      conversation: 'Conversation',
+      quiz: 'Quiz',
+      lessonGoal: 'Lesson goals:',
+      practiceConversation: 'Practice conversation',
+      startQuiz: 'Start quiz',
+    }
+  };
+  const t = translations[language] || translations.vn;
 
   const dynamicStyles = {
     container: {
-      backgroundColor: isDarkMode ? '#121212' : '#f8f9fa',
+      flex: 1,
+      backgroundColor: isDarkMode ? '#121212' : '#f4f7ff',
     },
     tabContainer: {
       backgroundColor: isDarkMode ? '#232323' : '#fff',
-      borderBottomColor: isDarkMode ? '#333' : '#eee',
+      borderBottomColor: isDarkMode ? '#333' : '#e3e7fd',
+      borderBottomWidth: 1,
     },
     tabButton: {
       backgroundColor: isDarkMode ? '#232323' : '#fff',
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      flexDirection: 'row',
+      alignItems: 'center',
     },
     activeTabButton: {
+      borderBottomWidth: 2,
       borderBottomColor: isDarkMode ? '#FFD700' : '#4b46f1',
     },
     tabText: {
+      marginLeft: 8,
+      fontWeight: '500',
       color: isDarkMode ? '#ccc' : '#666',
     },
     activeTabText: {
+      fontWeight: 'bold',
       color: isDarkMode ? '#FFD700' : '#4b46f1',
     },
     content: {
-      backgroundColor: isDarkMode ? '#121212' : '#f8f9fa',
+      flex: 1,
+      padding: 16,
+      backgroundColor: isDarkMode ? '#121212' : '#f4f7ff',
     },
     sectionContainer: {
+      borderRadius: 16,
+      padding: 18,
       backgroundColor: isDarkMode ? '#232323' : '#fff',
-      shadowColor: isDarkMode ? '#000' : '#000',
+      elevation: 4,
+      borderWidth: 1.5,
+      borderColor: isDarkMode ? '#FFD70033' : '#e3e7fd',
+      shadowColor: isDarkMode ? '#000' : '#4b46f1',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: isDarkMode ? 0.1 : 0.08,
+      shadowRadius: 8,
+      marginBottom: 18,
     },
     sectionTitle: {
-      color: isDarkMode ? '#fff' : '#333',
+      fontSize: 18,
+      marginLeft: 8,
+      color: isDarkMode ? '#fff' : '#4b46f1',
+      fontWeight: 'bold',
     },
     sectionText: {
+      fontSize: 15,
+      lineHeight: 22,
       color: isDarkMode ? '#ccc' : '#444',
     },
     goalTitle: {
-      color: isDarkMode ? '#FFD700' : '#333',
+      fontSize: 16,
+      marginTop: 16,
+      marginBottom: 8,
+      color: isDarkMode ? '#FFD700' : '#4b46f1',
+      fontWeight: 'bold',
     },
     goalText: {
+      fontSize: 15,
       color: isDarkMode ? '#ccc' : '#444',
+      flex: 1,
     },
     vocabularyItem: {
-      borderBottomColor: isDarkMode ? '#333' : '#eee',
+      marginBottom: 20,
+      paddingBottom: 16,
+      borderBottomWidth: 1,
+      borderBottomColor: isDarkMode ? '#333' : '#e3e7fd',
     },
     koreanWord: {
-      color: isDarkMode ? '#fff' : '#333',
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: isDarkMode ? '#fff' : '#4b46f1',
     },
     pronunciation: {
+      fontSize: 14,
+      marginTop: 4,
       color: isDarkMode ? '#FFD700' : '#666',
     },
     meaning: {
+      fontSize: 16,
+      marginTop: 4,
+      fontWeight: '500',
       color: isDarkMode ? '#FFD700' : '#4b46f1',
     },
     exampleContainer: {
-      backgroundColor: isDarkMode ? '#202124' : '#f5f5f5',
+      marginTop: 8,
+      padding: 8,
+      borderRadius: 8,
+      backgroundColor: isDarkMode ? '#202124' : '#e6f0ff',
     },
     exampleKorean: {
+      fontSize: 15,
       color: isDarkMode ? '#fff' : '#333',
     },
     exampleTranslation: {
+      fontSize: 14,
+      fontStyle: 'italic',
+      marginTop: 4,
       color: isDarkMode ? '#ccc' : '#666',
     },
     grammarPattern: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      padding: 8,
+      borderRadius: 8,
       color: isDarkMode ? '#FFD700' : '#4b46f1',
       backgroundColor: isDarkMode ? '#232323' : '#e6f0ff',
     },
     grammarExplanation: {
+      fontSize: 15,
+      marginVertical: 8,
+      lineHeight: 22,
       color: isDarkMode ? '#ccc' : '#444',
     },
     grammarExample: {
+      padding: 8,
+      borderRadius: 8,
+      marginBottom: 8,
       backgroundColor: isDarkMode ? '#202124' : '#f9f9f9',
     },
     grammarKorean: {
+      fontSize: 15,
       color: isDarkMode ? '#fff' : '#333',
     },
     grammarTranslation: {
+      fontSize: 14,
+      fontStyle: 'italic',
+      marginTop: 4,
       color: isDarkMode ? '#ccc' : '#666',
     },
     practiceItem: {
-      backgroundColor: isDarkMode ? '#202124' : '#f5f5f5',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: 12,
+      borderRadius: 8,
+      marginBottom: 12,
+      backgroundColor: isDarkMode ? '#202124' : '#e6f0ff',
     },
     practiceName: {
-      color: isDarkMode ? '#fff' : '#333',
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: isDarkMode ? '#fff' : '#4b46f1',
     },
     practiceDescription: {
+      fontSize: 14,
+      marginTop: 2,
       color: isDarkMode ? '#ccc' : '#666',
     },
     dialogueTitle: {
-      color: isDarkMode ? '#fff' : '#333',
+      fontSize: 16,
+      fontWeight: 'bold',
+      marginBottom: 12,
+      color: isDarkMode ? '#fff' : '#4b46f1',
     },
     speakerName: {
+      fontSize: 15,
+      fontWeight: 'bold',
+      marginBottom: 4,
       color: isDarkMode ? '#FFD700' : '#4b46f1',
     },
     dialogueTextContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: 8,
+      borderRadius: 8,
       backgroundColor: isDarkMode ? '#232323' : '#e6f0ff',
     },
     dialogueText: {
+      fontSize: 15,
+      flex: 1,
       color: isDarkMode ? '#fff' : '#333',
     },
     dialogueTranslation: {
+      fontSize: 14,
+      fontStyle: 'italic',
+      marginTop: 4,
+      marginLeft: 8,
       color: isDarkMode ? '#ccc' : '#666',
     },
     conversationPracticeButton: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 12,
+      borderRadius: 8,
+      marginTop: 16,
       backgroundColor: isDarkMode ? '#FFD700' : '#4b46f1',
     },
     conversationPracticeText: {
+      fontSize: 16,
+      fontWeight: 'bold',
       color: isDarkMode ? '#000' : '#fff',
     },
     quizDescription: {
+      fontSize: 15,
+      lineHeight: 22,
+      marginBottom: 16,
       color: isDarkMode ? '#ccc' : '#444',
     },
     quizButton: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 14,
+      borderRadius: 8,
       backgroundColor: isDarkMode ? '#FFD700' : '#4CAF50',
     },
     quizButtonText: {
+      fontSize: 16,
+      fontWeight: 'bold',
       color: isDarkMode ? '#000' : '#fff',
     },
   };
@@ -215,12 +350,12 @@ const LessonDetailScreen = ({ route, navigation }) => {
 
   // Danh sách các section trong bài học
   const sections = [
-    { id: 'introduction', title: 'Giới thiệu', icon: 'info-circle' },
-    { id: 'vocabulary', title: 'Từ vựng', icon: 'book' },
-    { id: 'grammar', title: 'Ngữ pháp', icon: 'paragraph' },
-    { id: 'practice', title: 'Luyện tập', icon: 'pencil-alt' },
-    { id: 'conversation', title: 'Hội thoại', icon: 'comments' },
-    { id: 'quiz', title: 'Kiểm tra', icon: 'question-circle' },
+    { id: 'introduction', title: t.introduction, icon: 'info-circle' },
+    { id: 'vocabulary', title: t.vocabulary, icon: 'book' },
+    { id: 'grammar', title: t.grammar, icon: 'paragraph' },
+    { id: 'practice', title: t.practice, icon: 'pencil-alt' },
+    { id: 'conversation', title: t.conversation, icon: 'comments' },
+    { id: 'quiz', title: t.quiz, icon: 'question-circle' },
   ];
 
   // Hàm phát âm từ vựng
@@ -241,7 +376,7 @@ const LessonDetailScreen = ({ route, navigation }) => {
     <View style={[styles.sectionContainer, dynamicStyles.sectionContainer]}>
       <Text style={[styles.sectionText, dynamicStyles.sectionText]}>{lessonContent.introduction.content}</Text>
       
-      <Text style={[styles.goalTitle, dynamicStyles.goalTitle]}>Mục tiêu bài học:</Text>
+      <Text style={[styles.goalTitle, dynamicStyles.goalTitle]}>{t.lessonGoal}</Text>
       {lessonContent.introduction.goals.map((goal, index) => (
         <View key={index} style={styles.goalItem}>
           <FontAwesome5 name="check-circle" size={16} color="#4CAF50" style={styles.goalIcon} />
@@ -347,7 +482,7 @@ const LessonDetailScreen = ({ route, navigation }) => {
         style={[styles.conversationPracticeButton, dynamicStyles.conversationPracticeButton]}
         onPress={() => navigation.navigate('ConversationPracticeScreen', { lessonId: lesson.id })}
       >
-        <Text style={[styles.conversationPracticeText, dynamicStyles.conversationPracticeText]}>Luyện tập hội thoại</Text>
+        <Text style={[styles.conversationPracticeText, dynamicStyles.conversationPracticeText]}>{t.practiceConversation}</Text>
         <FontAwesome5 name="microphone" size={16} color="#fff" style={{marginLeft: 8}} />
       </TouchableOpacity>
     </View>
@@ -362,7 +497,7 @@ const LessonDetailScreen = ({ route, navigation }) => {
         style={[styles.quizButton, dynamicStyles.quizButton]}
         onPress={() => navigation.navigate(lessonContent.quiz.screen, { lessonId: lesson.id })}
       >
-        <Text style={[styles.quizButtonText, dynamicStyles.quizButtonText]}>Bắt đầu kiểm tra</Text>
+        <Text style={[styles.quizButtonText, dynamicStyles.quizButtonText]}>{t.startQuiz}</Text>
         <FontAwesome5 name="play" size={16} color="#fff" style={{marginLeft: 8}} />
       </TouchableOpacity>
     </View>

@@ -7,6 +7,7 @@ import DailyReward from '../Screens/Home/DailyReward';
 import LessonStack from '../Navigation/LessonStack';
 import all from '../Screens/Home/allAchievement';
 import AllDailyMission from '../Screens/Home/allDailyMission';
+import ComingSoon from '../Screens/ComingSoon';
 const Stack = createStackNavigator();
 
 const HomeStack = () => {
@@ -37,7 +38,7 @@ const HomeStack = () => {
       <Stack.Screen 
         name="DailyReward" 
         component={DailyReward} 
-        options={{ title: 'Phần thưởng hàng ngày' }} 
+        options={{ title: 'Phần thưởng hàng ngày' , headerShown: false }} 
       />
       <Stack.Screen 
         name="LessonStack" 
@@ -47,14 +48,21 @@ const HomeStack = () => {
       <Stack.Screen 
         name="all" 
         component={all} 
-        options={{ title: 'Tất cả thành tựu' }}
+        options={{ title: 'Tất cả thành tựu', headerShown: false }}
       />
       <Stack.Screen 
         name="AllDailyMission" 
         component={AllDailyMission} 
         options={{ title: 'Tất cả nhiệm vụ hôm nay' }}
+    
+    />
+      <Stack.Screen 
+        name="ComingSoon" 
+        component={ComingSoon} 
+        options={{ title: 'Tính năng đang phát triển' }} 
       />
     </Stack.Navigator>
+
 
   );
 };

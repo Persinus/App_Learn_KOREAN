@@ -1,59 +1,172 @@
 [
-  {
-      "suit": "♠️",
-      "value": "A",
-      "image": "https://example.com/spade_A.png",
-      "question": "Từ nào là danh từ chỉ một loại trái cây?",
-      "answers": [
-          { "id": 1, "text": "사과" },
-          { "id": 2, "text": "먹다" },
-          { "id": 3, "text": "빨간" },
-          { "id": 4, "text": "빨리" }
-      ],
-      "valueTrue": 1,
-      "score": 1
-  },
-  {
-      "suit": "♠️",
-      "value": "2",
-      "image": "https://example.com/spade_2.png",
-      "question": "Danh từ nào có nghĩa là 'cặp sách'?",
-      "answers": [
-          { "id": 1, "text": "빨리" },
-          { "id": 2, "text": "가방" },
-          { "id": 3, "text": "크다" },
-          { "id": 4, "text": "먹다" }
-      ],
-      "valueTrue": 2,
-      "score": 2
-  },
+  
   {
       "suit": "♠️",
       "value": "J",
-      "image": "https://i.pinimg.com/474x/f1/d3/57/f1d357b7500975ec0d1d9a5d139d396e.jpg",
-      "question": "다음 빈칸에 들어갈 단어를 고르세요: 저는 손목에 ___를 차고 시간을 확인해요. (Tôi đeo ___ trên tay để xem giờ.)",
+      "image": "https://i.pinimg.com/736x/33/58/ce/3358ce54bac011c40d43b5dadb811428.jpg",
+      "question": "Từ nào là danh từ chỉ một nơi chốn?",
       "answers": [
-          { "id": 1, "text": "책상" },
-          { "id": 2, "text": "시계" },
-          { "id": 3, "text": "크다" },
-          { "id": 4, "text": "가방" }
+          { "id": 1, "text": "학교" },
+          { "id": 2, "text": "달리다" },
+          { "id": 3, "text": "예쁜" },
+          { "id": 4, "text": "빨리" }
       ],
       "valueTrue": 2,
       "score": 11
   },
   {
+      "suit": "♣️",
+      "value": "J",
+      "image": "https://i.pinimg.com/736x/29/7f/9c/297f9c8419eaff91f6b7d3214d80be10.jpg",
+      "question": "Từ nào là động từ chỉ hoạt động?",
+      "answers": [
+          { "id": 1, "text": "사과" },
+          { "id": 2, "text": "먹다" },
+          { "id": 3, "text": "예쁜" },
+          { "id": 4, "text": "천천히" }
+      ],
+      "valueTrue": 3,
+      "score": 11
+  },
+  {
+      "suit": "♦️",
+      "value": "J",
+      "image": "https://i.pinimg.com/736x/88/aa/7a/88aa7acdab56cd4c6337ccfb322b2185.jpg",
+      "question": "Từ nào là tính từ?",
+      "answers": [
+          { "id": 1, "text": "가방" },
+          { "id": 2, "text": "먹다" },
+          { "id": 3, "text": "예쁜" },
+          { "id": 4, "text": "빨리" }
+      ],
+      "valueTrue": 4,
+      "score": 11
+  },
+  {
+      "suit": "♥️",
+      "value": "J",
+      "image": "https://i.pinimg.com/736x/af/63/b5/af63b56a66041d87388660259d01b367.jpg",
+      "question": "Từ nào là trạng từ?",
+      "answers": [
+          { "id": 1, "text": "가방" },
+          { "id": 2, "text": "예쁜" },
+          { "id": 3, "text": "빨리" },
+          { "id": 4, "text": "먹다" }
+      ],
+      "valueTrue": 1,
+      "score": 11
+  },
+  {
       "suit": "♠️",
       "value": "Q",
-      "image": "https://i.pinimg.com/474x/00/de/79/00de794204ce05c795c26e8a73b779a1.jpg",
-      "question": "다음 빈칸에 들어갈 단어를 고르세요: 우리는 ___를 타고 여행을 떠나요. (Chúng tôi đi du lịch bằng ___.)",
+      "image": "https://i.pinimg.com/736x/3c/88/79/3c88796153942b39e74a73659782236e.jpg",
+      "question": "Từ nào là danh từ chỉ một đồ vật?",
       "answers": [
-          { "id": 1, "text": "자동차" },
-          { "id": 2, "text": "책상" },
-          { "id": 3, "text": "가방" },
+          { "id": 1, "text": "책상" },
+          { "id": 2, "text": "달리다" },
+          { "id": 3, "text": "예쁜" },
+          { "id": 4, "text": "빨리" }
+      ],
+      "valueTrue": 3,
+      "gold": 6
+  },
+  {
+      "suit": "♣️",
+      "value": "Q",
+      "image": "https://i.pinimg.com/736x/d6/29/62/d6296277472d7e9594d0ebee0cb82cdc.jpg",
+      "question": "Từ nào là động từ chỉ cảm xúc?",
+      "answers": [
+          { "id": 1, "text": "사과" },
+          { "id": 2, "text": "기쁘다" },
+          { "id": 3, "text": "예쁜" },
+          { "id": 4, "text": "천천히" }
+      ],
+      "valueTrue": 4,
+      "gold": 6
+  },
+  {
+      "suit": "♦️",
+      "value": "Q",
+      "image": "https://i.pinimg.com/736x/b2/56/59/b2565912b78d61f9231a3c2504f50c27.jpg",
+      "question": "Từ nào là tính từ chỉ màu sắc?",
+      "answers": [
+          { "id": 1, "text": "가방" },
+          { "id": 2, "text": "빨간" },
+          { "id": 3, "text": "먹다" },
           { "id": 4, "text": "빨리" }
       ],
       "valueTrue": 1,
-      "score": 12
+      "gold": 6
+  },
+  {
+      "suit": "♥️",
+      "value": "Q",
+      "image": "https://i.pinimg.com/736x/63/af/a6/63afa62b47efa84b8b87d3e39ef42bc1.jpg",
+      "question": "Từ nào là trạng từ chỉ mức độ?",
+      "answers": [
+          { "id": 1, "text": "가방" },
+          { "id": 2, "text": "예쁜" },
+          { "id": 3, "text": "아주" },
+          { "id": 4, "text": "먹다" }
+      ],
+      "valueTrue": 2,
+      "gold": 6
+  },
+  {
+      "suit": "♠️",
+      "value": "K",
+      "image": "https://i.pinimg.com/736x/e8/d1/a4/e8d1a4cfe9d8dca64733c050e65e9dfd.jpg",
+      "question": "Từ nào là danh từ chỉ người?",
+      "answers": [
+          { "id": 1, "text": "학생" },
+          { "id": 2, "text": "달리다" },
+          { "id": 3, "text": "예쁜" },
+          { "id": 4, "text": "빨리" }
+      ],
+      "valueTrue": 4,
+      "diamond": 3
+  },
+  {
+      "suit": "♣️",
+      "value": "K",
+      "image": "https://i.pinimg.com/736x/f4/f2/c5/f4f2c5d809f9c43a0bfc31723af746a2.jpg",
+      "question": "Từ nào là động từ chỉ trạng thái?",
+      "answers": [
+          { "id": 1, "text": "사과" },
+          { "id": 2, "text": "있다" },
+          { "id": 3, "text": "예쁜" },
+          { "id": 4, "text": "천천히" }
+      ],
+      "valueTrue": 1,
+      "diamond": 3
+  },
+  {
+      "suit": "♦️",
+      "value": "K",
+      "image": "https://i.pinimg.com/736x/32/b8/bf/32b8bf4cb02b39efc28ddbad65b566b7.jpg",
+      "question": "Từ nào là tính từ chỉ kích thước?",
+      "answers": [
+          { "id": 1, "text": "가방" },
+          { "id": 2, "text": "먹다" },
+          { "id": 3, "text": "크다" },
+          { "id": 4, "text": "빨리" }
+      ],
+      "valueTrue": 2,
+      "diamond": 3
+  },
+  {
+      "suit": "♥️",
+      "value": "K",
+      "image": "https://i.pinimg.com/736x/3b/48/ae/3b48ae8207b07a1f9477d7e6135ca211.jpg",
+      "question": "Từ nào là trạng từ chỉ thời gian?",
+      "answers": [
+          { "id": 1, "text": "가방" },
+          { "id": 2, "text": "예쁜" },
+          { "id": 3, "text": "먹다" },
+          { "id": 4, "text": "지금" }
+      ],
+      "valueTrue": 3,
+      "diamond": 3
   }
 ]
 

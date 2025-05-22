@@ -14,66 +14,24 @@ const subscriptionOptions = [
     title: "Mini Games",
     description: "Học thông qua các trò chơi tương tác thú vị.",
     color: "#D6E6FF", 
-    icon: require('../../assets/avatar_1.jpg'),
+    icon: require('../../assets/avatar_2.jpg'),
     onPress: (navigation) => navigation.navigate('MiniGame1'),
   },
   {
     title: "Thư viện Video",
     description: "Học qua video K-pop và phim Hàn Quốc có phụ đề.",
     color: "#FFE6C7",
-    icon: require('../../assets/avatar_1.jpg'),
+    icon: require('../../assets/avatar_3.jpg'),
     onPress: (navigation) => navigation.navigate('VideoListScreen'),
   },
    {
     title: "Từ Điển",
     description: "Tra cứu từ vựng.",
     color: "#E6D6FF",
-    icon: require('../../assets/avatar_2.jpg'),
+    icon: require('../../assets/avatar_4.jpg'),
     onPress: (navigation) => navigation.navigate('Dictionary'),
   },
-  {
-    title: "Phần thưởng",
-    description: "Nhận thưởng đăng nhập và thành tích học tập.",
-    color: "#FFD6D6",
-    icon: require('../../assets/avatar_1.jpg'),
-    onPress: (navigation) => navigation.navigate('PracticeDailyReward'),
-  },
-  {
-    title: "Thách đấu",
-    description: "Thi đấu với bạn bè và tham gia giải đấu hàng tuần.",
-    color: "#D6FFE6",
-    icon: require('../../assets/avatar_1.jpg'),
-    onPress: (navigation) => navigation.navigate('PracticeCompetition'),
-  },
-  {
-    title: "Daily Rewards",
-    description: "Đăng nhập hàng ngày để nhận thưởng.",
-    color: "#FFE6C7",
-    icon: require('../../assets/avatar_1.jpg'),
-    onPress: (navigation) => navigation.navigate('PracticeDailyReward'),
-  },
  
-  {
-    title: "Milestones", 
-    description: "Đạt cột mốc để nhận phần thưởng đặc biệt.",
-    color: "#E6FFD6",
-    icon: require('../../assets/avatar_1.jpg'),
-    onPress: (navigation) => navigation.navigate('PracticeMilestones'),
-  },
-  {
-    title: "PvP Arena",
-    description: "Thách đấu với người chơi khác.",
-    color: "#FFD6D6", 
-    icon: require('../../assets/avatar_1.jpg'),
-    onPress: (navigation) => navigation.navigate('PracticeCompetition'),
-  },
-  {
-    title: "Tournament",
-    description: "Tham gia giải đấu tuần để nhận thưởng lớn.",
-    color: "#D6FFE6",
-    icon: require('../../assets/avatar_1.jpg'),
-    onPress: (navigation) => navigation.navigate('PracticeTournament'), 
-  }
 ];
 
 const PracticeScreen = ({ navigation }) => {
@@ -82,14 +40,14 @@ const PracticeScreen = ({ navigation }) => {
 
   const translations = {
     vn: {
-      header: "📚 Gói đăng ký",
+      header: "📚 Các Tiện ích học tập ",
       subscriptionOptions: [
         {
           title: "Bài học hàng tháng",
           description: "Truy cập tất cả các bài học và tài nguyên trong một tháng.",
         },
         {
-          title: "Mini Games",
+          title: "Trò chơi nhỏ ",
           description: "Học thông qua các trò chơi tương tác thú vị.",
         },
       
@@ -101,24 +59,14 @@ const PracticeScreen = ({ navigation }) => {
           title: "Từ Điển",
           description: "Tra cứu từ vựng ",
         },
-        {
-          title: "Phần thưởng",
-          description: "Nhận thưởng đăng nhập và thành tích học tập.",
-        },
-        {
-          title: "Thách đấu",
-          description: "Thi đấu với bạn bè và tham gia giải đấu hàng tuần.",
-        },
+       
+        
    
-        {
-          title: "Milestones",
-          description: "Đạt cột mốc để nhận phần thưởng đặc biệt.",
-        },
        
       ],
     },
     en: {
-      header: "📚 Subscription Plans",
+      header: "📚 Study Plans",
       subscriptionOptions: [
         {
           title: "Monthly Lessons",
@@ -136,31 +84,9 @@ const PracticeScreen = ({ navigation }) => {
           title: "Dictionary",
           description: "Look up vocabulary.",
         },
-        {
-          title: "Rewards",
-          description: "Earn login rewards and learning achievements.",
-        },
+      
      
-        {
-          title: "Challenges",
-          description: "Compete with friends and join weekly tournaments.",
-        },
-        {
-          title: "Daily Rewards",
-          description: "Log in daily to claim rewards.",
-        },
-        {
-          title: "Milestones",
-          description: "Reach milestones to earn special rewards.",
-        },
-        {
-          title: "PvP Arena",
-          description: "Challenge other players.",
-        },
-        {
-          title: "Tournament",
-          description: "Join weekly tournaments to win big rewards.",
-        },
+       
       ],
     },
   };
@@ -170,25 +96,36 @@ const PracticeScreen = ({ navigation }) => {
   const dynamicStyles = {
     container: {
       flex: 1,
-      backgroundColor: isDarkMode ? '#121212' : '#fff',
+      backgroundColor: isDarkMode ? '#121212' : '#f4f7ff',
     },
     header: {
       fontSize: 24,
       fontWeight: "bold",
-      color: isDarkMode ? '#fff' : '#6A0DAD',
+      color: isDarkMode ? '#fff' : '#4b46f1',
       textAlign: "center",
       marginBottom: 15,
+      letterSpacing: 0.2,
     },
     card: {
-      backgroundColor: isDarkMode ? '#232323' : '#f8f8f8',
-      shadowColor: isDarkMode ? '#000' : '#000',
+      backgroundColor: isDarkMode ? '#232323' : '#fff',
+      borderRadius: 14,
+      borderWidth: 1.5,
+      borderColor: isDarkMode ? '#FFD70033' : '#e3e7fd',
+      shadowColor: isDarkMode ? '#000' : '#4b46f1',
+      shadowOpacity: isDarkMode ? 0.12 : 0.08,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 2 },
+      elevation: 4,
     },
     title: {
-      color: isDarkMode ? '#fff' : '#333',
+      color: isDarkMode ? '#fff' : '#4b46f1',
       fontWeight: "bold",
+      fontSize: 18,
     },
     description: {
       color: isDarkMode ? '#ccc' : '#666',
+      fontSize: 14,
+      marginVertical: 5,
     },
   };
 

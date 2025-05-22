@@ -75,23 +75,34 @@ const LinkingPaid = ({ route, navigation }) => {
   const dynamicStyles = {
     container: {
       flex: 1,
-      backgroundColor: isDarkMode ? '#121212' : '#f8f9fa',
+      backgroundColor: isDarkMode ? '#121212' : '#f4f7ff',
     },
     courseInfo: {
-      backgroundColor: isDarkMode ? '#232323' : '#f8f4ff',
+      backgroundColor: isDarkMode ? '#232323' : '#fff',
+      borderRadius: 12,
+      borderWidth: 1.5,
+      borderColor: isDarkMode ? '#FFD70033' : '#e3e7fd',
+      marginBottom: 24,
+      elevation: 3,
+      shadowColor: isDarkMode ? '#000' : '#4b46f1',
+      shadowOpacity: isDarkMode ? 0.08 : 0.12,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 2 },
     },
     courseName: {
-      color: isDarkMode ? '#fff' : '#333',
+      color: isDarkMode ? '#fff' : '#4b46f1',
+      fontWeight: 'bold',
     },
     coursePrice: {
-      color: isDarkMode ? '#FFD700' : '#6a0dad',
+      color: isDarkMode ? '#FFD700' : '#4b46f1',
+      fontWeight: 'bold',
     },
     sectionTitle: {
-      color: isDarkMode ? '#fff' : '#333',
+      color: isDarkMode ? '#fff' : '#4b46f1',
+      fontWeight: 'bold',
     },
     methodItem: {
       backgroundColor: isDarkMode ? '#232323' : '#fff',
-      borderColor: isDarkMode ? '#4b46f1' : '#ddd',
     },
     selectedMethod: {
       backgroundColor: isDarkMode ? '#4b46f1' : '#f0e6ff',

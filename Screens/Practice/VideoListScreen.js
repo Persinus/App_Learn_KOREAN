@@ -9,15 +9,15 @@ const movieVideos = [
     id: '1', 
     title: { vn: 'Phim 1', en: 'Movie 1' }, 
     question: { vn: 'Bạn nghĩ gì về bộ phim này?', en: 'What do you think about this movie?' }, 
-    youtubeId: 'dTDzDxv-YDo', 
-    thumbnail: 'https://img.youtube.com/vi/dTDzDxv-YDo/0.jpg' 
+    youtubeId: '', 
+    thumbnail: '' 
   },
   { 
     id: '2', 
     title: { vn: 'Phim 2', en: 'Movie 2' }, 
     question: { vn: 'Khái niệm này có thể áp dụng vào phim như thế nào?', en: 'How can this concept be applied in movies?' }, 
-    youtubeId: 'HLk38k25EhU', 
-    thumbnail: 'https://img.youtube.com/vi/HLk38k25EhU/0.jpg' 
+    youtubeId: '', 
+    thumbnail: '' 
   },
 ];
 
@@ -46,16 +46,51 @@ const VideoList = ({ videos, navigation }) => {
 
   const dynamicStyles = {
     container: {
-      backgroundColor: isDarkMode ? '#121212' : '#fff',
+      flex: 1,
+      padding: 16,
+      backgroundColor: isDarkMode ? '#121212' : '#f4f7ff',
     },
     card: {
+      flexDirection: 'row',
+      borderRadius: 12,
+      marginBottom: 15,
+      overflow: 'hidden',
+      elevation: 4,
       backgroundColor: isDarkMode ? '#232323' : '#fff',
+      borderWidth: 1.5,
+      borderColor: isDarkMode ? '#FFD70033' : '#e3e7fd',
+      shadowColor: isDarkMode ? '#000' : '#4b46f1',
+      shadowOpacity: isDarkMode ? 0.08 : 0.12,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 2 },
+    },
+    thumbnail: {
+      width: 120,
+      height: 80,
+      backgroundColor: isDarkMode ? '#333' : '#e3e7fd',
+    },
+    cardContent: {
+      flex: 1,
+      padding: 10,
+      justifyContent: 'center',
     },
     title: {
-      color: isDarkMode ? '#fff' : '#333',
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginBottom: 5,
+      color: isDarkMode ? '#FFD700' : '#4b46f1',
     },
     question: {
+      fontSize: 14,
       color: isDarkMode ? '#ccc' : '#666',
+    },
+    tabBarStyle: {
+      backgroundColor: isDarkMode ? '#444' : '#4b46f1',
+    },
+    tabBarActiveTintColor: isDarkMode ? '#FFD700' : '#fff',
+    tabBarInactiveTintColor: isDarkMode ? '#ccc' : '#ccc',
+    tabBarIndicatorStyle: {
+      backgroundColor: isDarkMode ? '#FFD700' : '#fff',
     },
   };
 
@@ -73,8 +108,8 @@ const VideoList = ({ videos, navigation }) => {
             jsonOrigin: video.jsonOrigin, // 🔵 Truyền JSON phụ đề tiếng Hàn
           })}
         >
-          <Image source={{ uri: video.thumbnail }} style={styles.thumbnail} />
-          <View style={styles.cardContent}>
+          <Image source={{ uri: video.thumbnail }} style={dynamicStyles.thumbnail} />
+          <View style={dynamicStyles.cardContent}>
             <Text style={[styles.title, dynamicStyles.title]}>{video.title[language]}</Text>
             <Text style={[styles.question, dynamicStyles.question]}>{video.question[language]}</Text>
           </View>

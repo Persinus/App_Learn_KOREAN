@@ -9,20 +9,40 @@ const DailyMission = () => {
   const [missions, setMissions] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
-  const isDarkMode = useSelector((state) => state.darkMode.isDarkMode); // Lấy từ Redux
+  const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+  const language = useSelector((state) => state.language.language);
+
+  // Đa ngôn ngữ
+  const translations = {
+    vn: {
+      today: '🎯 Nhiệm vụ hôm nay',
+      all: 'Tất cả',
+      gold: 'vàng',
+    },
+    en: {
+      today: '🎯 Today\'s Missions',
+      all: 'All',
+      gold: 'gold',
+    }
+  };
+  const t = translations[language] || translations.vn;
 
   const dynamicStyles = {
     container: {
-      backgroundColor: isDarkMode ? '#232323' : '#fff',
+      backgroundColor: isDarkMode ? '#232323' : '#f4f33',
+      borderColor: isDarkMode ? '#FFD70033' : '#e3e7fd',
     },
     title: {
       color: isDarkMode ? '#FFD700' : '#4b46f1',
+      fontWeight: 'bold',
     },
     missionTitle: {
-      color: isDarkMode ? '#fff' : '#333',
+      color: isDarkMode ? '#fff' : '#4b46f1',
+      fontWeight: 'bold',
     },
     missionReward: {
       color: isDarkMode ? '#FFD700' : '#4b46f1',
+      fontWeight: 'bold',
     },
     progressText: {
       color: isDarkMode ? '#ccc' : '#666',
@@ -46,14 +66,12 @@ const DailyMission = () => {
     fetchMissions();
   }, []);
 
-  const totalReward = missions.slice(0, 3).reduce((sum, m) => sum + (m.reward?.gold || 0), 0);
-
   return (
     <View style={[styles.container, dynamicStyles.container]}>
       <View style={styles.header}>
-        <Text style={[styles.title, dynamicStyles.title]}>🎯 Nhiệm vụ hôm nay</Text>
+        <Text style={[styles.title, dynamicStyles.title]}>{t.today}</Text>
         <TouchableOpacity onPress={() => navigation.navigate('AllDailyMission')}>
-          <Text style={[styles.viewAll, dynamicStyles.rewards]}>Tất cả</Text>
+          <Text style={[styles.viewAll, dynamicStyles.rewards]}>{t.all}</Text>
         </TouchableOpacity>
       </View>
       {loading ? (
@@ -70,7 +88,7 @@ const DailyMission = () => {
                 <Text style={[styles.missionTitle, dynamicStyles.missionTitle]}>{mission.title}</Text>
                 <View style={styles.rewardBtn}>
                   <Text style={[styles.missionReward, dynamicStyles.missionReward]}>
-                    +{mission.reward?.gold || 0} vàng
+                    🪙 {mission.reward?.gold || 0} {t.gold}
                   </Text>
                 </View>
               </View>

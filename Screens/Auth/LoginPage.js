@@ -7,10 +7,7 @@ const Login = ({ navigation }) => {
   const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
 
   return (
-    <ImageBackground
-      source={require("../../assets/background.jpg")}
-      style={styles.background}
-    >
+    
       <View
         style={[
           styles.container,
@@ -58,7 +55,7 @@ const Login = ({ navigation }) => {
           </TouchableOpacity>
         </View>
       </View>
-    </ImageBackground>
+
   );
 };
 

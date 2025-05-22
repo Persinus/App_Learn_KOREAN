@@ -13,6 +13,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Audio } from 'expo-av';
 import { useSelector } from 'react-redux';
 import { sendPushNotification } from '../../utils/NotificationHelper';
+import { getUsername } from '../../Util/UserStorage';
+import axios from 'axios';
+import BASE_API_URL from '../../Util/Baseapi';
 
 const getDaysInMonth = (month, year) => {
   const days = new Date(year, month + 1, 0).getDate();
@@ -86,62 +89,134 @@ const DailyReward = ({ navigation }) => {
       return;
     }
 
-    const gold = goldRewards[day];
+    // Random gold mỗi lần nhận
+    const gold = Math.floor(Math.random() * 50) + 50; // 50-99 gold
     setGoldAmount(gold);
     setRewardClaimedDays([...rewardClaimedDays, day]);
     setShowReward(true);
     await playSound();
 
     try {
+      // Lưu ngày đã nhận
       await AsyncStorage.setItem('rewardClaimedDays', JSON.stringify([...rewardClaimedDays, day]));
+
+      // Lấy username từ AsyncStorage
+      const username = await getUsername();
+      if (username) {
+        // Gọi API cộng gold cho user
+        await axios.post(
+          `${BASE_API_URL}users/${username}/add-gold`,
+          { amount: gold },
+          { headers: { 'Content-Type': 'application/json', Accept: 'application/json' } }
+        );
+      }
+
       await sendPushNotification('Điểm danh thành công!', `Bạn đã nhận được ${gold} xu hôm nay! 🎉`);
     } catch (error) {
-      console.error('Error saving claimed days:', error);
+      console.error('Error saving claimed days or adding gold:', error);
     }
   };
 
   const dynamicStyles = {
     container: {
-      backgroundColor: isDarkMode ? '#121212' : '#fff',
+      flex: 1,
+      backgroundColor: isDarkMode ? '#121212' : '#f4f7ff',
+      paddingTop: 40,
     },
     title: {
-      color: isDarkMode ? '#fff' : '#333',
+      fontSize: 28,
+      fontWeight: 'bold',
+      textAlign: 'center',
+      marginBottom: 16,
+      color: isDarkMode ? '#fff' : '#4b46f1',
     },
     subtitle: {
+      fontSize: 18,
+      textAlign: 'center',
+      marginBottom: 16,
       color: isDarkMode ? '#ccc' : '#666',
+    },
+    calendar: {
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    day: {
+      width: 45,
+      height: 45,
+      justifyContent: 'center',
+      alignItems: 'center',
+      margin: 6,
+      borderRadius: 8,
+      borderWidth: 2,
+      borderColor: isDarkMode ? '#FFD70055' : '#e3e7fd',
+      backgroundColor: isDarkMode ? '#232323' : '#fff',
+      elevation: 2,
+      shadowColor: isDarkMode ? '#000' : '#4b46f1',
+      shadowOpacity: isDarkMode ? 0.08 : 0.12,
+      shadowRadius: 6,
+      shadowOffset: { width: 0, height: 2 },
     },
     today: {
       backgroundColor: isDarkMode ? '#388e3c' : '#4caf50',
+      borderColor: isDarkMode ? '#FFD700' : '#4b46f1',
     },
     claimed: {
       backgroundColor: isDarkMode ? '#FFD70055' : '#ffa726',
+      borderColor: isDarkMode ? '#FFD700' : '#ffa726',
     },
     missed: {
       backgroundColor: isDarkMode ? '#333' : '#e0e0e0',
+      borderColor: isDarkMode ? '#444' : '#e3e7fd',
     },
     unclaimed: {
-      backgroundColor: isDarkMode ? '#232323' : '#90caf9',
+      backgroundColor: isDarkMode ? '#232323' : '#e3e7fd',
+      borderColor: isDarkMode ? '#FFD70033' : '#e3e7fd',
+    },
+    dayText: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: isDarkMode ? '#fff' : '#4b46f1',
+    },
+    goldText: {
+      fontSize: 12,
+      color: isDarkMode ? '#FFD700' : '#FFA500',
     },
     modalView: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
       backgroundColor: isDarkMode ? 'rgba(0,0,0,0.85)' : 'rgba(255,255,255,0.95)',
     },
     modalText: {
-      color: isDarkMode ? '#FFD700' : '#000',
+      fontSize: 24,
+      textAlign: 'center',
+      marginBottom: 20,
+      color: isDarkMode ? '#FFD700' : '#4b46f1',
+      fontWeight: 'bold',
     },
     closeButton: {
+      padding: 12,
+      borderRadius: 8,
       backgroundColor: isDarkMode ? '#FFD700' : '#4b46f1',
+      marginTop: 12,
     },
     closeButtonText: {
+      fontSize: 16,
       color: isDarkMode ? '#000' : '#fff',
+      fontWeight: 'bold',
     },
     backButton: {
+      position: 'absolute',
+      top: 40,
+      left: 20,
+      padding: 10,
+      borderRadius: 8,
       backgroundColor: isDarkMode ? '#6666FF' : '#4b46f1',
     },
-    dayText: {
-      color: isDarkMode ? '#fff' : '#000',
-    },
-    goldText: {
-      color: isDarkMode ? '#FFD700' : '#FFA500',
+    backButtonText: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: '#fff',
     },
   };
 
@@ -177,7 +252,7 @@ const DailyReward = ({ navigation }) => {
       >
         <Text style={[styles.dayText, dynamicStyles.dayText]}>{day}</Text>
         <Text style={[styles.goldText, dynamicStyles.goldText]}>
-          💎 +{goldRewards[day]}
+           🪙+{goldRewards[day]}
         </Text>
       </TouchableOpacity>
     );
@@ -208,7 +283,7 @@ const DailyReward = ({ navigation }) => {
       >
         <View style={[styles.modalView, dynamicStyles.modalView]}>
           <Text style={[styles.modalText, dynamicStyles.modalText]}>
-            🎉 Bạn đã nhận được {goldAmount} xu! 🎉
+            🎉 Bạn đã nhận được {goldAmount} vàng ! 🎉
           </Text>
           <TouchableOpacity
             style={[styles.closeButton, dynamicStyles.closeButton]}

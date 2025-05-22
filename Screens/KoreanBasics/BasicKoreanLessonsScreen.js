@@ -7,37 +7,115 @@ import headerStyles from '../../Styles/HeaderStyles';
 const BasicKoreanLessonsScreen = ({ navigation }) => {
   const [currentUnit, setCurrentUnit] = useState(1);
   const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+  const language = useSelector((state) => state.language.language);
+
+  // Đa ngôn ngữ
+  const translations = {
+    vn: {
+      basicKorean: 'Tiếng Hàn Cơ Bản',
+      unit: 'Đơn vị',
+      lesson: 'Bài học',
+      completed: 'Đã hoàn thành',
+      progress: 'Tiến độ',
+      lessons: 'Bài',
+      unitTitles: [
+        'Giao tiếp cơ bản',
+        'Cuộc sống hàng ngày',
+        'Thói quen và sở thích',
+        'Giao thông và địa điểm'
+      ],
+      lessonTitles: [
+        'Chào hỏi và giới thiệu',
+        'Gia đình',
+        'Số đếm',
+        'Ngày tháng',
+        'Màu sắc',
+        'Nhà cửa',
+        'Thời tiết',
+        'Đồ ăn',
+        'Quần áo',
+        'Mua sắm'
+      ],
+      lessonDescs: [
+        'Học cách chào hỏi và tự giới thiệu bản thân.',
+        'Học từ vựng về các thành viên trong gia đình.',
+        'Học cách đếm số trong tiếng Hàn.',
+        'Học cách nói về ngày, tháng, năm trong tiếng Hàn.',
+        'Học từ vựng về màu sắc trong tiếng Hàn.',
+        'Học từ vựng về nhà cửa và các vật dụng.',
+        'Học từ vựng về thời tiết và khí hậu.',
+        'Học từ vựng về các món ăn và đồ uống.',
+        'Học từ vựng về quần áo và phụ kiện.',
+        'Học cách giao tiếp khi đi mua sắm.'
+      ]
+    },
+    en: {
+      basicKorean: 'Basic Korean',
+      unit: 'Unit',
+      lesson: 'Lesson',
+      completed: 'Completed',
+      progress: 'Progress',
+      lessons: 'Lessons',
+      unitTitles: [
+        'Basic Communication',
+        'Daily Life',
+        'Habits and Hobbies',
+        'Transportation and Places'
+      ],
+      lessonTitles: [
+        'Greetings and Introduction',
+        'Family',
+        'Numbers',
+        'Dates',
+        'Colors',
+        'House',
+        'Weather',
+        'Food',
+        'Clothes',
+        'Shopping'
+      ],
+      lessonDescs: [
+        'Learn how to greet and introduce yourself.',
+        'Learn vocabulary about family members.',
+        'Learn how to count in Korean.',
+        'Learn how to talk about dates in Korean.',
+        'Learn vocabulary about colors in Korean.',
+        'Learn vocabulary about house and furniture.',
+        'Learn vocabulary about weather and climate.',
+        'Learn vocabulary about food and drinks.',
+        'Learn vocabulary about clothes and accessories.',
+        'Learn how to communicate when shopping.'
+      ]
+    }
+  };
+  const t = translations[language] || translations.vn;
 
   // Chia bài học thành các đơn vị (unit) dựa trên cấp độ học tập
   const units = [
-    { id: 1, title: 'Đơn vị 1: Giao tiếp cơ bản', completed: 4, total: 5 },
-    { id: 2, title: 'Đơn vị 2: Cuộc sống hàng ngày', completed: 2, total: 5 },
-    { id: 3, title: 'Đơn vị 3: Thói quen và sở thích', completed: 0, total: 5 },
-    { id: 4, title: 'Đơn vị 4: Giao thông và địa điểm', completed: 0, total: 5 },
+    { id: 1, title: `${t.unit} 1: ${t.unitTitles[0]}`, completed: 4, total: 5 },
+    { id: 2, title: `${t.unit} 2: ${t.unitTitles[1]}`, completed: 2, total: 5 },
+    { id: 3, title: `${t.unit} 3: ${t.unitTitles[2]}`, completed: 0, total: 5 },
+    { id: 4, title: `${t.unit} 4: ${t.unitTitles[3]}`, completed: 0, total: 5 },
   ];
-  
+
   // Danh sách các bài học trong đơn vị hiện tại
   const lessonsByUnit = {
     1: [
-      { id: '1', title: 'Bài 1: Chào hỏi và giới thiệu', description: 'Học cách chào hỏi và tự giới thiệu bản thân.', image: require('../../assets/logo.jpg'), progress: 100 },
-      { id: '2', title: 'Bài 2: Gia đình', description: 'Học từ vựng về các thành viên trong gia đình.', image: require('../../assets/logo.jpg'), progress: 100 },
-      { id: '3', title: 'Bài 3: Số đếm', description: 'Học cách đếm số trong tiếng Hàn.', image: require('../../assets/logo.jpg'), progress: 100 },
-      { id: '4', title: 'Bài 4: Ngày tháng', description: 'Học cách nói về ngày, tháng, năm trong tiếng Hàn.', image: require('../../assets/logo.jpg'), progress: 100 },
-      { id: '5', title: 'Bài 5: Màu sắc', description: 'Học từ vựng về màu sắc trong tiếng Hàn.', image: require('../../assets/logo.jpg'), progress: 0 },
+      { id: '1', title: `${t.lesson} 1: ${t.lessonTitles[0]}`, description: t.lessonDescs[0], image: require('../../assets/logo.jpg'), progress: 100 },
+      { id: '2', title: `${t.lesson} 2: ${t.lessonTitles[1]}`, description: t.lessonDescs[1], image: require('../../assets/logo.jpg'), progress: 100 },
+      { id: '3', title: `${t.lesson} 3: ${t.lessonTitles[2]}`, description: t.lessonDescs[2], image: require('../../assets/logo.jpg'), progress: 100 },
+      { id: '4', title: `${t.lesson} 4: ${t.lessonTitles[3]}`, description: t.lessonDescs[3], image: require('../../assets/logo.jpg'), progress: 100 },
+      { id: '5', title: `${t.lesson} 5: ${t.lessonTitles[4]}`, description: t.lessonDescs[4], image: require('../../assets/logo.jpg'), progress: 0 },
     ],
     2: [
-      { id: '6', title: 'Bài 6: Nhà cửa', description: 'Học từ vựng về nhà cửa và các vật dụng.', image: require('../../assets/logo.jpg'), progress: 100 },
-      { id: '7', title: 'Bài 7: Thời tiết', description: 'Học từ vựng về thời tiết và khí hậu.', image: require('../../assets/logo.jpg'), progress: 100 },
-      { id: '8', title: 'Bài 8: Đồ ăn', description: 'Học từ vựng về các món ăn và đồ uống.', image: require('../../assets/logo.jpg'), progress: 0 },
-      { id: '9', title: 'Bài 9: Quần áo', description: 'Học từ vựng về quần áo và phụ kiện.', image: require('../../assets/logo.jpg'), progress: 0 },
-      { id: '10', title: 'Bài 10: Mua sắm', description: 'Học cách giao tiếp khi đi mua sắm.', image: require('../../assets/logo.jpg'), progress: 0 },
+      { id: '6', title: `${t.lesson} 6: ${t.lessonTitles[5]}`, description: t.lessonDescs[5], image: require('../../assets/logo.jpg'), progress: 100 },
+      { id: '7', title: `${t.lesson} 7: ${t.lessonTitles[6]}`, description: t.lessonDescs[6], image: require('../../assets/logo.jpg'), progress: 100 },
+      { id: '8', title: `${t.lesson} 8: ${t.lessonTitles[7]}`, description: t.lessonDescs[7], image: require('../../assets/logo.jpg'), progress: 0 },
+      { id: '9', title: `${t.lesson} 9: ${t.lessonTitles[8]}`, description: t.lessonDescs[8], image: require('../../assets/logo.jpg'), progress: 0 },
+      { id: '10', title: `${t.lesson} 10: ${t.lessonTitles[9]}`, description: t.lessonDescs[9], image: require('../../assets/logo.jpg'), progress: 0 },
     ],
-    3: [
-      // Bài học cho đơn vị 3
-    ],
-    4: [
-      // Bài học cho đơn vị 4
-    ]
+    3: [],
+    4: []
   };
 
   // Tính toán tiến độ đơn vị
@@ -111,15 +189,7 @@ const BasicKoreanLessonsScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={[styles.container, dynamicStyles.container]}>
-      <View style={headerStyles.container}>
-        <TouchableOpacity 
-          style={headerStyles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <FontAwesome5 name="arrow-left" size={16} color="#4b46f1" />
-        </TouchableOpacity>
-        <Text style={headerStyles.title}>Tiếng Hàn Cơ Bản</Text>
-      </View>
+      
 
       {/* Chọn đơn vị học tập */}
       <View style={styles.unitSelector}>
@@ -142,7 +212,7 @@ const BasicKoreanLessonsScreen = ({ navigation }) => {
                 dynamicStyles.unitTabText,
                 currentUnit === item.id && dynamicStyles.activeUnitTabText
               ]}>
-                {`Đơn vị ${item.id}`}
+                {`${t.unit} ${item.id}`}
               </Text>
               <View style={[styles.unitProgressBar, dynamicStyles.unitProgressBar]}>
                 <View 
@@ -164,7 +234,7 @@ const BasicKoreanLessonsScreen = ({ navigation }) => {
       {/* Tiêu đề đơn vị hiện tại */}
       <View style={styles.currentUnitHeader}>
         <Text style={[styles.currentUnitTitle, dynamicStyles.currentUnitTitle]}>
-          {units.find(u => u.id === currentUnit)?.title || 'Đơn vị học tập'}
+          {units.find(u => u.id === currentUnit)?.title || `${t.unit} học tập`}
         </Text>
         <View style={styles.overallProgress}>
           <View style={[styles.progressBarContainer, dynamicStyles.progressBarContainer]}>

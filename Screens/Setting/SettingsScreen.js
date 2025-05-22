@@ -4,13 +4,13 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Switch,
   ScrollView,
   Alert,
+  Switch,
   Image,
+  TextInput,
+  RefreshControl,
 } from 'react-native';
-import * as Location from 'expo-location';
-import * as Notifications from 'expo-notifications';
 import { FontAwesome5, Ionicons, Feather } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleDarkMode } from '../../Store/DarkMode';
@@ -24,63 +24,69 @@ const SettingsScreen = ({ navigation }) => {
   const language = useSelector((state) => state.language.language);
   const dispatch = useDispatch();
 
-  const [isLocationEnabled, setIsLocationEnabled] = useState(false);
-  const [isNotificationEnabled, setIsNotificationEnabled] = useState(false);
   const [profile, setProfile] = useState(null);
+  const [giftcode, setGiftcode] = useState('');
+  const [giftResult, setGiftResult] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
 
   const dynamicStyles = {
     container: {
       flex: 1,
-      backgroundColor: isDarkMode ? '#121212' : '#fff',
+      backgroundColor: isDarkMode ? '#121212' : '#f4f7ff',
     },
     groupTitle: {
-      color: isDarkMode ? '#fff' : '#333',
+      color: isDarkMode ? '#fff' : '#4b46f1',
     },
     settingText: {
-      color: isDarkMode ? '#ccc' : '#333',
+      color: isDarkMode ? '#ccc' : '#222',
     },
     settingsGroup: {
-      backgroundColor: isDarkMode ? '#1E1E1E' : '#f8f9fa',
-      borderColor: isDarkMode ? '#444' : '#eee',
+      backgroundColor: isDarkMode ? '#1E1E1E' : '#f4f7ff',
+      borderColor: isDarkMode ? '#444' : '#e3e7fd',
     },
     userInfoBox: {
       flexDirection: 'row',
       alignItems: 'center',
-      padding: 16,
-      borderRadius: 16,
-      backgroundColor: isDarkMode ? '#232323' : '#f3f3f3',
+      padding: 20,
+      borderRadius: 20,
+      backgroundColor: isDarkMode ? '#232323' : '#fff',
       margin: 16,
-      marginBottom: 8,
+      marginBottom: 12,
+      elevation: 2,
+      shadowColor: '#000',
+      shadowOpacity: 0.06,
+      shadowRadius: 6,
+      shadowOffset: { width: 0, height: 2 },
     },
     avatar: {
-      width: 64,
-      height: 64,
-      borderRadius: 32,
-      marginRight: 16,
+      width: 70,
+      height: 70,
+      borderRadius: 35,
+      marginRight: 18,
       borderWidth: 2,
-      borderColor: '#00ADB5',
-      backgroundColor: '#eee',
+      borderColor: '#4b46f1',
+      backgroundColor: '#e3e7fd',
     },
     userDetails: {
       flex: 1,
     },
     userName: {
-      color: isDarkMode ? '#fff' : '#222',
+      color: isDarkMode ? '#fff' : '#4b46f1',
       fontWeight: 'bold',
-      fontSize: 18,
-      marginBottom: 2,
+      fontSize: 20,
+      marginBottom: 4,
     },
     userEmail: {
       color: isDarkMode ? '#B3B3B3' : '#666',
-      fontSize: 14,
+      fontSize: 15,
     },
     editIcon: {
-      padding: 8,
+      padding: 10,
       borderRadius: 20,
-      backgroundColor: isDarkMode ? '#1E1E1E' : '#fff',
-      marginLeft: 8,
+      backgroundColor: isDarkMode ? '#1E1E1E' : '#f4f7ff',
+      marginLeft: 10,
       borderWidth: 1,
-      borderColor: isDarkMode ? '#333' : '#eee',
+      borderColor: isDarkMode ? '#333' : '#e3e7fd',
       alignItems: 'center',
       justifyContent: 'center',
     },
@@ -88,102 +94,109 @@ const SettingsScreen = ({ navigation }) => {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
-      margin: 16,
-      padding: 12,
-      borderRadius: 8,
+      margin: 20,
+      padding: 14,
+      borderRadius: 10,
       backgroundColor: '#CF6679',
+      elevation: 2,
     },
     logoutText: {
       color: '#fff',
       fontWeight: 'bold',
-      fontSize: 16,
-      marginLeft: 8,
+      fontSize: 17,
+      marginLeft: 10,
     },
+    giftInputRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginTop: 12,
+      marginBottom: 8,
+    },
+    giftInput: {
+      flex: 1,
+      borderWidth: 1,
+      borderColor: '#4b46f1',
+      borderRadius: 8,
+      padding: 10,
+      color: isDarkMode ? '#fff' : '#222',
+      backgroundColor: isDarkMode ? '#232323' : '#fff',
+      marginRight: 8,
+    },
+    giftBtn: {
+      backgroundColor: '#4b46f1',
+      paddingVertical: 10,
+      paddingHorizontal: 16,
+      borderRadius: 8,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    giftBtnText: {
+      color: '#fff',
+      fontWeight: 'bold',
+    },
+    giftResult: {
+      marginTop: 6,
+      color: '#00ADB5',
+      fontWeight: 'bold',
+    }
   };
 
   const translations = {
     vn: {
       appSettings: 'Cài đặt ứng dụng',
-      notifications: 'Thông báo',
-      location: 'Vị trí',
       darkMode: 'Giao diện tối',
       language: 'Ngôn ngữ',
       feedback: 'Phản hồi',
       appInfo: 'Thông tin ứng dụng',
-      enableLocation: 'Bật vị trí',
-      locationError: 'Không thể lấy vị trí. Vui lòng kiểm tra cài đặt quyền.',
-      locationSuccess: 'Vị trí của bạn đã được lấy thành công!',
-      enableNotifications: 'Bật thông báo',
-      notificationError: 'Không thể bật thông báo. Vui lòng kiểm tra cài đặt quyền.',
-      notificationSuccess: 'Thông báo đã được bật thành công!',
       logout: 'Đăng xuất',
       editInfo: 'Sửa thông tin',
+      giftcode: 'Nhận thưởng giftcode',
+      enterGiftcode: 'Nhập giftcode...',
+      giftSuccess: 'Nhận thưởng thành công!',
+      giftFail: 'Giftcode không hợp lệ hoặc đã nhận!',
     },
     en: {
       appSettings: 'App Settings',
-      notifications: 'Notifications',
-      location: 'Location',
       darkMode: 'Dark Mode',
       language: 'Language',
       feedback: 'Feedback',
       appInfo: 'App Info',
-      enableLocation: 'Enable Location',
-      locationError: 'Unable to fetch location. Please check permission settings.',
-      locationSuccess: 'Your location has been successfully retrieved!',
-      enableNotifications: 'Enable Notifications',
-      notificationError: 'Unable to enable notifications. Please check permission settings.',
-      notificationSuccess: 'Notifications have been successfully enabled!',
       logout: 'Logout',
       editInfo: 'Edit Info',
+      giftcode: 'Redeem Giftcode',
+      enterGiftcode: 'Enter giftcode...',
+      giftSuccess: 'Reward received successfully!',
+      giftFail: 'Invalid or already redeemed giftcode!',
     },
   };
 
   const t = translations[language];
 
-  // Lấy profile từ backend
+  const fetchProfile = async () => {
+    try {
+      const username = await getUsername();
+      if (!username) return;
+      const options = {
+        method: 'GET',
+        url: BASE_API_URL + 'users/profile',
+        params: { username },
+        headers: { Accept: 'application/json' }
+      };
+      const { data } = await axios.request(options);
+      setProfile(data.user);
+    } catch (error) {
+      setProfile(null);
+    }
+  };
+
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const username = await getUsername();
-        if (!username) return;
-        const options = {
-          method: 'GET',
-          url: BASE_API_URL + 'users/profile',
-          params: { username },
-          headers: { Accept: 'application/json' }
-        };
-        const { data } = await axios.request(options);
-        setProfile(data.user);
-      } catch (error) {
-        setProfile(null);
-      }
-    };
     fetchProfile();
   }, []);
 
-  const handleLocationToggle = async () => {
-    if (!isLocationEnabled) {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('Error', t.locationError);
-        return;
-      }
-      const location = await Location.getCurrentPositionAsync({});
-      Alert.alert('Success', `${t.locationSuccess}\nLatitude: ${location.coords.latitude}, Longitude: ${location.coords.longitude}`);
-    }
-    setIsLocationEnabled(!isLocationEnabled);
-  };
-
-  const handleNotificationToggle = async () => {
-    if (!isNotificationEnabled) {
-      const { status } = await Notifications.requestPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('Error', t.notificationError);
-        return;
-      }
-      Alert.alert('Success', t.notificationSuccess);
-    }
-    setIsNotificationEnabled(!isNotificationEnabled);
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchProfile();
+    setRefreshing(false);
   };
 
   const handleLogout = async () => {
@@ -191,9 +204,36 @@ const SettingsScreen = ({ navigation }) => {
     navigation.navigate('AuthStack', { screen: 'LoginScreen' });
   };
 
+  const handleGiftcode = async () => {
+    const code = giftcode.trim();
+    if (!code) return;
+    try {
+      const username = await getUsername();
+      const options = {
+        method: 'POST',
+        url: BASE_API_URL + 'giftcodes/redeem',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        data: { code, username }
+      };
+      const { data } = await axios.request(options);
+      setGiftResult(`${t.giftSuccess} +${data.gold || 0} vàng, +${data.diamond || 0} kim cương, +${data.score || 0} điểm`);
+    } catch (error) {
+      setGiftResult(t.giftFail);
+    }
+  };
+
   return (
-    <ScrollView style={dynamicStyles.container}>
-      {/* User Info */}
+    <ScrollView
+      style={dynamicStyles.container}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          colors={["#4b46f1", "#00ADB5"]}
+          tintColor={isDarkMode ? "#fff" : "#4b46f1"}
+        />
+      }
+    >
       <View style={dynamicStyles.userInfoBox}>
         <Image
           source={{ uri: profile?.avatar || 'https://i.pinimg.com/736x/a4/11/f9/a411f94f4622cfa7c1a87f4f79328064.jpg' }}
@@ -216,39 +256,20 @@ const SettingsScreen = ({ navigation }) => {
           {t.appSettings}
         </Text>
 
-        {/* Notifications */}
-        <View style={styles.settingItem}>
-          <View style={styles.settingLabel}>
-            <Ionicons name="notifications-outline" size={20} color="#4b46f1" />
-            <Text style={[styles.settingText, dynamicStyles.settingText]}>
-              {t.enableNotifications}
-            </Text>
-          </View>
-          <Switch
-            value={isNotificationEnabled}
-            onValueChange={handleNotificationToggle}
-            thumbColor={isNotificationEnabled ? '#fff' : '#000'}
-            trackColor={{ false: '#767577', true: '#81b0ff' }}
+        <View style={dynamicStyles.giftInputRow}>
+          <TextInput
+            style={dynamicStyles.giftInput}
+            placeholder={t.enterGiftcode}
+            placeholderTextColor={isDarkMode ? '#888' : '#aaa'}
+            value={giftcode}
+            onChangeText={setGiftcode}
           />
+          <TouchableOpacity style={dynamicStyles.giftBtn} onPress={handleGiftcode}>
+            <Text style={dynamicStyles.giftBtnText}>{t.giftcode}</Text>
+          </TouchableOpacity>
         </View>
+        {giftResult ? <Text style={dynamicStyles.giftResult}>{giftResult}</Text> : null}
 
-        {/* Location */}
-        <View style={styles.settingItem}>
-          <View style={styles.settingLabel}>
-            <Ionicons name="location-outline" size={20} color="#4b46f1" />
-            <Text style={[styles.settingText, dynamicStyles.settingText]}>
-              {t.enableLocation}
-            </Text>
-          </View>
-          <Switch
-            value={isLocationEnabled}
-            onValueChange={handleLocationToggle}
-            thumbColor={isLocationEnabled ? '#fff' : '#000'}
-            trackColor={{ false: '#767577', true: '#81b0ff' }}
-          />
-        </View>
-
-        {/* Dark Mode */}
         <View style={styles.settingItem}>
           <View style={styles.settingLabel}>
             <Ionicons name="moon-outline" size={20} color="#4b46f1" />
@@ -264,7 +285,6 @@ const SettingsScreen = ({ navigation }) => {
           />
         </View>
 
-        {/* Language */}
         <View style={styles.settingItem}>
           <View style={styles.settingLabel}>
             <Ionicons name="language-outline" size={20} color="#4b46f1" />
@@ -280,7 +300,6 @@ const SettingsScreen = ({ navigation }) => {
           />
         </View>
 
-        {/* Feedback */}
         <TouchableOpacity
           style={styles.settingItem}
           onPress={() => navigation.navigate('UserFeedback')}
@@ -294,7 +313,6 @@ const SettingsScreen = ({ navigation }) => {
           <FontAwesome5 name="chevron-right" size={16} color="#666" />
         </TouchableOpacity>
 
-        {/* App Info */}
         <TouchableOpacity
           style={styles.settingItem}
           onPress={() => navigation.navigate('InfoApp')}
@@ -307,9 +325,21 @@ const SettingsScreen = ({ navigation }) => {
           </View>
           <FontAwesome5 name="chevron-right" size={16} color="#666" />
         </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.settingItem}
+          onPress={() => navigation.navigate('ChangePasswordScreen')}
+        >
+          <View style={styles.settingLabel}>
+            <Ionicons name="key-outline" size={20} color="#4b46f1" />
+            <Text style={[styles.settingText, dynamicStyles.settingText]}>
+              {language === 'en' ? 'Change Password' : 'Đổi mật khẩu'}
+            </Text>
+          </View>
+          <FontAwesome5 name="chevron-right" size={16} color="#666" />
+        </TouchableOpacity>
       </View>
 
-      {/* Logout Button */}
       <TouchableOpacity style={dynamicStyles.logoutBtn} onPress={handleLogout}>
         <FontAwesome5 name="sign-out-alt" size={18} color="#fff" />
         <Text style={dynamicStyles.logoutText}>{t.logout}</Text>
@@ -321,35 +351,42 @@ const SettingsScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   settingsGroup: {
     margin: 16,
-    padding: 16,
-    borderRadius: 12,
+    padding: 20,
+    borderRadius: 16,
     borderWidth: 1,
-    elevation: 2,
+    borderColor: '#e0e0e0',
+    backgroundColor: '#f4f7ff',
+    elevation: 3,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.08,
     shadowRadius: 8,
   },
   groupTitle: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: 'bold',
-    marginBottom: 16,
+    marginBottom: 20,
+    color: '#4b46f1',
+    letterSpacing: 0.5,
+    textAlign: 'center',
   },
   settingItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: '#e3e7fd',
   },
   settingLabel: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   settingText: {
-    fontSize: 16,
-    marginLeft: 12,
+    fontSize: 18,
+    marginLeft: 14,
+    fontWeight: '500',
+    color: '#222',
   },
 });
 

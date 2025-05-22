@@ -5,16 +5,36 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
-  Alert,
   StyleSheet,
   Modal,
 } from "react-native";
+import { useSelector } from "react-redux";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import cardData from "../../../assets/Card.json";
+import { getUsername } from "../../../Util/UserStorage";
+import BASE_API_URL from "../../../Util/Baseapi";
+import axios from "axios";
+
+const translations = {
+  vn: {
+    rules: "📜 Luật chơi",
+    score: "Điểm",
+    gold: "Vàng",
+    diamond: "Kim cương",
+  },
+  en: {
+    rules: "📜 Rules",
+    score: "Score",
+    gold: "Gold",
+    diamond: "Diamond",
+  },
+};
 
 // Filter cards to remove Joker
 const filteredCardData = cardData.filter((card) => card.value !== "Joker");
 
-const RulesModal = ({ visible, onClose }) => (
+// Luật chơi modal, truyền thêm userProfile
+const RulesModal = ({ visible, onClose, userProfile }) => (
   <Modal
     animationType="slide"
     transparent={true}
@@ -27,6 +47,14 @@ const RulesModal = ({ visible, onClose }) => (
         <Text style={styles.modalText}>- Lá bài từ 1-10: Tính điểm tương ứng (1-10 điểm).</Text>
         <Text style={styles.modalText}>- Lá bài J, Q, K: Tương ứng 11, 12, 13 điểm.</Text>
         <Text style={styles.modalText}>- Bích: Danh từ; Tép: Động từ; Rô: Tính từ; Cơ: Trạng từ.</Text>
+        <View style={{ marginVertical: 12, alignItems: "center" }}>
+          <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+            Tài nguyên của bạn:
+          </Text>
+          <Text style={{ fontSize: 16, marginTop: 4 }}>
+            ⭐ {userProfile?.score ?? "?"}   🪙 {userProfile?.gold ?? "?"}   💎 {userProfile?.diamond ?? "?"}
+          </Text>
+        </View>
         <TouchableOpacity style={styles.closeButton} onPress={onClose}>
           <Text style={styles.closeButtonText}>Đóng</Text>
         </TouchableOpacity>
@@ -35,13 +63,17 @@ const RulesModal = ({ visible, onClose }) => (
   </Modal>
 );
 
-const CardRow = ({ cards, onPress }) => (
+const CardRow = ({ cards, onPress, disabledCards }) => (
   <View style={styles.row}>
     {cards.map((card, index) => (
       <TouchableOpacity
         key={index}
-        style={styles.card}
-        onPress={() => onPress(card)}
+        style={[
+          styles.card,
+          disabledCards.includes(card.suit + card.value) && { opacity: 0.4 }
+        ]}
+        onPress={() => !disabledCards.includes(card.suit + card.value) && onPress(card)}
+        disabled={disabledCards.includes(card.suit + card.value)}
       >
         <Image
           source={{ uri: card.image }}
@@ -59,16 +91,80 @@ const CardRow = ({ cards, onPress }) => (
 const MiniGame1 = () => {
   const [cards, setCards] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [questionModal, setQuestionModal] = useState(false);
+  const [currentCard, setCurrentCard] = useState(null);
+  const [answeredCards, setAnsweredCards] = useState([]); // lưu các lá đã trả lời
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [explanation, setExplanation] = useState("");
+  const [isCorrect, setIsCorrect] = useState(null);
+  const [userProfile, setUserProfile] = useState(null);
+  const [username, setUsername] = useState("");
+  const isDarkMode = useSelector(state => state.darkMode.isDarkMode);
+  const language = useSelector(state => state.language.language);
+  const t = translations[language];
 
+  // Lấy profile user
+  const fetchProfile = async () => {
+    try {
+      const username = await getUsername();
+      const options = {
+        method: "GET",
+        url: `${BASE_API_URL}users/profile`,
+        params: { username },
+        headers: { Accept: "application/json" }
+      };
+      const { data } = await axios.request(options);
+      setUserProfile(data.user);
+    } catch (error) {
+      setUserProfile(null);
+    }
+  };
+
+  // Lấy username và trạng thái đã chơi
   useEffect(() => {
+    const init = async () => {
+      const user = await getUsername();
+      setUsername(user);
+      // Lấy trạng thái đã chơi từ AsyncStorage
+      const played = await AsyncStorage.getItem(`minigame1_played_${user}`);
+      if (played) setAnsweredCards(JSON.parse(played));
+      else setAnsweredCards([]); // Nếu chưa có thì là mảng rỗng
+    };
     setCards(filteredCardData);
+    fetchProfile();
+    init();
   }, []);
 
+  // Nếu muốn cập nhật trạng thái khi username đổi (ví dụ khi logout/login user khác)
+  useEffect(() => {
+    if (!username) return;
+    const loadPlayed = async () => {
+      const played = await AsyncStorage.getItem(`minigame1_played_${username}`);
+      if (played) setAnsweredCards(JSON.parse(played));
+      else setAnsweredCards([]);
+    };
+    loadPlayed();
+  }, [username]);
+
+  // Khi trả lời xong 1 lá, lưu trạng thái vào AsyncStorage
+  const handleAnswered = async (cardKey) => {
+    const newAnswered = [...answeredCards, cardKey];
+    setAnsweredCards(newAnswered);
+    if (username) {
+      await AsyncStorage.setItem(
+        `minigame1_played_${username}`,
+        JSON.stringify(newAnswered)
+      );
+    }
+  };
+
   const handleCardPress = (card) => {
-    Alert.alert(
-      `Câu hỏi ${card.type}`,
-      `Lá bài: ${card.value} ${card.suit}\nChủ đề: ${card.type}\nĐộ khó: ${card.difficulty}`
-    );
+    if (answeredCards.includes(card.suit + card.value)) return;
+    setCurrentCard(card);
+    setSelectedAnswer(null);
+    setExplanation("");
+    setIsCorrect(null);
+    setQuestionModal(true);
   };
 
   // Group cards into rows of 4
@@ -77,25 +173,146 @@ const MiniGame1 = () => {
     groupedCards.push(cards.slice(i, i + 4));
   }
 
+  // Gọi API thưởng
+  const rewardUser = async (card) => {
+    const username = await getUsername();
+    let url = "";
+    let amount = card.score || card.gold || card.diamond || 1;
+    if (card.value === "J") url = `${BASE_API_URL}users/${username}/add-score`;
+    else if (card.value === "Q") url = `${BASE_API_URL}users/${username}/add-gold`;
+    else if (card.value === "K") url = `${BASE_API_URL}users/${username}/add-diamond`;
+    else return;
+    try {
+      await axios.post(url, { amount });
+      await fetchProfile(); // Refresh tài nguyên sau khi cộng
+    } catch (e) {}
+  };
+
+  // Giải thích đáp án
+  const getExplanation = (card, isCorrect) => {
+    if (isCorrect) return "Chính xác! Bạn đã chọn đáp án đúng.";
+    const correct = card.answers.find(a => a.id === card.valueTrue);
+    return `Sai rồi! Đáp án đúng là: "${correct.text}".`;
+  };
+
+  // Modal câu hỏi
+  const renderQuestionModal = () => {
+    if (!currentCard) return null;
+    return (
+      <Modal
+        visible={questionModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setQuestionModal(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={[
+            styles.modalContent,
+            { backgroundColor: isDarkMode ? "#232323" : "#FFF" }
+          ]}>
+            <Text style={[
+              styles.modalTitle,
+              { color: isDarkMode ? "#FFD700" : "#6A0DAD" }
+            ]}>
+              {currentCard.question}
+            </Text>
+            {currentCard.answers.map((ans) => (
+              <TouchableOpacity
+                key={ans.id}
+                style={[
+                  styles.answerButton,
+                  selectedAnswer === ans.id && (isCorrect
+                    ? styles.answerCorrect
+                    : styles.answerWrong),
+                  selectedAnswer && currentCard.valueTrue === ans.id && styles.answerHighlight
+                ]}
+                disabled={!!selectedAnswer}
+                onPress={async () => {
+                  if (selectedAnswer) return;
+                  const correct = ans.id === currentCard.valueTrue;
+                  setSelectedAnswer(ans.id);
+                  setIsCorrect(correct);
+                  setExplanation(getExplanation(currentCard, correct));
+                  await handleAnswered(currentCard.suit + currentCard.value);
+                  if (correct) await rewardUser(currentCard);
+                }}
+              >
+                <Text style={styles.answerText}>{ans.text}</Text>
+              </TouchableOpacity>
+            ))}
+            {selectedAnswer && (
+              <Text style={styles.explanationText}>{explanation}</Text>
+            )}
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setQuestionModal(false)}
+              disabled={!selectedAnswer}
+            >
+              <Text style={styles.closeButtonText}>
+                {selectedAnswer ? "Đóng" : "Chọn đáp án để tiếp tục"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    );
+  };
+
   return (
-    <View style={styles.screen}>
-      {/* Fixed Header */}
-      <View style={styles.header}>
+    <View style={[
+      styles.screen,
+      { backgroundColor: isDarkMode ? "#121212" : "#F5F5F5" }
+    ]}>
+      {/* Header: Rules + Resource in one row */}
+      <View style={[
+        styles.headerRow,
+        { backgroundColor: isDarkMode ? "#232323" : "#6A0DAD" }
+      ]}>
         <TouchableOpacity
-          style={styles.rulesButton}
-          onPress={() => setModalVisible(true)}
+          style={[
+            styles.rulesButton,
+            { backgroundColor: isDarkMode ? "#444" : "#FFF" }
+          ]}
+          onPress={() => {
+            fetchProfile();
+            setModalVisible(true);
+          }}
         >
-          <Text style={styles.rulesButtonText}>📜 Luật chơi</Text>
+          <Text style={[
+            styles.rulesButtonText,
+            { color: isDarkMode ? "#FFD700" : "#6A0DAD" }
+          ]}>
+            {t.rules}
+          </Text>
         </TouchableOpacity>
+        <View style={[
+          styles.resourceBox,
+          { backgroundColor: isDarkMode ? "#444" : "#FFF" }
+        ]}>
+          <Text style={[
+            styles.resourceText,
+            { color: isDarkMode ? "#FFD700" : "#6A0DAD" }
+          ]}>
+            ⭐ {userProfile?.score ?? "?"}   🪙 {userProfile?.gold ?? "?"}   💎 {userProfile?.diamond ?? "?"}
+          </Text>
+        </View>
       </View>
 
       {/* Rules Modal */}
-      <RulesModal visible={modalVisible} onClose={() => setModalVisible(false)} />
+      <RulesModal visible={modalVisible} onClose={() => setModalVisible(false)} userProfile={userProfile} />
+
+      {/* Question Modal */}
+      {renderQuestionModal()}
 
       {/* Scrollable Cards */}
       <ScrollView contentContainerStyle={styles.container}>
         {groupedCards.map((row, rowIndex) => (
-          <CardRow key={rowIndex} cards={row} onPress={handleCardPress} />
+          <CardRow
+            key={rowIndex}
+            cards={row}
+            onPress={handleCardPress}
+            disabledCards={answeredCards}
+          />
         ))}
       </ScrollView>
     </View>
@@ -109,12 +326,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F5F5F5",
   },
-  header: {
-    backgroundColor: "#6A0DAD",
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingVertical: 10,
     paddingHorizontal: 15,
-    justifyContent: "flex-end",
-    alignItems: "flex-end",
     elevation: 5,
   },
   container: {
@@ -164,20 +381,43 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalTitle: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: "bold",
     color: "#6A0DAD",
     marginBottom: 15,
-  },
-  modalText: {
-    fontSize: 16,
-    color: "#555",
-    marginBottom: 10,
     textAlign: "center",
-    lineHeight: 22,
+  },
+  answerButton: {
+    width: "100%",
+    padding: 12,
+    borderRadius: 8,
+    backgroundColor: "#eee",
+    marginVertical: 6,
+    alignItems: "center",
+  },
+  answerText: {
+    fontSize: 16,
+    color: "#333",
+  },
+  answerCorrect: {
+    backgroundColor: "#b6e388",
+  },
+  answerWrong: {
+    backgroundColor: "#ffb3b3",
+  },
+  answerHighlight: {
+    borderWidth: 2,
+    borderColor: "#FFD700",
+  },
+  explanationText: {
+    marginTop: 12,
+    fontSize: 15,
+    color: "#6A0DAD",
+    textAlign: "center",
+    fontWeight: "bold",
   },
   closeButton: {
-    marginTop: 15,
+    marginTop: 18,
     paddingHorizontal: 20,
     paddingVertical: 10,
     backgroundColor: "#6A0DAD",
@@ -187,12 +427,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#FFF",
     fontWeight: "bold",
+    textAlign: "center",
   },
   rulesButton: {
-    backgroundColor: "#FFF",
     paddingHorizontal: 15,
     paddingVertical: 8,
     borderRadius: 8,
+    marginRight: 8,
     shadowColor: "#000",
     shadowOpacity: 0.2,
     shadowRadius: 3,
@@ -200,7 +441,22 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   rulesButtonText: {
-    color: "#6A0DAD",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  resourceBox: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 5,
+  },
+  resourceText: {
     fontWeight: "bold",
     fontSize: 16,
   },

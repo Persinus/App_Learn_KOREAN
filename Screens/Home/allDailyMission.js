@@ -4,10 +4,30 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 import BASE_API_URL from '../../Util/Baseapi';
 
-const AllDailyMission = ({ navigation, route }) => {
+const AllDailyMission = ({ navigation }) => {
   const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+  const language = useSelector((state) => state.language.language);
   const [missions, setMissions] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Đa ngôn ngữ
+  const translations = {
+    vn: {
+      allMissions: '🎯 Tất cả nhiệm vụ',
+      gold: 'vàng',
+      close: 'Đóng',
+      expired: 'Hết hạn',
+      unknown: 'Không rõ',
+    },
+    en: {
+      allMissions: '🎯 All Missions',
+      gold: 'gold',
+      close: 'Close',
+      expired: 'Expires',
+      unknown: 'Unknown',
+    }
+  };
+  const t = translations[language] || translations.vn;
 
   const dynamicStyles = {
     container: {
@@ -47,7 +67,7 @@ const AllDailyMission = ({ navigation, route }) => {
         <Text style={[styles.missionTitle, dynamicStyles.missionTitle]}>{item.title}</Text>
         <View style={styles.rewardBtn}>
           <Text style={[styles.missionReward, dynamicStyles.missionReward]}>
-            +{item.reward?.gold || 0} vàng
+            🪙 {item.reward?.gold || 0} {t.gold}
           </Text>
         </View>
       </View>
@@ -55,18 +75,14 @@ const AllDailyMission = ({ navigation, route }) => {
         {item.description}
       </Text>
       <Text style={{ fontSize: 11, color: '#aaa', marginTop: 2 }}>
-        Hết hạn: {item.expiryDate ? new Date(item.expiryDate).toLocaleDateString() : 'Không rõ'}
+        {t.expired}: {item.expiryDate ? new Date(item.expiryDate).toLocaleDateString() : t.unknown}
       </Text>
     </View>
   );
 
   return (
     <View style={[styles.container, dynamicStyles.container]}>
-      <View style={styles.header}>
-    
-       
-        <View style={{ width: 32 }} />
-      </View>
+      
       {loading ? (
         <ActivityIndicator size="large" color="#FFD700" style={{ marginTop: 32 }} />
       ) : (

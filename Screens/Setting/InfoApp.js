@@ -47,62 +47,56 @@ const InfoApp = ({ navigation }) => {
   const dynamicStyles = {
     container: {
       flex: 1,
-      backgroundColor: isDarkMode ? '#121212' : '#fff',
+      backgroundColor: isDarkMode ? '#121212' : '#f4f7ff',
     },
     header: {
       backgroundColor: isDarkMode ? '#232323' : '#fff',
-      borderBottomColor: isDarkMode ? '#444' : '#eee',
+      borderBottomColor: isDarkMode ? '#444' : '#e3e7fd',
     },
     headerTitle: {
-      color: isDarkMode ? '#fff' : '#333',
+      color: isDarkMode ? '#fff' : '#4b46f1',
     },
     appInfoCard: {
-      backgroundColor: isDarkMode ? '#1E1E1E' : '#f8f9fa',
-      shadowColor: isDarkMode ? '#000' : '#000',
+      backgroundColor: isDarkMode ? '#232323' : '#fff',
+      shadowColor: isDarkMode ? '#000' : '#4b46f1',
+      borderWidth: 1.5,
+      borderColor: isDarkMode ? '#FFD70033' : '#e3e7fd',
     },
     appName: {
-      color: isDarkMode ? '#fff' : '#333',
+      color: isDarkMode ? '#FFD700' : '#4b46f1',
     },
     version: {
       color: isDarkMode ? '#B3B3B3' : '#666',
     },
     sectionTitle: {
-      color: isDarkMode ? '#fff' : '#4b46f1',
+      color: isDarkMode ? '#FFD700' : '#4b46f1',
+      fontWeight: 'bold',
     },
     description: {
       color: isDarkMode ? '#ccc' : '#666',
     },
     featureText: {
-      color: isDarkMode ? '#fff' : '#444',
+      color: isDarkMode ? '#fff' : '#4b46f1',
+      fontWeight: '500',
     },
     contactText: {
-      color: isDarkMode ? '#ccc' : '#666',
+      color: isDarkMode ? '#FFD700' : '#4b46f1',
     },
     copyright: {
       color: isDarkMode ? '#ccc' : '#999',
-      borderTopColor: isDarkMode ? '#444' : '#eee',
+      borderTopColor: isDarkMode ? '#444' : '#e3e7fd',
       backgroundColor: isDarkMode ? '#121212' : '#fff',
     },
   };
 
   return (
     <View style={[styles.container, dynamicStyles.container]}>
-      <View style={[styles.header, dynamicStyles.header]}>
-        <View style={styles.headerMain}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
-          >
-            <FontAwesome5 name="arrow-left" size={16} color={isDarkMode ? '#fff' : '#4b46f1'} />
-          </TouchableOpacity>
-          <Text style={[styles.headerTitle, dynamicStyles.headerTitle]}>{t.appInfo}</Text>
-        </View>
-      </View>
+     
 
       <ScrollView style={styles.content}>
         <View style={[styles.appInfoCard, dynamicStyles.appInfoCard]}>
           <Image
-            source={require('../../assets/icon.png')}
+            source={require('../../assets/logo.png')}
             style={styles.appLogo}
           />
           <Text style={[styles.appName, dynamicStyles.appName]}>Korean Learning App</Text>
