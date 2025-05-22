@@ -110,14 +110,133 @@ const VideoDetailScreen = ({ route }) => {
 
   const isLast10Seconds = duration > 0 && duration - currentTime <= 10 && currentTime > 0;
 
+  const dynamicStyles = {
+    container: {
+      flex: 1,
+      alignItems: 'center',
+      padding: 16,
+      backgroundColor: isDarkMode ? '#121212' : '#f4f7ff',
+    },
+    songTitle: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: isDarkMode ? '#FFD700' : '#6A0DAD',
+      marginBottom: 20,
+      textAlign: 'center',
+      backgroundColor: isDarkMode ? '#232323' : '#FFD700',
+      padding: 10,
+      borderRadius: 10,
+      textShadowColor: isDarkMode ? '#333' : '#D1C4E9',
+      textShadowOffset: { width: 1, height: 1 },
+      textShadowRadius: 3,
+      elevation: 5,
+    },
+    question: {
+      fontSize: 18,
+      fontStyle: 'italic',
+      color: isDarkMode ? '#FFD700' : '#6A0DAD',
+      marginBottom: 20,
+      textAlign: 'center',
+      backgroundColor: isDarkMode ? '#232323' : '#E0BBE4',
+      padding: 8,
+      borderRadius: 8,
+      elevation: 3,
+    },
+    videoContainer: {
+      width: width * 0.9,
+      backgroundColor: isDarkMode ? '#232323' : '#fff',
+      borderRadius: 15,
+      overflow: 'hidden',
+      shadowColor: isDarkMode ? '#FFD700' : '#6C4AB6',
+      shadowOffset: { width: 0, height: 3 },
+      shadowOpacity: 0.4,
+      shadowRadius: 6,
+      elevation: 8,
+      borderColor: isDarkMode ? '#FFD700' : '#FFD700',
+    },
+    subtitle: {
+      fontSize: 22,
+      textAlign: 'center',
+      marginVertical: 20,
+      fontWeight: 'bold',
+      padding: 10,
+      elevation: 3,
+    },
+    subtitlePrimary: {
+      backgroundColor: isDarkMode ? '#232323' : '#ADD8E6',
+      color: isDarkMode ? '#eee' : '#0000FF',
+      fontSize: 20,
+    },
+    subtitleOrigin: {
+      backgroundColor: isDarkMode ? '#333' : '#FFFACD',
+      color: isDarkMode ? '#FFD700' : '#FFD700',
+      fontSize: 20,
+    },
+    buttonContainer: {
+      marginTop: 20,
+      width: '80%',
+    },
+    floatingButton: {
+      position: 'absolute',
+      bottom: 20,
+      right: 20,
+      backgroundColor: isDarkMode ? '#FFD700' : '#6C4AB6',
+      paddingVertical: 12,
+      paddingHorizontal: 20,
+      borderRadius: 30,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.3,
+      shadowRadius: 3,
+      elevation: 5,
+    },
+    floatingButtonText: {
+      color: isDarkMode ? '#232323' : '#FFF',
+      fontWeight: 'bold',
+      fontSize: 20,
+    },
+    wordListContainer: {
+      marginTop: 24,
+      backgroundColor: isDarkMode ? '#232323' : '#fffbe6',
+      borderRadius: 12,
+      padding: 16,
+      width: '100%',
+      elevation: 2,
+    },
+    wordListTitle: {
+      fontWeight: 'bold',
+      fontSize: 20,
+      color: isDarkMode ? '#FFD700' : '#6A0DAD',
+      marginBottom: 12,
+      textAlign: 'center',
+    },
+    wordItem: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: 8,
+      paddingVertical: 4,
+      borderBottomWidth: 1,
+      borderBottomColor: isDarkMode ? '#333' : '#eee',
+    },
+    wordText: {
+      fontWeight: 'bold',
+      color: isDarkMode ? '#FFD700' : '#333',
+      fontSize: 16,
+    },
+    meaningText: {
+      color: isDarkMode ? '#FFD700' : '#6C4AB6',
+      fontSize: 16,
+      marginLeft: 12,
+      flex: 1,
+      textAlign: 'right',
+    },
+  };
+
   return (
-    <View style={[
-      styles.container,
-      { backgroundColor: isDarkMode ? '#121212' : '#F5F5F5' }
-    ]}>
-      <Text style={styles.songTitle}>🎵 {title} 🎵</Text>
-      <Text style={styles.question}>{question}</Text>
-      <View style={styles.videoContainer}>
+    <View style={dynamicStyles.container}>
+      <Text style={dynamicStyles.songTitle}>🎵 {title} 🎵</Text>
+      <Text style={dynamicStyles.question}>{question}</Text>
+      <View style={dynamicStyles.videoContainer}>
         <YoutubeIframe
           ref={playerRef}
           videoId={youtubeId}
@@ -139,10 +258,9 @@ const VideoDetailScreen = ({ route }) => {
       {subtitleOrigin ? (
         <Animated.Text
           style={[
-            styles.subtitle,
-            styles.subtitleOrigin,
-            { opacity: subtitleOriginAnim },
-            isDarkMode && { backgroundColor: '#333', color: '#FFD700' }
+            dynamicStyles.subtitle,
+            dynamicStyles.subtitleOrigin,
+            { opacity: subtitleOriginAnim }
           ]}
         >
           {subtitleOrigin}
@@ -151,28 +269,27 @@ const VideoDetailScreen = ({ route }) => {
       {subtitle ? (
         <Animated.Text
           style={[
-            styles.subtitle,
-            styles.subtitlePrimary,
-            { opacity: subtitleAnim },
-            isDarkMode && { backgroundColor: '#232323', color: '#eee' }
+            dynamicStyles.subtitle,
+            dynamicStyles.subtitlePrimary,
+            { opacity: subtitleAnim }
           ]}
         >
           {subtitle}
         </Animated.Text>
       ) : null}
       {isVideoEnded && id === '4' ? (
-        <View style={styles.wordListContainer}>
-          <Text style={styles.wordListTitle}>📚 Từ mới trong bài:</Text>
+        <View style={dynamicStyles.wordListContainer}>
+          <Text style={dynamicStyles.wordListTitle}>📚 Từ mới trong bài:</Text>
           {(newWords || []).map((item, idx) => (
-            <View key={idx} style={styles.wordItem}>
-              <Text style={styles.wordText}>{item.word}</Text>
-              <Text style={styles.meaningText}>{item.meaning}</Text>
+            <View key={idx} style={dynamicStyles.wordItem}>
+              <Text style={dynamicStyles.wordText}>{item.word}</Text>
+              <Text style={dynamicStyles.meaningText}>{item.meaning}</Text>
             </View>
           ))}
         </View>
       ) : null}
       {isVideoEnded && id !== '4' ? (
-        <View style={styles.buttonContainer}>
+        <View style={dynamicStyles.buttonContainer}>
           <Button
             title="Trả lời câu hỏi"
             color="#6C4AB6"
@@ -182,137 +299,14 @@ const VideoDetailScreen = ({ route }) => {
       ) : null}
       {isLast10Seconds && !isVideoEnded && id !== '4' && (
         <TouchableOpacity
-          style={styles.floatingButton}
+          style={dynamicStyles.floatingButton}
           onPress={() => navigation.navigate('QuestionScreen', { question })}
         >
-          <Text style={styles.floatingButtonText}>Trả lời</Text>
+          <Text style={dynamicStyles.floatingButtonText}>Trả lời</Text>
         </TouchableOpacity>
       )}
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    padding: 16,
-    backgroundColor: '#F5F5F5',
-  },
-  songTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#6A0DAD',
-    marginBottom: 20,
-    textAlign: 'center',
-    backgroundColor: '#FFD700',
-    padding: 10,
-    borderRadius: 10,
-    textShadowColor: '#D1C4E9',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 3,
-    elevation: 5,
-  },
-  question: {
-    fontSize: 18,
-    fontStyle: 'italic',
-    color: '#6A0DAD',
-    marginBottom: 20,
-    textAlign: 'center',
-    backgroundColor: '#E0BBE4',
-    padding: 8,
-    borderRadius: 8,
-    elevation: 3,
-  },
-  videoContainer: {
-    width: width * 0.9,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 15,
-    overflow: 'hidden',
-    shadowColor: '#6C4AB6',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.4,
-    shadowRadius: 6,
-    elevation: 8,
-    borderColor: '#FFD700',
-  },
-  subtitle: {
-    fontSize: 22,
-    textAlign: 'center',
-    marginVertical: 20,
-    fontWeight: 'bold',
-    padding: 10,
-    elevation: 3,
-  },
-  subtitlePrimary: {
-    // màu sẽ được override bằng dynamicStyles khi render
-    backgroundColor: '#ADD8E6',
-    color: '#0000FF',
-    fontSize: 20,
-  },
-  subtitleOrigin: {
-    backgroundColor: '#FFFACD',
-    color: '#FFD700',
-    fontSize: 20,
-  },
-  buttonContainer: {
-    marginTop: 20,
-    width: '80%',
-  },
-  floatingButton: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    backgroundColor: '#6C4AB6',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 30,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: 5,
-  },
-  floatingButtonText: {
-    color: '#FFF',
-    fontWeight: 'bold',
-    fontSize: 20,
-  },
-  wordListContainer: {
-    marginTop: 24,
-    backgroundColor: '#fffbe6',
-    borderRadius: 12,
-    padding: 16,
-    width: '100%',
-    elevation: 2,
-  },
-  wordListTitle: {
-    fontWeight: 'bold',
-    fontSize: 20,
-    color: '#6A0DAD',
-    marginBottom: 12,
-    textAlign: 'center',
-  },
-  wordItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 8,
-    paddingVertical: 4,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-  },
-  wordText: {
-    fontWeight: 'bold',
-    color: '#333',
-    fontSize: 16,
-  },
-  meaningText: {
-    color: '#6C4AB6',
-    fontSize: 16,
-    marginLeft: 12,
-    flex: 1,
-    textAlign: 'right',
-  },
-});
 
 export default VideoDetailScreen;
