@@ -3,7 +3,7 @@ import { View, Text, FlatList, StyleSheet, TouchableOpacity, Animated } from "re
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
 
-const notificationsData = [
+const initialNotifications = [
   { id: "1", title: "🎉 Nhận thưởng", message: "Bạn đã nhận được 50 điểm thưởng!", time: "5 phút trước", seen: false },
   { id: "2", title: "📢 Sự kiện sắp diễn ra", message: "Sự kiện học tiếng Hàn mới sắp diễn ra!", time: "1 giờ trước", seen: true },
   { id: "3", title: "📚 Chăm chỉ học tập", message: "Hôm nay bạn đã hoàn thành 3 bài học, tiếp tục cố gắng nhé!", time: "2 giờ trước", seen: false },
@@ -11,9 +11,19 @@ const notificationsData = [
 ];
 
 const NotificationsScreen = ({ navigation }) => {
-  const [notifications, setNotifications] = useState(notificationsData);
+  const [notifications, setNotifications] = useState(initialNotifications);
   const [fadeAnim] = useState(new Animated.Value(1));
   const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+
+  const handlePress = (id) => {
+    setNotifications(prev =>
+      prev.map(item => item.id === id ? { ...item, seen: true } : item)
+    );
+    Animated.sequence([
+      Animated.timing(fadeAnim, { toValue: 0.8, duration: 100, useNativeDriver: true }),
+      Animated.timing(fadeAnim, { toValue: 1, duration: 100, useNativeDriver: true }),
+    ]).start();
+  };
 
   const dynamicStyles = {
     container: {
@@ -45,16 +55,6 @@ const NotificationsScreen = ({ navigation }) => {
     time: {
       color: isDarkMode ? "#aaa" : "#999",
     },
-  };
-
-  const handlePress = (id) => {
-    setNotifications(notifications.map(notification =>
-      notification.id === id ? { ...notification, seen: true } : notification
-    ));
-    Animated.sequence([
-      Animated.timing(fadeAnim, { toValue: 0.8, duration: 100, useNativeDriver: true }),
-      Animated.timing(fadeAnim, { toValue: 1, duration: 100, useNativeDriver: true }),
-    ]).start();
   };
 
   return (
@@ -94,9 +94,7 @@ const NotificationsScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: { flex: 1 },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -114,9 +112,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "600",
   },
-  listContainer: {
-    padding: 16,
-  },
+  listContainer: { padding: 16 },
   notificationItem: {
     padding: 12,
     borderRadius: 8,
