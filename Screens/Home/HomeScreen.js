@@ -11,6 +11,8 @@ import {
   Animated,
   TextInput,
   Share,
+  ActivityIndicator,
+  RefreshControl,
 } from "react-native";
 import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
@@ -44,127 +46,63 @@ const fetchUserProfile = async () => {
   }
 };
 
-const HomeScreen = ({ navigation }) => {
-  const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
-  const language = useSelector((state) => state.language.language);
+const topStudentsData = {
+  vn: [
+    { 
+      id: "1", 
+      name: "Nguyễn Văn A", 
+      points: { total: 1200, learning: 500, streak: 300, missions: 400 },
+      isFriend: true,
+      categories: ['beginner', 'speaking'],
+      avatar: require("../../assets/avatar_1.jpg")
+    },
+    { 
+      id: "2", 
+      name: "Trần Thị B", 
+      points: { total: 1150, learning: 450, streak: 350, missions: 350 },
+      isFriend: false,
+      categories: ['intermediate'],
+      avatar: require("../../assets/avatar_2.jpg")
+    },
+    { 
+      id: "3", 
+      name: "Lê Minh C", 
+      points: { total: 1100, learning: 400, streak: 300, missions: 400 },
+      isFriend: true,
+      categories: ['advanced'],
+      avatar: require("../../assets/avatar_3.jpg")
+    },
+  ],
+  en: [
+    { 
+      id: "1", 
+      name: "John Smith", 
+      points: { total: 1200, learning: 500, streak: 300, missions: 400 },
+      isFriend: true,
+      categories: ['beginner', 'speaking'],
+      avatar: require("../../assets/avatar_1.jpg")
+    },
+    { 
+      id: "2", 
+      name: "Emily Johnson", 
+      points: { total: 1150, learning: 450, streak: 350, missions: 350 },
+      isFriend: false,
+      categories: ['intermediate'],
+      avatar: require("../../assets/avatar_2.jpg")
+    },
+    { 
+      id: "3", 
+      name: "Michael Lee", 
+      points: { total: 1100, learning: 400, streak: 300, missions: 400 },
+      isFriend: true,
+      categories: ['advanced'],
+      avatar: require("../../assets/avatar_3.jpg")
+    },
+  ]
+};
 
-  // Dynamic styles for dark mode
-  const dynamicStyles = {
-    container: {
-      backgroundColor: isDarkMode ? '#121212' : '#f8f9fa',
-    },
-    card: {
-      backgroundColor: isDarkMode ? '#1E1E1E' : '#fff',
-      borderRadius: 12,
-      padding: 16,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.3,
-      shadowRadius: 12,
-      elevation: 4,
-      borderWidth: 1,
-      borderColor: isDarkMode ? '#2C2C2C' : '#eee',
-    },
-    label: {
-      color: isDarkMode ? '#FFFFFF' : '#333',
-    },
-    subText: {
-      color: isDarkMode ? '#B3B3B3' : '#666',
-    },
-    input: {
-      backgroundColor: isDarkMode ? '#2C2C2C' : '#fff',
-      borderColor: isDarkMode ? '#3A3A3A' : '#ddd',
-      color: isDarkMode ? '#FFFFFF' : '#000',
-      borderRadius: 8,
-      padding: 12,
-    },
-    primaryButton: {
-      backgroundColor: '#00ADB5',
-      borderRadius: 8,
-      paddingVertical: 12,
-      paddingHorizontal: 16,
-      alignItems: 'center',
-    },
-    primaryButtonText: {
-      color: '#fff',
-      fontWeight: 'bold',
-    },
-    secondaryButton: {
-      backgroundColor: 'transparent',
-      borderColor: '#00ADB5',
-      borderWidth: 1,
-      borderRadius: 8,
-      paddingVertical: 12,
-      paddingHorizontal: 16,
-      alignItems: 'center',
-    },
-    secondaryButtonText: {
-      color: '#00ADB5',
-      fontWeight: 'bold',
-    },
-    errorBox: {
-      backgroundColor: '#2C2C2C',
-      borderRadius: 8,
-      padding: 12,
-      marginVertical: 8,
-    },
-    errorText: {
-      color: '#CF6679',
-      fontWeight: 'bold',
-    },
-    tabBar: {
-      backgroundColor: isDarkMode ? '#1E1E1E' : '#fff',
-      borderTopColor: isDarkMode ? '#2C2C2C' : '#eee',
-    },
-    tabBarActive: {
-      color: '#00ADB5',
-    },
-    tabBarInactive: {
-      color: '#888888',
-    },
-  };
-
-  const [userLevel, setUserLevel] = useState(5);
-  const [userExp, setUserExp] = useState(750);
-  const [maxExp, setMaxExp] = useState(1000);
-  const [streakDays, setStreakDays] = useState(5);
-  const [showBadges, setShowBadges] = useState(false);
-  const [timeUntilReset, setTimeUntilReset] = useState('');
-  const [missionHistory, setMissionHistory] = useState([]);
-  const [streakBonus, setStreakBonus] = useState(1);
-  const [showReward, setShowReward] = useState(false);
-  const [rewardAmount, setRewardAmount] = useState(0);
-  const rewardAnim = new Animated.Value(0);
-  const [totalProgress, setTotalProgress] = useState(0);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedTag, setSelectedTag] = useState('all');
-  const [activeScrollCourse, setActiveScrollCourse] = useState(null);
-  const [rankingPeriod, setRankingPeriod] = useState('week'); // week/month
-  const [rankingCategory, setRankingCategory] = useState('all'); // all/friends/category
-  const [showLevelUp, setShowLevelUp] = useState(false);
-  const [unlockedAchievement, setUnlockedAchievement] = useState(null);
-  const [userProfile, setUserProfile] = useState(null);
-  const [milestones] = useState([
-    {id: 1, title: 'Học 7 ngày liên tiếp', target: 7, progress: streakDays, reward: '100 xu'},
-    {id: 2, title: 'Hoàn thành 50 bài học', target: 50, progress: 23, reward: '200 xu'},
-    {id: 3, title: 'Đạt level 10', target: 10, progress: userLevel, reward: 'Avatar khung đặc biệt'}
-  ]);
-
-  const courseTags = [
-    { id: 'all', name: 'Tất cả' },
-    { id: 'beginner', name: 'Sơ cấp' },
-    { id: 'intermediate', name: 'Trung cấp' },
-    { id: 'advanced', name: 'Cao cấp' },
-    { id: 'speaking', name: 'Giao tiếp' },
-  ];
-
-  const [badges, setBadges] = useState([
-    { id: '1', name: 'Siêng năng', icon: '🌟' },
-    { id: '2', name: 'Học giỏi', icon: '🏆' },
-    { id: '3', name: 'Xuất sắc', icon: '👑' }
-  ]);
-
-  const courses = [
+const coursesData = {
+  vn: [
     { 
       id: "1", 
       title: "Tiếng Hàn Cơ Bản", 
@@ -215,9 +153,84 @@ const HomeScreen = ({ navigation }) => {
       isActive: false,
       description: "Luyện kỹ năng ngôn ngữ nâng cao và văn học"
     }
-  ];
+  ],
+  en: [
+    { 
+      id: "1", 
+      title: "Basic Korean", 
+      progress: "15/20",
+      estimatedTime: "2 months",
+      color: "#4b46f1",
+      tag: 'beginner',
+      isActive: true,
+      description: "Suitable for beginners"
+    },
+    {
+      id: "2",
+      title: "Intermediate Korean",
+      progress: "10/30",
+      estimatedTime: "3 months",
+      color: "#ff9f43",
+      tag: 'intermediate',
+      isActive: false,
+      description: "Enhance grammar and vocabulary skills"
+    },
+    {
+      id: "3",
+      title: "Daily Conversations",
+      progress: "5/15",
+      estimatedTime: "1 month",
+      color: "#f44336",
+      tag: 'speaking',
+      isActive: false,
+      description: "Learn basic daily communication"
+    },
+    {
+      id: "4",
+      title: "Introduction to Korean",
+      progress: "3/10",
+      estimatedTime: "1 month",
+      color: "#2196F3",
+      tag: 'beginner',
+      isActive: false,
+      description: "Familiarize with the alphabet and basic pronunciation"
+    },
+    {
+      id: "5",
+      title: "Advanced Korean",
+      progress: "2/25",
+      estimatedTime: "4 months",
+      color: "#9C27B0",
+      tag: 'advanced',
+      isActive: false,
+      description: "Practice advanced language skills and literature"
+    }
+  ]
+};
 
-  const featuredLessons = [
+const courseTags = [
+  { id: 'all', name: { vn: 'Tất cả', en: 'All' } },
+  { id: 'beginner', name: { vn: 'Sơ cấp', en: 'Beginner' } },
+  { id: 'intermediate', name: { vn: 'Trung cấp', en: 'Intermediate' } },
+  { id: 'advanced', name: { vn: 'Cao cấp', en: 'Advanced' } },
+  { id: 'speaking', name: { vn: 'Giao tiếp', en: 'Speaking' } },
+];
+
+const badgesData = {
+  vn: [
+    { id: '1', name: 'Siêng năng', icon: '🌟' },
+    { id: '2', name: 'Học giỏi', icon: '🏆' },
+    { id: '3', name: 'Xuất sắc', icon: '👑' }
+  ],
+  en: [
+    { id: '1', name: 'Diligent', icon: '🌟' },
+    { id: '2', name: 'Excellent Learner', icon: '🏆' },
+    { id: '3', name: 'Outstanding', icon: '👑' }
+  ]
+};
+
+const featuredLessonsData = {
+  vn: [
     { 
       id: "featured_1",
       title: "Ngữ pháp cơ bản",
@@ -254,62 +267,222 @@ const HomeScreen = ({ navigation }) => {
       reviews: 89,
       level: "intermediate"
     }
-  ];
-
-  const topStudents = [
+  ],
+  en: [
     { 
-      id: "1", 
-      name: "Nguyễn Văn A", 
-      points: {
-        total: 1200,
-        learning: 500,
-        streak: 300,
-        missions: 400
-      },
-      isFriend: true,
-      categories: ['beginner', 'speaking'],
-      avatar: require("../../assets/avatar_1.jpg")
+      id: "featured_1",
+      title: "Basic Grammar",
+      duration: "2 hours",
+      image: require("../../assets/logo.jpg"),
+      preview: "Learn how to use basic Korean sentence patterns",
+      difficulty: "Easy",
+      studentsCount: 1200,
+      rating: 4.8,
+      reviews: 156,
+      level: "beginner"
     },
-    { 
-      id: "2", 
-      name: "Trần Thị B", 
-      points: {
-        total: 1150,
-        learning: 450,
-        streak: 350,
-        missions: 350
-      },
-      isFriend: false,
-      categories: ['intermediate'],
-      avatar: require("../../assets/avatar_2.jpg")
+    {
+      id: "featured_2", 
+      title: "Common Vocabulary",
+      duration: "1.5 hours",
+      image: require("../../assets/illustration2.jpg"),
+      preview: "500 most common words in conversation",
+      difficulty: "Medium",
+      studentsCount: 980,
+      rating: 4.6,
+      reviews: 124,
+      level: "beginner"
     },
-    { 
-      id: "3", 
-      name: "Lê Minh C", 
-      points: {
-        total: 1100,
-        learning: 400,
-        streak: 300,
-        missions: 400
-      },
-      isFriend: true,
-      categories: ['advanced'],
-      avatar: require("../../assets/avatar_3.jpg")
-    },
-  ];
+    {
+      id: "featured_3",
+      title: "Advanced Listening Practice",
+      duration: "2.5 hours", 
+      image: require("../../assets/illustration2.jpg"),
+      preview: "Practice listening at native speed",
+      difficulty: "Hard",
+      studentsCount: 650,
+      rating: 4.7,
+      reviews: 89,
+      level: "intermediate"
+    }
+  ]
+};
 
-  const rankingPeriods = [
-    { id: 'week', label: 'Tuần này' },
-    { id: 'month', label: 'Tháng này' }
-  ];
+const rankingPeriods = [
+  { id: 'week', label: { vn: 'Tuần này', en: 'This week' } },
+  { id: 'month', label: { vn: 'Tháng này', en: 'This month' } }
+];
 
-  const rankingCategories = [
-    { id: 'all', label: 'Tất cả' },
-    { id: 'friends', label: 'Bạn bè' },
-    { id: 'beginner', label: 'Sơ cấp' },
-    { id: 'intermediate', label: 'Trung cấp' },
-    { id: 'speaking', label: 'Giao tiếp' }
-  ];
+const rankingCategories = [
+  { id: 'all', label: { vn: 'Tất cả', en: 'All' } },
+  { id: 'friends', label: { vn: 'Bạn bè', en: 'Friends' } },
+  { id: 'beginner', label: { vn: 'Sơ cấp', en: 'Beginner' } },
+  { id: 'intermediate', label: { vn: 'Trung cấp', en: 'Intermediate' } },
+  { id: 'speaking', label: { vn: 'Giao tiếp', en: 'Speaking' } }
+];
+
+const sectionTitles = {
+  vn: {
+    yourCourses: "📚 Khóa học của bạn",
+    recommended: "Đề xuất cho trình độ của bạn",
+    featured: "🔥 Bài học nổi bật",
+    viewAll: "Xem tất cả",
+    rankings: "🏆 Bảng xếp hạng",
+    dailyMission: "🎯 Nhiệm vụ hàng ngày",
+    resetIn: "Làm mới sau",
+    searchCourse: "Tìm khóa học...",
+    todayLearn: "Hôm nay bạn muốn học gì?",
+    hello: "Xin chào,",
+    streak: "ngày liên tiếp 🔥"
+  },
+  en: {
+    yourCourses: "📚 Your Courses",
+    recommended: "Recommended for your level",
+    featured: "🔥 Featured Lessons",
+    viewAll: "View all",
+    rankings: "🏆 Rankings",
+    dailyMission: "🎯 Daily Missions",
+    resetIn: "Reset in",
+    searchCourse: "Search courses...",
+    todayLearn: "What do you want to learn today?",
+    hello: "Hello,",
+    streak: "days in a row 🔥"
+  }
+};
+
+const milestonesData = {
+  vn: [
+    {id: 1, title: 'Học 7 ngày liên tiếp', target: 7, reward: '100 xu'},
+    {id: 2, title: 'Hoàn thành 50 bài học', target: 50, reward: '200 xu'},
+    {id: 3, title: 'Đạt level 10', target: 10, reward: 'Avatar khung đặc biệt'}
+  ],
+  en: [
+    {id: 1, title: 'Study 7 days in a row', target: 7, reward: '100 coins'},
+    {id: 2, title: 'Complete 50 lessons', target: 50, reward: '200 coins'},
+    {id: 3, title: 'Reach level 10', target: 10, reward: 'Special avatar frame'}
+  ]
+};
+
+const HomeScreen = ({ navigation }) => {
+  const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
+  const language = useSelector((state) => state.language.language);
+  const translations = {
+    vn: {
+      gold: "Vàng",
+      diamond: "Kim cương",
+      score: "Điểm",
+      rankings: "Xếp hạng",
+      points: "điểm",
+      nhiemvu: "Nhiệm vụ",
+    },
+    en: {
+      gold: "Gold",
+      diamond: "Diamond",
+      score: "Score",
+      rankings: "Rankings",
+      points: "points",
+      nhiemvu: "Missions",
+    }
+  };
+  const t = translations[language];
+  const tSection = sectionTitles[language];
+  const badges = badgesData[language];
+  const featuredLessons = featuredLessonsData[language];
+  const milestones = milestonesData[language];
+  const courses = coursesData[language];
+  const topStudents = topStudentsData[language];
+
+  // Dynamic styles for dark mode
+  const dynamicStyles = {
+    container: {
+      backgroundColor: isDarkMode ? '#121212' : '#f4f3ff',
+    },
+    card: {
+      backgroundColor: isDarkMode ? '#1E1E1E' : '#fff',
+      borderRadius: 16,
+      padding: 18,
+      shadowColor: "#4b46f1",
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: isDarkMode ? 0.18 : 0.10,
+      shadowRadius: 12,
+      elevation: 4,
+      borderWidth: 1,
+      borderColor: isDarkMode ? '#2C2C2C' : '#e3e7fd',
+    },
+    label: {
+      color: isDarkMode ? '#fff' : '#4b46f1',
+      fontWeight: 'bold',
+    },
+    subtitle: {
+      color: isDarkMode ? '#B3B3B3' : '#666',
+      fontSize: 15,
+      marginBottom: 2,
+    },
+    input: {
+      backgroundColor: isDarkMode ? '#232323' : '#fff',
+      borderColor: isDarkMode ? '#555' : '#4b46f1',
+      color: isDarkMode ? '#fff' : '#222',
+      borderWidth: 1.5,
+      borderRadius: 8,
+      padding: 12,
+      fontSize: 16,
+      marginBottom: 2,
+      shadowColor: isDarkMode ? '#000' : '#4b46f1',
+      shadowOpacity: isDarkMode ? 0.1 : 0.08,
+      shadowRadius: 4,
+      shadowOffset: { width: 0, height: 2 },
+      elevation: isDarkMode ? 0 : 2,
+    },
+    primaryButton: {
+      backgroundColor: '#4b46f1',
+      borderRadius: 8,
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      alignItems: 'center',
+    },
+    primaryButtonText: {
+      color: '#fff',
+      fontWeight: 'bold',
+    },
+    secondaryButton: {
+      backgroundColor: 'transparent',
+      borderColor: '#4b46f1',
+      borderWidth: 1,
+      borderRadius: 8,
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      alignItems: 'center',
+    },
+    secondaryButtonText: {
+      color: '#4b46f1',
+      fontWeight: 'bold',
+    },
+  };
+
+  const [userLevel, setUserLevel] = useState(5);
+  const [userExp, setUserExp] = useState(750);
+  const [maxExp, setMaxExp] = useState(1000);
+  const [streakDays, setStreakDays] = useState(5);
+  const [showBadges, setShowBadges] = useState(false);
+  const [timeUntilReset, setTimeUntilReset] = useState('');
+  const [missionHistory, setMissionHistory] = useState([]);
+  const [streakBonus, setStreakBonus] = useState(1);
+  const [showReward, setShowReward] = useState(false);
+  const [rewardAmount, setRewardAmount] = useState(0);
+  const rewardAnim = new Animated.Value(0);
+  const [totalProgress, setTotalProgress] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedTag, setSelectedTag] = useState('all');
+  const [activeScrollCourse, setActiveScrollCourse] = useState(null);
+  const [rankingPeriod, setRankingPeriod] = useState('week'); // week/month
+  const [rankingCategory, setRankingCategory] = useState('all'); // all/friends/category
+  const [showLevelUp, setShowLevelUp] = useState(false);
+  const [unlockedAchievement, setUnlockedAchievement] = useState(null);
+  const [userProfile, setUserProfile] = useState(null);
+  const [loadingProfile, setLoadingProfile] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const courseListRef = useRef(null);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -367,12 +540,15 @@ const HomeScreen = ({ navigation }) => {
   }, [userExp, streakDays]);
 
   useEffect(() => {
-    const loadProfile = async () => {
-      const user = await fetchUserProfile();
-      if (user) setUserProfile(user);
-    };
     loadProfile();
   }, []);
+
+  const loadProfile = async () => {
+    setLoadingProfile(true);
+    const user = await fetchUserProfile();
+    if (user) setUserProfile(user);
+    setLoadingProfile(false);
+  };
 
   const loadMissionHistory = async () => {
     try {
@@ -606,15 +782,13 @@ const HomeScreen = ({ navigation }) => {
     return filtered.sort((a, b) => b.points.total - a.points.total);
   };
 
-  const courseListRef = useRef(null);
-
   const renderCourseSection = () => (
     <View style={[styles.section, dynamicStyles.card]}>
-      <Text style={[styles.sectionTitle, dynamicStyles.label]}>📚 Khóa học của bạn</Text>
+      <Text style={[styles.sectionTitle, dynamicStyles.label]}>{tSection.yourCourses}</Text>
       
       <TextInput
         style={[styles.searchInput, dynamicStyles.input]}
-        placeholder="Tìm khóa học..."
+        placeholder={tSection.searchCourse}
         placeholderTextColor={isDarkMode ? '#888888' : '#666'}
         value={searchQuery}
         onChangeText={setSearchQuery}
@@ -638,7 +812,7 @@ const HomeScreen = ({ navigation }) => {
               styles.tagText,
               selectedTag === tag.id && styles.tagTextActive
             ]}>
-              {tag.name}
+              {tag.name[language]}
             </Text>
           </TouchableOpacity>
         ))}
@@ -654,11 +828,11 @@ const HomeScreen = ({ navigation }) => {
           <TouchableOpacity
             style={[styles.courseCard, { backgroundColor: item.color }]}
             onPress={() => {
-              if (item.title === "Tiếng Hàn Cơ Bản") {
+              if (item.title === "Tiếng Hàn Cơ Bản " || item.title === "Basic Korean") {
                 navigation.navigate('LessonStack', {
                   screen: 'BasicKoreanLessonsScreen',
                 });
-              } else if (item.title === "Nhập môn tiếng Hàn") {
+              } else if (item.title === "Nhập môn tiếng Hàn" || item.title === "Introduction to Korean") {
                 navigation.navigate("LessonStack", {
                   screen: "AlphabetHomeScreen",
                 });
@@ -678,7 +852,7 @@ const HomeScreen = ({ navigation }) => {
               />
             </View>
             <Text style={styles.courseTime}>⏱️ {item.estimatedTime}</Text>
-            <Text style={styles.courseTag}>#{courseTags.find(t => t.id === item.tag)?.name}</Text>
+            <Text style={styles.courseTag}>#{courseTags.find(t => t.id === item.tag)?.name[language]}</Text>
           </TouchableOpacity>
         )}
       />
@@ -686,7 +860,7 @@ const HomeScreen = ({ navigation }) => {
       {getRecommendedCourses().length > 0 && (
         <>
           <Text style={[styles.recommendedTitle, dynamicStyles.label]}>
-            Đề xuất cho trình độ của bạn
+            {tSection.recommended}
           </Text>
           <FlatList
             horizontal
@@ -710,9 +884,9 @@ const HomeScreen = ({ navigation }) => {
   const renderFeaturedSection = () => (
     <View style={[styles.section, dynamicStyles.card]}>
       <View style={styles.sectionHeader}>
-        <Text style={[styles.sectionTitle, dynamicStyles.label]}>🔥 Bài học nổi bật</Text>
+        <Text style={[styles.sectionTitle, dynamicStyles.label]}>{tSection.featured}</Text>
         <TouchableOpacity onPress={() => navigation.navigate('AllLessons')}>
-          <Text style={[styles.viewAll, dynamicStyles.label]}>Xem tất cả</Text>
+          <Text style={[styles.viewAll, dynamicStyles.label]}>{tSection.viewAll}</Text>
         </TouchableOpacity>
       </View>
 
@@ -740,8 +914,8 @@ const HomeScreen = ({ navigation }) => {
                 <View style={styles.metaItem}>
                   <Text style={[styles.difficultyTag, 
                     {backgroundColor: 
-                      item.difficulty === "Dễ" ? "#4CAF50" :
-                      item.difficulty === "Trung bình" ? "#FFA000" : "#F44336"
+                      item.difficulty === "Dễ" || item.difficulty === "Easy" ? "#4CAF50" :
+                      item.difficulty === "Trung bình" || item.difficulty === "Medium" ? "#FFA000" : "#F44336"
                     }
                   ]}>
                     {item.difficulty}
@@ -786,7 +960,7 @@ const HomeScreen = ({ navigation }) => {
   const renderRankingSection = () => (
     <View style={[styles.section, dynamicStyles.card]}>
       <View style={styles.rankingHeader}>
-        <Text style={[styles.sectionTitle, dynamicStyles.label]}>🏆 Bảng xếp hạng</Text>
+        <Text style={[styles.sectionTitle, dynamicStyles.label]}>{tSection.rankings}</Text>
         
         <ScrollView 
           horizontal 
@@ -806,7 +980,7 @@ const HomeScreen = ({ navigation }) => {
                 styles.filterText,
                 rankingPeriod === period.id && styles.filterTextActive
               ]}>
-                {period.label}
+                {period.label[language]}
               </Text>
             </TouchableOpacity>
           ))}
@@ -830,7 +1004,7 @@ const HomeScreen = ({ navigation }) => {
                 styles.filterText,
                 rankingCategory === category.id && styles.filterTextActive
               ]}>
-                {category.label}
+                {category.label[language]}
               </Text>
             </TouchableOpacity>
           ))}
@@ -883,15 +1057,31 @@ const HomeScreen = ({ navigation }) => {
     </View>
   );
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await loadProfile();
+    setRefreshing(false);
+  };
+
   return (
-    <ScrollView style={[styles.container, dynamicStyles.container]}>
+    <ScrollView
+      style={[styles.container, dynamicStyles.container]}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          colors={["#4b46f1", "#00ADB5"]}
+          tintColor={isDarkMode ? "#fff" : "#4b46f1"}
+        />
+      }
+    >
       <View style={styles.userInfo}>
         <View style={[styles.avatarContainer, { borderColor: getLevelBorderColor(userProfile?.level ?? 1) }]}>
           <Image
             source={
-              userProfile?.avatar
+              userProfile?.avatar && typeof userProfile.avatar === 'string' && userProfile.avatar.trim() !== ''
                 ? { uri: userProfile.avatar }
-              : { uri: 'https://via.placeholder.com/150' }
+                : { uri: 'https://via.placeholder.com/150' }
             }
             style={styles.avatar}
           />
@@ -899,9 +1089,12 @@ const HomeScreen = ({ navigation }) => {
             <Text style={styles.levelText}>Lv.{userProfile?.level ?? 1}</Text>
           </View>
         </View>
+     
+      
+      
         <View style={styles.textContainer}>
-          <Text style={[styles.greeting, dynamicStyles.label]}>Xin chào, {userProfile?.username || 'User'}!</Text>
-          <Text style={[styles.subtitle, dynamicStyles.subtitle]}>Hôm nay bạn muốn học gì?</Text>
+          <Text style={[styles.greeting, dynamicStyles.label]}>{tSection.hello} {userProfile?.username || 'User'}!</Text>
+          <Text style={[styles.subtitle, dynamicStyles.subtitle]}>{tSection.todayLearn}</Text>
           {/* Thanh EXP */}
           <View style={styles.progressContainer}>
             <View style={styles.progressRow}>
@@ -916,13 +1109,21 @@ const HomeScreen = ({ navigation }) => {
             </View>
           </View>
         </View>
+        {/* Nút refresh profile */}
+         <TouchableOpacity 
+        
+          onPress={() => navigation.navigate('NotificationsScreen')}
+        >
+          <FontAwesome5 name="bell" size={16} color="#4b46f1" />
+          <View style={styles.notificationBadge} />
+        </TouchableOpacity>
       </View>
 
       {userProfile?.dailyStreak > 0 && (
         <View style={styles.streakContainer}>
           <FontAwesome5 name="fire" size={20} color="#f44336" />
           <Text style={[styles.streakText, dynamicStyles.label]}>
-            {userProfile.dailyStreak} ngày liên tiếp 🔥
+            {userProfile.dailyStreak} {tSection.streak}
           </Text>
         </View>
       )}
@@ -958,23 +1159,26 @@ const HomeScreen = ({ navigation }) => {
         {/* Thông tin vàng, kim cương, điểm */}
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <View style={{ alignItems: 'center', marginHorizontal: 8 }}>
-            <FontAwesome5 name="coins" size={18} color="#FFD700" />
+            <Text style={{ fontSize: 20 }}>🪙</Text>
             <Text style={[{ fontSize: 12, fontWeight: 'bold' }, dynamicStyles.label]}>{userProfile?.gold ?? 0}</Text>
+            <Text style={{ fontSize: 10 }}>{t.gold}</Text>
           </View>
           <View style={{ alignItems: 'center', marginHorizontal: 8 }}>
-            <FontAwesome5 name="gem" size={18} color="#00BFFF" />
+            <Text style={{ fontSize: 20 }}>💎</Text>
             <Text style={[{ fontSize: 12, fontWeight: 'bold' }, dynamicStyles.label]}>{userProfile?.diamond ?? 0}</Text>
+            <Text style={{ fontSize: 10 }}>{t.diamond}</Text>
           </View>
           <View style={{ alignItems: 'center', marginHorizontal: 8 }}>
-            <FontAwesome5 name="star" size={18} color="#FFC107" />
+            <Text style={{ fontSize: 20 }}>⭐</Text>
             <Text style={[{ fontSize: 12, fontWeight: 'bold' }, dynamicStyles.label]}>{userProfile?.score ?? 0}</Text>
+            <Text style={{ fontSize: 10 }}>{t.score}</Text>
           </View>
         </View>
       </View>
 
       <View style={styles.missionHeader}>
-        <Text style={[styles.sectionTitle, dynamicStyles.label]}>🎯 Nhiệm vụ hàng ngày</Text>
-        <Text style={[styles.resetTimer, dynamicStyles.label]}>Làm mới sau {timeUntilReset}</Text>
+        <Text style={[styles.sectionTitle, dynamicStyles.label]}>{tSection.dailyMission}</Text>
+        <Text style={[styles.resetTimer, dynamicStyles.label]}>{tSection.resetIn} {timeUntilReset}</Text>
       </View>
 
       <DailyMission onPress={handleMissionPress} />
@@ -1264,26 +1468,8 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     width: 30,
   },
-  studentName: {
-    fontSize: 14,
-    flex: 1,
-  },
-  studentPoints: {
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  rewardPopup: {
-    position: 'absolute',
-    top: 100,
-    left: '50%',
-    transform: [{ translateX: -75 }],
-    width: 150,
-    height: 50,
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 5,
-  },
+  
+
   rewardText: {
     fontSize: 16,
     fontWeight: 'bold',
@@ -1353,6 +1539,22 @@ const styles = StyleSheet.create({
     margin: 4,
 
   },
+  rewardPopup: {
+    position: 'absolute',
+    bottom: 50,
+    left: '50%',
+    transform: [{ translateX: -50 }],
+    backgroundColor: '#4CAF50',
+    padding: 16,
+    borderRadius: 8,
+    elevation: 5,
+  },
+  rewardText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
 });
+
 
 export default HomeScreen;
