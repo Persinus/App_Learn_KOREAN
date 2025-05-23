@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { 
-  View, Text, FlatList, StyleSheet, TouchableOpacity, Image, Animated, ActivityIndicator 
+  View, Text, FlatList, StyleSheet, TouchableOpacity, Image, Animated, ActivityIndicator, RefreshControl 
 } from "react-native";
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useSelector } from "react-redux";
@@ -12,6 +12,7 @@ const PaidCoursesScreen = ({ navigation }) => {
   const [scaleAnim] = useState(new Animated.Value(1));
   const [paidCourses, setPaidCourses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -39,6 +40,18 @@ const PaidCoursesScreen = ({ navigation }) => {
       toValue: 1,
       useNativeDriver: true,
     }).start();
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      const { data } = await axios.get(`${BASE_API_URL}paid-courses`);
+      setPaidCourses(data);
+    } catch (error) {
+      setPaidCourses([]);
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   const dynamicStyles = {
@@ -141,20 +154,14 @@ const PaidCoursesScreen = ({ navigation }) => {
               </Text>
             )
           }
-          refreshing={loading}
-          onRefresh={() => {
-            setLoading(true);
-            (async () => {
-              try {
-                const { data } = await axios.get(`${BASE_API_URL}paid-courses`);
-                setPaidCourses(data);
-              } catch (error) {
-                setPaidCourses([]);
-              } finally {
-                setLoading(false);
-              }
-            })();
-          }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={[isDarkMode ? "#FFD700" : "#4b46f1"]}
+              tintColor={isDarkMode ? "#FFD700" : "#4b46f1"}
+            />
+          }
         />
       )}
     </View>
