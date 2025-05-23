@@ -73,7 +73,7 @@ const RankingsScreen = ({ navigation }) => {
       backgroundColor: isDarkMode ? '#121212' : '#f4f7ff',
     },
     sectionTitle: {
-      color: isDarkMode ? '#fff' : '#4b46f1',
+      color: isDarkMode ? '#FFD700' : '#4b46f1',
       fontSize: 22,
       fontWeight: 'bold',
       marginBottom: 12,
