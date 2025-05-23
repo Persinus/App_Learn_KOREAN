@@ -78,11 +78,11 @@ const UserDetail = ({ route }) => {
         }
         style={dynamicStyles.avatar}
       />
-      <Text style={dynamicStyles.username}>{profile.username}</Text>
-      <Text style={dynamicStyles.email}>{profile.email}</Text>
-      <Text style={dynamicStyles.info}>Tên: {profile.fullName && profile.fullName.trim() !== '' ? profile.fullName : 'Chưa cập nhật'}</Text>
-      <Text style={dynamicStyles.info}>Giới tính: {profile.gender && profile.gender.trim() !== '' ? profile.gender : 'Chưa cập nhật'}</Text>
-      <Text style={dynamicStyles.info}>Ngày sinh: {profile.birthday && profile.birthday.trim() !== '' ? profile.birthday : 'Chưa cập nhật'}</Text>
+      <Text style={dynamicStyles.username}>👤 {profile.username}</Text>
+      <Text style={dynamicStyles.email}>📧 {profile.email}</Text>
+      <Text style={dynamicStyles.info}>📝 Tên: {profile.fullName && profile.fullName.trim() !== '' ? profile.fullName : 'Chưa cập nhật'}</Text>
+      <Text style={dynamicStyles.info}>⚧️ Giới tính: {profile.gender && profile.gender.trim() !== '' ? profile.gender : 'Chưa cập nhật'}</Text>
+      <Text style={dynamicStyles.info}>🎂 Ngày sinh: {profile.birthday && profile.birthday.trim() !== '' ? profile.birthday : 'Chưa cập nhật'}</Text>
     </View>
   );
 };
