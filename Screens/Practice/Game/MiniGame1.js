@@ -21,12 +21,22 @@ const translations = {
     score: "Điểm",
     gold: "Vàng",
     diamond: "Kim cương",
+    win: (amount, type) => `🎉 Chính xác! Bạn nhận được +${amount} ${type}!`,
+    lose: "Sai rồi! Đáp án đúng là:",
+    tryAgain: "Cố gắng lần sau nhé!",
+    close: "Đóng",
+    chooseToContinue: "Chọn đáp án để tiếp tục",
   },
   en: {
     rules: "📜 Rules",
     score: "Score",
     gold: "Gold",
     diamond: "Diamond",
+    win: (amount, type) => `🎉 Correct! You get +${amount} ${type}!`,
+    lose: "Incorrect! The correct answer is:",
+    tryAgain: "Try again next time!",
+    close: "Close",
+    chooseToContinue: "Choose an answer to continue",
   },
 };
 
@@ -34,34 +44,45 @@ const translations = {
 const filteredCardData = cardData.filter((card) => card.value !== "Joker");
 
 // Luật chơi modal, truyền thêm userProfile
-const RulesModal = ({ visible, onClose, userProfile }) => (
-  <Modal
-    animationType="slide"
-    transparent={true}
-    visible={visible}
-    onRequestClose={onClose}
-  >
-    <View style={styles.modalContainer}>
-      <View style={styles.modalContent}>
-        <Text style={styles.modalTitle}>📜 Luật chơi</Text>
-        <Text style={styles.modalText}>- Lá bài từ 1-10: Tính điểm tương ứng (1-10 điểm).</Text>
-        <Text style={styles.modalText}>- Lá bài J, Q, K: Tương ứng 11, 12, 13 điểm.</Text>
-        <Text style={styles.modalText}>- Bích: Danh từ; Tép: Động từ; Rô: Tính từ; Cơ: Trạng từ.</Text>
-        <View style={{ marginVertical: 12, alignItems: "center" }}>
-          <Text style={{ fontSize: 16, fontWeight: "bold" }}>
-            Tài nguyên của bạn:
+const RulesModal = ({ visible, onClose, userProfile }) => {
+  const isDarkMode = useSelector(state => state.darkMode.isDarkMode);
+  return (
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={visible}
+      onRequestClose={onClose}
+    >
+      <View style={[styles.modalContainer, { backgroundColor: "rgba(0,0,0,0.5)" }]}>
+        <View style={[
+          styles.modalContent,
+          { backgroundColor: isDarkMode ? "#232323" : "#FFF" }
+        ]}>
+          <Text style={[
+            styles.modalTitle,
+            { color: isDarkMode ? "#FFD700" : "#6A0DAD" }
+          ]}>
+            {translations[useSelector(state => state.language.language)].rules}
           </Text>
-          <Text style={{ fontSize: 16, marginTop: 4 }}>
-            ⭐ {userProfile?.score ?? "?"}   🪙 {userProfile?.gold ?? "?"}   💎 {userProfile?.diamond ?? "?"}
-          </Text>
+          <Text style={[styles.modalText, { color: isDarkMode ? "#fff" : "#333" }]}>- Lá bài từ 1-10: Tính điểm tương ứng (1-10 điểm).</Text>
+          <Text style={[styles.modalText, { color: isDarkMode ? "#fff" : "#333" }]}>- Lá bài J, Q, K: Tương ứng 11, 12, 13 điểm.</Text>
+          <Text style={[styles.modalText, { color: isDarkMode ? "#fff" : "#333" }]}>- Bích: Danh từ; Tép: Động từ; Rô: Tính từ; Cơ: Trạng từ.</Text>
+          <View style={{ marginVertical: 12, alignItems: "center" }}>
+            <Text style={{ fontSize: 16, fontWeight: "bold", color: isDarkMode ? "#FFD700" : "#6A0DAD" }}>
+              Tài nguyên của bạn:
+            </Text>
+            <Text style={{ fontSize: 16, marginTop: 4, color: isDarkMode ? "#FFD700" : "#6A0DAD" }}>
+              ⭐ {userProfile?.score ?? "?"}   🪙 {userProfile?.gold ?? "?"}   💎 {userProfile?.diamond ?? "?"}
+            </Text>
+          </View>
+          <TouchableOpacity style={[styles.closeButton, { backgroundColor: isDarkMode ? "#FFD700" : "#6A0DAD" }]} onPress={onClose}>
+            <Text style={[styles.closeButtonText, { color: isDarkMode ? "#232323" : "#FFF" }]}>{translations[useSelector(state => state.language.language)].close}</Text>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-          <Text style={styles.closeButtonText}>Đóng</Text>
-        </TouchableOpacity>
       </View>
-    </View>
-  </Modal>
-);
+    </Modal>
+  );
+};
 
 const CardRow = ({ cards, onPress, disabledCards }) => (
   <View style={styles.row}>
@@ -190,9 +211,13 @@ const MiniGame1 = () => {
 
   // Giải thích đáp án
   const getExplanation = (card, isCorrect) => {
-    if (isCorrect) return "Chính xác! Bạn đã chọn đáp án đúng.";
     const correct = card.answers.find(a => a.id === card.valueTrue);
-    return `Sai rồi! Đáp án đúng là: "${correct.text}".`;
+    if (isCorrect) {
+      let amount = card.score || card.gold || card.diamond || 1;
+      let type = card.value === "J" ? t.score : card.value === "Q" ? t.gold : card.value === "K" ? t.diamond : t.score;
+      return t.win(amount, type);
+    }
+    return `${t.lose} "${correct.text}".\n${t.tryAgain}`;
   };
 
   // Modal câu hỏi
@@ -237,19 +262,24 @@ const MiniGame1 = () => {
                   if (correct) await rewardUser(currentCard);
                 }}
               >
-                <Text style={styles.answerText}>{ans.text}</Text>
+                <Text style={[styles.answerText, { color: isDarkMode ? "#fff" : "#333" }]}>{ans.text}</Text>
               </TouchableOpacity>
             ))}
             {selectedAnswer && (
-              <Text style={styles.explanationText}>{explanation}</Text>
+              <Text style={[
+                styles.explanationText,
+                { color: isCorrect ? (isDarkMode ? "#b6e388" : "#388e3c") : (isDarkMode ? "#ffb3b3" : "#d32f2f") }
+              ]}>
+                {explanation}
+              </Text>
             )}
             <TouchableOpacity
-              style={styles.closeButton}
+              style={[styles.closeButton, { backgroundColor: isDarkMode ? "#FFD700" : "#6A0DAD" }]}
               onPress={() => setQuestionModal(false)}
               disabled={!selectedAnswer}
             >
-              <Text style={styles.closeButtonText}>
-                {selectedAnswer ? "Đóng" : "Chọn đáp án để tiếp tục"}
+              <Text style={[styles.closeButtonText, { color: isDarkMode ? "#232323" : "#FFF" }]}>
+                {selectedAnswer ? t.close : t.chooseToContinue}
               </Text>
             </TouchableOpacity>
           </View>
