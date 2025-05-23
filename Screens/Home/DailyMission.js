@@ -29,7 +29,7 @@ const DailyMission = () => {
 
   const dynamicStyles = {
     container: {
-      backgroundColor: isDarkMode ? '#232323' : '#f4f33',
+      backgroundColor: isDarkMode ? '#232323' : '#f4f3300',
       borderColor: isDarkMode ? '#FFD70033' : '#e3e7fd',
     },
     title: {

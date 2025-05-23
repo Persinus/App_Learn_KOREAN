@@ -53,6 +53,9 @@ const MainNavigator = () => {
               case 'Home':
                 iconName = 'home';
                 return <MaterialIcons name={iconName} size={24} color={color} />;
+              case 'Friend':
+                iconName = 'people';
+                return <MaterialIcons name={iconName} size={24} color={color} />;
               case 'Practice':
                 iconName = 'clipboard-list';
                 return <FontAwesome5 name={iconName} size={20} color={color} />;
