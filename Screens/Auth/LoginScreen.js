@@ -8,6 +8,8 @@ import {
   Platform,
   ScrollView,
   Alert,
+  ActivityIndicator,
+  Modal,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -57,6 +59,7 @@ const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
   const language = useSelector((state) => state.language.language);
@@ -146,8 +149,8 @@ const LoginScreen = ({ navigation }) => {
       Alert.alert("Error", t.enterEmailPassword);
       return;
     }
+    setLoading(true); // Hiện modal loading
 
-    // Đăng nhập qua API
     const options = {
       method: 'POST',
       url: BASE_API_URL + 'login',
@@ -164,96 +167,127 @@ const LoginScreen = ({ navigation }) => {
     try {
       const { data } = await axios.request(options);
 
-      // Đăng nhập thành công
       await AsyncStorage.setItem("userToken", data.token || "true");
-      await saveUsername(username); // Lưu username vào AsyncStorage
+      await saveUsername(username);
 
+      setLoading(false); // Tắt modal loading
       Alert.alert(t.loginSuccess, `${t.emailLabel}: ${username}`);
       navigation.reset({
         index: 0,
         routes: [{ name: "MainNavigator" }],
       });
     } catch (error) {
+      setLoading(false); // Tắt modal loading
       if (error.response) {
         Alert.alert("Error", error.response.data.msg || t.loginError);
+        console.log("Login error:", error.response.data);
       } else {
         Alert.alert("Error", t.loginError);
+        console.log("Login error:", error);
       }
-      console.error(error);
     }
   };
 
   return (
-    <KeyboardAvoidingView
-      style={[{ flex: 1 }, dynamicStyles.container]}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <ScrollView contentContainerStyle={authStyles.container} keyboardShouldPersistTaps="handled">
-        <Text style={[authStyles.title, dynamicStyles.title]}>{t.title}</Text>
+    <>
+      {/* Modal loading */}
+      <Modal
+        visible={loading}
+        transparent
+        animationType="fade"
+      >
+        <View style={{
+          flex: 1,
+          backgroundColor: "rgba(0,0,0,0.3)",
+          justifyContent: "center",
+          alignItems: "center"
+        }}>
+          <View style={{
+            backgroundColor: isDarkMode ? "#232323" : "#fff",
+            padding: 32,
+            borderRadius: 16,
+            alignItems: "center"
+          }}>
+            <ActivityIndicator size="large" color={isDarkMode ? "#FFD700" : "#4b46f1"} />
+            <Text style={{ marginTop: 16, color: isDarkMode ? "#FFD700" : "#4b46f1", fontWeight: "bold" }}>
+              {t.loginButton}...
+            </Text>
+          </View>
+        </View>
+      </Modal>
 
-        <Text style={[authStyles.label, dynamicStyles.label]}>{t.emailLabel}</Text>
-        <TextInput
-          style={[authStyles.input, dynamicStyles.input]}
-          placeholder={t.emailLabel}
-          placeholderTextColor={isDarkMode ? "#888" : "#aaa"}
-          value={username}
-          onChangeText={setUsername}
-        />
+      {/* Main login UI */}
+      <KeyboardAvoidingView
+        style={[{ flex: 1 }, dynamicStyles.container]}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        <ScrollView contentContainerStyle={authStyles.container} keyboardShouldPersistTaps="handled">
+          <Text style={[authStyles.title, dynamicStyles.title]}>{t.title}</Text>
 
-        <Text style={[authStyles.label, dynamicStyles.label]}>{t.passwordLabel}</Text>
-        <View style={authStyles.passwordContainer}>
+          <Text style={[authStyles.label, dynamicStyles.label]}>{t.emailLabel}</Text>
           <TextInput
-            style={[authStyles.input, authStyles.passwordInput, dynamicStyles.input]}
-            placeholder={t.passwordLabel}
+            style={[authStyles.input, dynamicStyles.input]}
+            placeholder={t.emailLabel}
             placeholderTextColor={isDarkMode ? "#888" : "#aaa"}
-            secureTextEntry={!isPasswordVisible}
-            value={password}
-            onChangeText={setPassword}
+            value={username}
+            onChangeText={setUsername}
           />
+
+          <Text style={[authStyles.label, dynamicStyles.label]}>{t.passwordLabel}</Text>
+          <View style={authStyles.passwordContainer}>
+            <TextInput
+              style={[authStyles.input, authStyles.passwordInput, dynamicStyles.input]}
+              placeholder={t.passwordLabel}
+              placeholderTextColor={isDarkMode ? "#888" : "#aaa"}
+              secureTextEntry={!isPasswordVisible}
+              value={password}
+              onChangeText={setPassword}
+            />
+            <TouchableOpacity
+              onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+              style={authStyles.eyeIcon}
+            >
+              <FontAwesome name={isPasswordVisible ? "eye-slash" : "eye"} size={20} color="gray" />
+            </TouchableOpacity>
+          </View>
+
+          <TouchableOpacity style={authStyles.forgotPassword}>
+            <Text style={[authStyles.link, dynamicStyles.link]}>{t.forgotPassword}</Text>
+          </TouchableOpacity>
+
           <TouchableOpacity
-            onPress={() => setIsPasswordVisible(!isPasswordVisible)}
-            style={authStyles.eyeIcon}
+            style={[authStyles.primaryButton, dynamicStyles.primaryButton]}
+            onPress={handleLogin}
           >
-            <FontAwesome name={isPasswordVisible ? "eye-slash" : "eye"} size={20} color="gray" />
+            <Text style={[authStyles.primaryButtonText, dynamicStyles.primaryButtonText]}>
+              {t.loginButton}
+            </Text>
           </TouchableOpacity>
-        </View>
 
-        <TouchableOpacity style={authStyles.forgotPassword}>
-          <Text style={[authStyles.link, dynamicStyles.link]}>{t.forgotPassword}</Text>
-        </TouchableOpacity>
+          <View style={authStyles.secondaryContainer}>
+            <Text style={authStyles.text}>{t.noAccount} </Text>
+            <TouchableOpacity onPress={() => navigation.navigate("SignInScreen")}>
+              <Text style={[authStyles.link, dynamicStyles.link]}>{t.signUp}</Text>
+            </TouchableOpacity>
+          </View>
 
-        <TouchableOpacity
-          style={[authStyles.primaryButton, dynamicStyles.primaryButton]}
-          onPress={handleLogin}
-        >
-          <Text style={[authStyles.primaryButtonText, dynamicStyles.primaryButtonText]}>
-            {t.loginButton}
-          </Text>
-        </TouchableOpacity>
-
-        <View style={authStyles.secondaryContainer}>
-          <Text style={authStyles.text}>{t.noAccount} </Text>
-          <TouchableOpacity onPress={() => navigation.navigate("SignInScreen")}>
-            <Text style={[authStyles.link, dynamicStyles.link]}>{t.signUp}</Text>
-          </TouchableOpacity>
-        </View>
-
-        <Text style={authStyles.orText}>{t.orLoginWith}</Text>
-        <View style={authStyles.socialContainer}>
-          <TouchableOpacity
-            style={[authStyles.socialButton, dynamicStyles.socialButton, { backgroundColor: "#db4437" }]}
-            onPress={() => promptAsync()}
-          >
-            <FontAwesome name="google" size={20} color="white" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[authStyles.socialButton, dynamicStyles.socialButton, { backgroundColor: "#3b5998" }]}
-          >
-            <FontAwesome name="facebook" size={20} color="white" />
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+          <Text style={authStyles.orText}>{t.orLoginWith}</Text>
+          <View style={authStyles.socialContainer}>
+            <TouchableOpacity
+              style={[authStyles.socialButton, dynamicStyles.socialButton, { backgroundColor: "#db4437" }]}
+              onPress={() => promptAsync()}
+            >
+              <FontAwesome name="google" size={20} color="white" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[authStyles.socialButton, dynamicStyles.socialButton, { backgroundColor: "#3b5998" }]}
+            >
+              <FontAwesome name="facebook" size={20} color="white" />
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </>
   );
 };
 
