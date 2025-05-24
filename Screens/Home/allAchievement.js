@@ -35,6 +35,10 @@ const AllAchievementsScreen = ({ navigation }) => {
       try {
         const { data } = await axios.get(`${BASE_API_URL}achievements`);
         setAchievements(data);
+        // Log tên các thành tựu ngắn gọn ra console
+        if (Array.isArray(data)) {
+          console.log("Tên các thành tựu:", data.map(a => a.title).join(", "));
+        }
       } catch (error) {
         setAchievements([]);
       } finally {
