@@ -52,6 +52,10 @@ const AllDailyMission = ({ navigation }) => {
       try {
         const { data } = await axios.get(`${BASE_API_URL}daily-missions`);
         setMissions(data);
+        // Log tên các nhiệm vụ ngắn gọn ra console
+        if (Array.isArray(data)) {
+          console.log("Tên các nhiệm vụ:", data.map(m => m.title).join(", "));
+        }
       } catch (error) {
         setMissions([]);
       } finally {
