@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions, FlatList, TouchableOpacity, Image, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, FlatList, TouchableOpacity, Image, Alert, ActivityIndicator, RefreshControl } from 'react-native';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import axios from 'axios';
 import BASE_API_URL from '../../Util/Baseapi';
@@ -239,40 +239,44 @@ const AcceptFriend = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userMap, setUserMap] = useState({});
+  const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    const fetchRequests = async () => {
-      try {
-        const username = await getUsername();
-        if (!username) {
-          setRequests([]);
-          setLoading(false);
-          return;
-        }
-        const { data } = await axios.get(`${BASE_API_URL}users/${username}/friend-requests`, {
+  const fetchRequests = async () => {
+    try {
+      const username = await getUsername();
+      if (!username) {
+        setRequests([]);
+        setLoading(false);
+        setRefreshing(false);
+        return;
+      }
+      const { data } = await axios.get(`${BASE_API_URL}users/${username}/friend-requests`, {
+        headers: { Accept: 'application/json' }
+      });
+      const requestsArr = data.requests || [];
+      setRequests(requestsArr);
+      if (requestsArr.length > 0) {
+        const fromUsernames = requestsArr.map(r => r.from);
+        const usersRes = await axios.get(`${BASE_API_URL}users`, {
           headers: { Accept: 'application/json' }
         });
-        const requestsArr = data.requests || [];
-        setRequests(requestsArr);
-        if (requestsArr.length > 0) {
-          const fromUsernames = requestsArr.map(r => r.from);
-          const usersRes = await axios.get(`${BASE_API_URL}users`, {
-            headers: { Accept: 'application/json' }
-          });
-          const allUsers = usersRes.data;
-          const map = {};
-          allUsers.forEach(u => {
-            if (fromUsernames.includes(u.username)) map[u.username] = u;
-          });
-          setUserMap(map);
-        }
-      } catch (error) {
-        setRequests([]);
-        setUserMap({});
-      } finally {
-        setLoading(false);
+        const allUsers = usersRes.data;
+        const map = {};
+        allUsers.forEach(u => {
+          if (fromUsernames.includes(u.username)) map[u.username] = u;
+        });
+        setUserMap(map);
       }
-    };
+    } catch (error) {
+      setRequests([]);
+      setUserMap({});
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
     fetchRequests();
   }, []);
 
@@ -324,6 +328,17 @@ const AcceptFriend = () => {
         );
       }}
       ListEmptyComponent={<Text style={{ textAlign: 'center', marginTop: 32 }}>{translations[language].noRequests}</Text>}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={() => {
+            setRefreshing(true);
+            fetchRequests();
+          }}
+          colors={[isDarkMode ? "#FFD700" : "#4b46f1"]}
+          tintColor={isDarkMode ? "#FFD700" : "#4b46f1"}
+        />
+      }
     />
   );
 };
