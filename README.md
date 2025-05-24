@@ -81,9 +81,3 @@ Developed by **Persinus** and contributors.
 Feel free to fork, contribute, or give feedback!
 
 
----
-
-## 🤝 Credits
-Developed by **Persinus** and contributors.  
-Feel free to fork, contribute, or give feedback!
-
