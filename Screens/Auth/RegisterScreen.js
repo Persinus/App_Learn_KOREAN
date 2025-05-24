@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Alert, Modal, ActivityIndicator } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
@@ -52,6 +52,7 @@ const RegisterScreen = ({ navigation }) => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const isDarkMode = useSelector((state) => state.darkMode.isDarkMode);
   const language = useSelector((state) => state.language.language);
@@ -141,6 +142,8 @@ const RegisterScreen = ({ navigation }) => {
       return;
     }
 
+    setLoading(true); // Hiện modal loading
+
     const options = {
       method: 'POST',
       url: BASE_API_URL + "register",
@@ -152,15 +155,17 @@ const RegisterScreen = ({ navigation }) => {
         username: name,
         password: password,
         email: email,
-        avatarUrl: "https://i.pinimg.com/474x/e7/37/61/e73761b05e3921a209960b591787aa9c.jpg" // hoặc cho phép user chọn
+        avatarUrl: "https://i.pinimg.com/474x/e7/37/61/e73761b05e3921a209960b591787aa9c.jpg"
       }
     };
 
     try {
       const { data } = await axios.request(options);
+      setLoading(false); // Tắt modal loading
       Alert.alert("Thành công", data.msg || t.success);
       navigation.navigate("LoginScreen");
     } catch (error) {
+      setLoading(false); // Tắt modal loading
       if (error.response) {
         Alert.alert("Lỗi", error.response.data.msg || t.error);
       } else {
@@ -172,6 +177,32 @@ const RegisterScreen = ({ navigation }) => {
 
   return (
     <View style={dynamicStyles.container}>
+      {/* Modal loading */}
+      <Modal
+        visible={loading}
+        transparent
+        animationType="fade"
+      >
+        <View style={{
+          flex: 1,
+          backgroundColor: "rgba(0,0,0,0.3)",
+          justifyContent: "center",
+          alignItems: "center"
+        }}>
+          <View style={{
+            backgroundColor: isDarkMode ? "#232323" : "#fff",
+            padding: 32,
+            borderRadius: 16,
+            alignItems: "center"
+          }}>
+            <ActivityIndicator size="large" color={isDarkMode ? "#FFD700" : "#4b46f1"} />
+            <Text style={{ marginTop: 16, color: isDarkMode ? "#FFD700" : "#4b46f1", fontWeight: "bold" }}>
+              {t.signUp}...
+            </Text>
+          </View>
+        </View>
+      </Modal>
+
       <Text style={dynamicStyles.title}>{t.title}</Text>
 
       <Text style={dynamicStyles.label}>{t.name}</Text>
