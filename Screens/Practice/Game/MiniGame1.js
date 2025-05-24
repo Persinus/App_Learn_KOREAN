@@ -46,6 +46,8 @@ const filteredCardData = cardData.filter((card) => card.value !== "Joker");
 // Luật chơi modal, truyền thêm userProfile
 const RulesModal = ({ visible, onClose, userProfile }) => {
   const isDarkMode = useSelector(state => state.darkMode.isDarkMode);
+  const language = useSelector(state => state.language.language);
+  const t = translations[language];
   return (
     <Modal
       animationType="slide"
@@ -62,7 +64,7 @@ const RulesModal = ({ visible, onClose, userProfile }) => {
             styles.modalTitle,
             { color: isDarkMode ? "#FFD700" : "#6A0DAD" }
           ]}>
-            {translations[useSelector(state => state.language.language)].rules}
+            {t.rules}
           </Text>
           <Text style={[styles.modalText, { color: isDarkMode ? "#fff" : "#333" }]}>- Lá bài từ 1-10: Tính điểm tương ứng (1-10 điểm).</Text>
           <Text style={[styles.modalText, { color: isDarkMode ? "#fff" : "#333" }]}>- Lá bài J, Q, K: Tương ứng 11, 12, 13 điểm.</Text>
@@ -76,7 +78,7 @@ const RulesModal = ({ visible, onClose, userProfile }) => {
             </Text>
           </View>
           <TouchableOpacity style={[styles.closeButton, { backgroundColor: isDarkMode ? "#FFD700" : "#6A0DAD" }]} onPress={onClose}>
-            <Text style={[styles.closeButtonText, { color: isDarkMode ? "#232323" : "#FFF" }]}>{translations[useSelector(state => state.language.language)].close}</Text>
+            <Text style={[styles.closeButtonText, { color: isDarkMode ? "#232323" : "#FFF" }]}>{t.close}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -120,6 +122,8 @@ const MiniGame1 = () => {
   const [isCorrect, setIsCorrect] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
   const [username, setUsername] = useState("");
+  const [resultModal, setResultModal] = useState(false);
+  const [resultInfo, setResultInfo] = useState({ isCorrect: null, amount: 0, type: "", correctText: "" });
   const isDarkMode = useSelector(state => state.darkMode.isDarkMode);
   const language = useSelector(state => state.language.language);
   const t = translations[language];
@@ -259,7 +263,19 @@ const MiniGame1 = () => {
                   setIsCorrect(correct);
                   setExplanation(getExplanation(currentCard, correct));
                   await handleAnswered(currentCard.suit + currentCard.value);
-                  if (correct) await rewardUser(currentCard);
+                  let amount = currentCard.score || currentCard.gold || currentCard.diamond || 1;
+                  let type = currentCard.value === "J" ? t.score : currentCard.value === "Q" ? t.gold : currentCard.value === "K" ? t.diamond : t.score;
+                  let correctText = currentCard.answers.find(a => a.id === currentCard.valueTrue)?.text || "";
+                  if (correct) {
+                    await rewardUser(currentCard);
+                    setResultInfo({ isCorrect: true, amount, type, correctText });
+                    setResultModal(true);
+                    console.log(`+${amount} ${type}`);
+                  } else {
+                    setResultInfo({ isCorrect: false, amount: 0, type, correctText });
+                    setResultModal(true);
+                    console.log("Chưa nhận được thưởng vì trả lời sai");
+                  }
                 }}
               >
                 <Text style={[styles.answerText, { color: isDarkMode ? "#fff" : "#333" }]}>{ans.text}</Text>
@@ -287,6 +303,47 @@ const MiniGame1 = () => {
       </Modal>
     );
   };
+
+  // Modal kết quả
+  const renderResultModal = () => (
+    <Modal
+      visible={resultModal}
+      transparent
+      animationType="fade"
+      onRequestClose={() => setResultModal(false)}
+    >
+      <View style={styles.modalContainer}>
+        <View style={[
+          styles.modalContent,
+          { backgroundColor: isDarkMode ? "#232323" : "#FFF" }
+        ]}>
+          {resultInfo.isCorrect ? (
+            <>
+              <Text style={[styles.modalTitle, { color: isDarkMode ? "#FFD700" : "#388e3c" }]}>
+                🎉 {t.win(resultInfo.amount, resultInfo.type)}
+              </Text>
+            </>
+          ) : (
+            <>
+              <Text style={[styles.modalTitle, { color: isDarkMode ? "#FFD700" : "#d32f2f" }]}>
+                😢 {t.lose} "{resultInfo.correctText}"
+              </Text>
+              <Text style={{ color: isDarkMode ? "#fff" : "#333", marginTop: 8 }}>{t.tryAgain}</Text>
+            </>
+          )}
+          <TouchableOpacity
+            style={[styles.closeButton, { backgroundColor: isDarkMode ? "#FFD700" : "#6A0DAD" }]}
+            onPress={() => {
+              setResultModal(false);
+              setQuestionModal(false);
+            }}
+          >
+            <Text style={[styles.closeButtonText, { color: isDarkMode ? "#232323" : "#FFF" }]}>{t.close}</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
+  );
 
   return (
     <View style={[
@@ -333,6 +390,9 @@ const MiniGame1 = () => {
 
       {/* Question Modal */}
       {renderQuestionModal()}
+
+      {/* Result Modal */}
+      {renderResultModal()}
 
       {/* Scrollable Cards */}
       <ScrollView contentContainerStyle={styles.container}>
@@ -412,10 +472,11 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 20,
+    textAlign: "center",
     fontWeight: "bold",
     color: "#6A0DAD",
     marginBottom: 15,
-    textAlign: "center",
+    paddingVertical: 8,
   },
   answerButton: {
     width: "100%",
@@ -431,60 +492,77 @@ const styles = StyleSheet.create({
   },
   answerCorrect: {
     backgroundColor: "#b6e388",
+    textAlign: "center",
   },
   answerWrong: {
     backgroundColor: "#ffb3b3",
+    borderRadius: 8,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    alignItems: "center",
   },
   answerHighlight: {
-    borderWidth: 2,
     borderColor: "#FFD700",
+    borderWidth: 2,
   },
   explanationText: {
-    marginTop: 12,
-    fontSize: 15,
-    color: "#6A0DAD",
     textAlign: "center",
     fontWeight: "bold",
+    color: "#6A0DAD",
+    fontSize: 15,
+    marginTop: 12,
   },
   closeButton: {
     marginTop: 18,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    backgroundColor: "#6A0DAD",
     borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    elevation: 5,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 3,
+    shadowOpacity: 0.2,
+    shadowColor: "#000",
+    backgroundColor: "#FFD700",
   },
   closeButtonText: {
-    fontSize: 16,
-    color: "#FFF",
-    fontWeight: "bold",
     textAlign: "center",
+    fontWeight: "bold",
+    color: "#6A0DAD",
+    fontSize: 16,
   },
   rulesButton: {
-    paddingHorizontal: 15,
-    paddingVertical: 8,
     borderRadius: 8,
-    marginRight: 8,
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-    shadowOffset: { width: 0, height: 2 },
+    paddingVertical: 8,
+    paddingHorizontal: 15,
     elevation: 5,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 3,
+    shadowOpacity: 0.2,
+    shadowColor: "#000",
+    marginRight: 8,
   },
   rulesButtonText: {
+    textAlign: "center",
     fontWeight: "bold",
+    color: "#6A0DAD",
     fontSize: 16,
   },
   resourceBox: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 10,
-    paddingVertical: 5,
     borderRadius: 8,
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-    shadowOffset: { width: 0, height: 2 },
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    alignItems: "center",
+    flexDirection: "row",
     elevation: 5,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 3,
+    shadowOpacity: 0.2,
+    shadowColor: "#000",
   },
   resourceText: {
     fontWeight: "bold",
